@@ -1,4 +1,4 @@
-RocketChat.callbacks.add('beforeSaveMessage', function(message) {
+RocketChat.callbacks.add({ hook: 'beforeSaveMessage', callback: function(message) {
 	// Test if the message mentions include @all.
 	if (message.mentions != null &&
 		_.pluck(message.mentions, '_id').some((item) => item === 'all')) {
@@ -33,4 +33,4 @@ RocketChat.callbacks.add('beforeSaveMessage', function(message) {
 
 	return message;
 
-}, 1, 'filterATAllTag');
+}, priority: 1, id: 'filterATAllTag' });

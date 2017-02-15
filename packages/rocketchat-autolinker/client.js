@@ -61,4 +61,4 @@ function AutoLinker(message) {
 	return message;
 }
 
-RocketChat.callbacks.add('renderMessage', AutoLinker);
+RocketChat.callbacks.add({ hook: 'renderMessage', callback: AutoLinker });

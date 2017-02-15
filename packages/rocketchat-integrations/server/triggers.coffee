@@ -338,4 +338,4 @@ ExecuteTriggers = (message, room) ->
 	return message
 
 
-RocketChat.callbacks.add 'afterSaveMessage', ExecuteTriggers, RocketChat.callbacks.priority.LOW, 'ExecuteTriggers'
+RocketChat.callbacks.add { hook: 'afterSaveMessage', callback: ExecuteTriggers, priority: RocketChat.callbacks.priority.LOW, id: 'ExecuteTriggers' }

@@ -21,18 +21,28 @@ RocketChat.callbacks.priority =
 	MEDIUM: 0
 	LOW: 1000
 
+RocketChat.callbacks.hooks = []
+
 ###
 # Add a callback function to a hook
 # @param {String} hook - The name of the hook
 # @param {Function} callback - The callback function
+# @param {Function} priority - The order in which callbacks will be run. Higher numbers are ran first
+# @param {Function} id - Callback identification (for removal purposes)
+# @param {Function} categories - Either a single category or an array of categories
 ###
-RocketChat.callbacks.add = (hook, callback, priority, id) ->
+RocketChat.callbacks.add = ({ hook, callback, priority, id, categories }) ->
 	# if callback array doesn't exist yet, initialize it
 	priority ?= RocketChat.callbacks.priority.MEDIUM
 	unless _.isNumber priority
 		priority = RocketChat.callbacks.priority.MEDIUM
 	callback.priority = priority
 	callback.id = id or Random.id()
+	callback.categories = if categories then [].concat(categories) else []
+
+	if RocketChat.callbacks.hooks.indexOf(hook) is -1
+		RocketChat.callbacks.hooks.push(hook)
+
 	RocketChat.callbacks[hook] ?= []
 
 	if RocketChat.callbacks.showTime is true
@@ -60,6 +70,13 @@ RocketChat.callbacks.remove = (hookName, id) ->
 	RocketChat.callbacks[hookName] = _.reject RocketChat.callbacks[hookName], (callback) ->
 		callback.id is id
 	return
+
+RocketChat.callbacks.getByCategory = (category) ->
+	results = []
+	for hook in RocketChat.callbacks.hooks
+		results = results.concat(_.filter(RocketChat.callbacks[hook], (callback) -> return callback.categories.indexOf(category) isnt -1))
+
+	return results
 
 ###
 # Successively run all of a hook's callbacks on an item

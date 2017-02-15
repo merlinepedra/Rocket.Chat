@@ -1,6 +1,6 @@
 var Filter = Npm.require('bad-words');
 
-RocketChat.callbacks.add('beforeSaveMessage', function(message) {
+RocketChat.callbacks.add({ hook: 'beforeSaveMessage', callback: function(message) {
 
 	if (RocketChat.settings.get('Message_AllowBadWordsFilter')) {
 		var badWordsList = RocketChat.settings.get('Message_BadWordsFilterList');
@@ -18,4 +18,4 @@ RocketChat.callbacks.add('beforeSaveMessage', function(message) {
 
 	return message;
 
-}, 1, 'filterBadWords');
+}, priority: 1, id: 'filterBadWords' });

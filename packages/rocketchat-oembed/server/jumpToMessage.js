@@ -3,7 +3,7 @@
 const URL = Npm.require('url');
 const QueryString = Npm.require('querystring');
 
-RocketChat.callbacks.add('beforeSaveMessage', (msg) => {
+RocketChat.callbacks.add({ hook: 'beforeSaveMessage', callback: (msg) => {
 	if (msg && msg.urls) {
 		msg.urls.forEach((item) => {
 			if (item.url.indexOf(Meteor.absoluteUrl()) === 0) {
@@ -30,4 +30,4 @@ RocketChat.callbacks.add('beforeSaveMessage', (msg) => {
 		});
 	}
 	return msg;
-}, RocketChat.callbacks.priority.LOW, 'jumpToMessage');
+}, priority: RocketChat.callbacks.priority.LOW, id: 'jumpToMessage' });

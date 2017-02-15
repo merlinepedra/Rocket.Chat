@@ -242,6 +242,6 @@ Tracker.autorun ->
 	computation: computation
 
 
-RocketChat.callbacks.add 'afterLogoutCleanUp', ->
+RocketChat.callbacks.add { hook: 'afterLogoutCleanUp', callback: ->
 	RoomManager.closeAllRooms()
-, RocketChat.callbacks.priority.MEDIUM, 'roommanager-after-logout-cleanup'
+, priority: RocketChat.callbacks.priority.MEDIUM, id: 'roommanager-after-logout-cleanup' }

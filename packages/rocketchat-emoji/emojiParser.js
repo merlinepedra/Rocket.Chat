@@ -3,7 +3,7 @@
  * emojiParser is a function that will replace emojis
  * @param {Object} message - The message object
  */
-RocketChat.callbacks.add('renderMessage', (message) => {
+RocketChat.callbacks.add({ hook: 'renderMessage', callback: (message) => {
 	if (isSetNotNull(() => Meteor.user().settings.preferences.useEmojis) && !Meteor.user().settings.preferences.useEmojis) {
 		return message;
 	}
@@ -45,4 +45,4 @@ RocketChat.callbacks.add('renderMessage', (message) => {
 	}
 
 	return message;
-}, RocketChat.callbacks.priority.LOW, 'emoji');
+}, priority: RocketChat.callbacks.priority.LOW, id: 'emoji' });

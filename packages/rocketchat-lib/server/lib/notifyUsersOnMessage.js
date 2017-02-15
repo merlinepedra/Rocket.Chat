@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-RocketChat.callbacks.add('afterSaveMessage', function(message, room) {
+RocketChat.callbacks.add({ hook: 'afterSaveMessage', callback: function(message, room) {
 	// skips this callback if the message was edited and increments it if the edit was way in the past (aka imported)
 	if (message.editedAt && Math.abs(moment(message.editedAt).diff()) > 60000) {
 		//TODO: Review as I am not sure how else to get around this as the incrementing of the msgs count shouldn't be in this callback
@@ -85,4 +85,4 @@ RocketChat.callbacks.add('afterSaveMessage', function(message, room) {
 
 	return message;
 
-}, RocketChat.callbacks.priority.LOW, 'notifyUsersOnMessage');
+}, priority: RocketChat.callbacks.priority.LOW, id: 'notifyUsersOnMessage' });

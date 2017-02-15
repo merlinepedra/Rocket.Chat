@@ -401,11 +401,11 @@ class IrcLogoutCleanUper
 
 # Only proceed if the package has been enabled
 if IRC_AVAILABILITY == true
-	RocketChat.callbacks.add 'beforeValidateLogin', IrcLoginer, RocketChat.callbacks.priority.LOW, 'irc-loginer'
-	RocketChat.callbacks.add 'beforeSaveMessage', IrcSender, RocketChat.callbacks.priority.LOW, 'irc-sender'
-	RocketChat.callbacks.add 'beforeJoinRoom', IrcRoomJoiner, RocketChat.callbacks.priority.LOW, 'irc-room-joiner'
-	RocketChat.callbacks.add 'beforeCreateChannel', IrcRoomJoiner, RocketChat.callbacks.priority.LOW, 'irc-room-joiner-create-channel'
-	RocketChat.callbacks.add 'beforeLeaveRoom', IrcRoomLeaver, RocketChat.callbacks.priority.LOW, 'irc-room-leaver'
-	RocketChat.callbacks.add 'afterLogoutCleanUp', IrcLogoutCleanUper, RocketChat.callbacks.priority.LOW, 'irc-clean-up'
+	RocketChat.callbacks.add { hook: 'beforeValidateLogin', callback: IrcLoginer, priority: RocketChat.callbacks.priority.LOW, id: 'irc-loginer' }
+	RocketChat.callbacks.add { hook: 'beforeSaveMessage', callback: IrcSender, priority: RocketChat.callbacks.priority.LOW, id: 'irc-sender' }
+	RocketChat.callbacks.add { hook: 'beforeJoinRoom', callback: IrcRoomJoiner, priority: RocketChat.callbacks.priority.LOW, id: 'irc-room-joiner' }
+	RocketChat.callbacks.add { hook: 'beforeCreateChannel', callback: IrcRoomJoiner, priority: RocketChat.callbacks.priority.LOW, id: 'irc-room-joiner-create-channel' }
+	RocketChat.callbacks.add { hook: 'beforeLeaveRoom', callback: IrcRoomLeaver, priority: RocketChat.callbacks.priority.LOW, id: 'irc-room-leaver' }
+	RocketChat.callbacks.add { hook: 'afterLogoutCleanUp', callback: IrcLogoutCleanUper, priority: RocketChat.callbacks.priority.LOW, id: 'irc-clean-up' }
 else
 	return

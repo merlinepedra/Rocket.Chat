@@ -26,4 +26,4 @@ function HighlightWordsClient(message) {
 	return message;
 }
 
-RocketChat.callbacks.add('renderMessage', HighlightWordsClient, RocketChat.callbacks.priority.MEDIUM + 1, 'highlight-words');
+RocketChat.callbacks.add({ hook: 'renderMessage', callback: HighlightWordsClient, priority: RocketChat.callbacks.priority.MEDIUM + 1, id: 'highlight-words' });

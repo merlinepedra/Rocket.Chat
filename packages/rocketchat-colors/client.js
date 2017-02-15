@@ -15,4 +15,4 @@ function HexColorPreview(message) {
 	return message;
 }
 
-RocketChat.callbacks.add('renderMessage', HexColorPreview, RocketChat.callbacks.priority.MEDIUM);
+RocketChat.callbacks.add({ hook: 'renderMessage', callback: HexColorPreview, priority: RocketChat.callbacks.priority.MEDIUM });

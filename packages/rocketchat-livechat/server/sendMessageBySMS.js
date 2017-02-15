@@ -1,4 +1,4 @@
-RocketChat.callbacks.add('afterSaveMessage', function(message, room) {
+RocketChat.callbacks.add({ hook: 'afterSaveMessage', callback: function(message, room) {
 	// skips this callback if the message was edited
 	if (message.editedAt) {
 		return message;
@@ -39,4 +39,4 @@ RocketChat.callbacks.add('afterSaveMessage', function(message, room) {
 
 	return message;
 
-}, RocketChat.callbacks.priority.LOW, 'sendMessageBySms');
+}, priority: RocketChat.callbacks.priority.LOW, id: 'sendMessageBySms' });

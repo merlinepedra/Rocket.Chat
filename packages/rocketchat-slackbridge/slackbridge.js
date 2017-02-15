@@ -648,10 +648,10 @@ class SlackBridge {
 	}
 
 	registerForRocketEvents() {
-		RocketChat.callbacks.add('afterSaveMessage', this.onRocketMessage.bind(this), RocketChat.callbacks.priority.LOW, 'SlackBridge_Out');
-		RocketChat.callbacks.add('afterDeleteMessage', this.onRocketMessageDelete.bind(this), RocketChat.callbacks.priority.LOW, 'SlackBridge_Delete');
-		RocketChat.callbacks.add('setReaction', this.onRocketSetReaction.bind(this), RocketChat.callbacks.priority.LOW, 'SlackBridge_SetReaction');
-		RocketChat.callbacks.add('unsetReaction', this.onRocketUnSetReaction.bind(this), RocketChat.callbacks.priority.LOW, 'SlackBridge_UnSetReaction');
+		RocketChat.callbacks.add({ hook: 'afterSaveMessage', callback: this.onRocketMessage.bind(this), priority: RocketChat.callbacks.priority.LOW, id: 'SlackBridge_Out' });
+		RocketChat.callbacks.add({ hook: 'afterDeleteMessage', callback: this.onRocketMessageDelete.bind(this), priority: RocketChat.callbacks.priority.LOW, id: 'SlackBridge_Delete' });
+		RocketChat.callbacks.add({ hook: 'setReaction', callback: this.onRocketSetReaction.bind(this), priority: RocketChat.callbacks.priority.LOW, id: 'SlackBridge_SetReaction' });
+		RocketChat.callbacks.add({ hook: 'unsetReaction', callback: this.onRocketUnSetReaction.bind(this), priority: RocketChat.callbacks.priority.LOW, id: 'SlackBridge_UnSetReaction' });
 	}
 
 	unregisterForRocketEvents() {

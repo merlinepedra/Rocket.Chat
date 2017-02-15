@@ -13,7 +13,7 @@ RocketChat.settings.get('Livechat_Knowledge_Apiai_Language', function(key, value
 	apiaiLanguage = value;
 });
 
-RocketChat.callbacks.add('afterSaveMessage', function(message, room) {
+RocketChat.callbacks.add({ hook: 'afterSaveMessage', callback: function(message, room) {
 	// skips this callback if the message was edited
 	if (message.editedAt) {
 		return message;
@@ -60,4 +60,4 @@ RocketChat.callbacks.add('afterSaveMessage', function(message, room) {
 	});
 
 	return message;
-}, RocketChat.callbacks.priority.LOW, 'externalWebHook');
+}, priority: RocketChat.callbacks.priority.LOW, id: 'externalWebHook' });

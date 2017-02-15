@@ -1,4 +1,4 @@
-RocketChat.callbacks.add('livechat.offlineMessage', (data) => {
+RocketChat.callbacks.add({ hook: 'livechat.offlineMessage', callback: (data) => {
 	if (!RocketChat.settings.get('Livechat_webhook_on_offline_msg')) {
 		return data;
 	}
@@ -14,4 +14,4 @@ RocketChat.callbacks.add('livechat.offlineMessage', (data) => {
 	};
 
 	RocketChat.Livechat.sendRequest(postData);
-}, RocketChat.callbacks.priority.MEDIUM, 'livechat-send-email-offline-message');
+}, priority: RocketChat.callbacks.priority.MEDIUM, id: 'livechat-send-email-offline-message' });

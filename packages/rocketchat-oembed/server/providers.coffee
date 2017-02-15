@@ -45,7 +45,7 @@ providers.registerProvider
 RocketChat.oembed = {}
 RocketChat.oembed.providers = providers
 
-RocketChat.callbacks.add 'oembed:beforeGetUrlContent', (data) ->
+RocketChat.callbacks.add { hook: 'oembed:beforeGetUrlContent', callback: (data) ->
 	if data.parsedUrl?
 		url = URL.format data.parsedUrl
 		provider = providers.getProviderForUrl url
@@ -60,9 +60,9 @@ RocketChat.callbacks.add 'oembed:beforeGetUrlContent', (data) ->
 			delete data.urlObj.search
 
 	return data
-, RocketChat.callbacks.priority.MEDIUM, 'oembed-providers-before'
+, priority: RocketChat.callbacks.priority.MEDIUM, id: 'oembed-providers-before' }
 
-RocketChat.callbacks.add 'oembed:afterParseContent', (data) ->
+RocketChat.callbacks.add { hook: 'oembed:afterParseContent', callback: (data) ->
 	if data.parsedUrl?.query?
 		queryString = data.parsedUrl.query
 		if _.isString data.parsedUrl.query
@@ -80,4 +80,4 @@ RocketChat.callbacks.add 'oembed:afterParseContent', (data) ->
 						data.meta['oembedUrl'] = url
 
 	return data
-, RocketChat.callbacks.priority.MEDIUM, 'oembed-providers-after'
+, priority: RocketChat.callbacks.priority.MEDIUM, id: 'oembed-providers-after' }

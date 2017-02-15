@@ -40,7 +40,7 @@ if Meteor.isServer
 
 		ServiceConfiguration.configurations.upsert {service: 'dolphin'}, $set: data
 
-	RocketChat.callbacks.add 'beforeCreateUser', DolphinOnCreateUser, RocketChat.callbacks.priority.HIGH
+	RocketChat.callbacks.add { hook: 'beforeCreateUser', callback: DolphinOnCreateUser, priority: RocketChat.callbacks.priority.HIGH }
 else
 	Meteor.startup ->
 		Tracker.autorun ->

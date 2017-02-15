@@ -174,7 +174,7 @@ class Katex
 RocketChat.katex = new Katex
 
 cb = RocketChat.katex.render_message.bind(RocketChat.katex)
-RocketChat.callbacks.add 'renderMessage', cb, RocketChat.callbacks.priority.HIGH - 1, 'katex'
+RocketChat.callbacks.add { hook: 'renderMessage', callback: cb, priority: RocketChat.callbacks.priority.HIGH - 1, id: 'katex' }
 
 if Meteor.isClient
 	Blaze.registerHelper 'RocketChatKatex', (text) ->

@@ -36,7 +36,7 @@ if (Meteor.isServer)
 					SharedSecret[currentUser] = []
 					SharedSecret[currentUser][currentRoomId] = secret
 
-	RocketChat.callbacks.add 'beforeSaveMessage', EncryptMessage, 9999, 'sharedsecret-encrypt-message' #LAST
+	RocketChat.callbacks.add { hook: 'beforeSaveMessage', callback: EncryptMessage, priority: 9999, id: 'sharedsecret-encrypt-message' } #LAST
 	RocketChat.slashCommands.add 'setsecretkey', HandleSlashCommand
 
 if (Meteor.isClient)
@@ -78,5 +78,5 @@ if (Meteor.isClient)
 
 
 
-	RocketChat.callbacks.add 'renderMessage', DecryptMessage, -9999, 'sharedsecret-decrypt-message' #FIRST
+	RocketChat.callbacks.add { hook: 'renderMessage', callback: DecryptMessage, priority: -9999, id: 'sharedsecret-decrypt-message' } #FIRST
 	RocketChat.slashCommands.add 'setsecretkey', HandleSlashCommand

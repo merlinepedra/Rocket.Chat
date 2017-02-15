@@ -53,6 +53,6 @@ class Spotify
 
 		return message
 
-RocketChat.callbacks.add 'beforeSaveMessage', Spotify.transform, RocketChat.callbacks.priority.LOW, 'spotify-save'
-RocketChat.callbacks.add 'renderMessage', Spotify.render, RocketChat.callbacks.priority.MEDIUM, 'spotify-render'
+RocketChat.callbacks.add { hook: 'beforeSaveMessage', callback: Spotify.transform, priority: RocketChat.callbacks.priority.LOW, id: 'spotify-save' }
+RocketChat.callbacks.add { hook: 'renderMessage', callback: Spotify.render, priority: RocketChat.callbacks.priority.MEDIUM, id: 'spotify-render' }
 RocketChat.Spotify = Spotify

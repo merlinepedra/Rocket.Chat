@@ -195,7 +195,7 @@ init = _.debounce Meteor.bindEnvironment( =>
 		InternalHubot.adapter = new RocketChatAdapter InternalHubot
 		HubotScripts(InternalHubot)
 		InternalHubot.run()
-		RocketChat.callbacks.add 'afterSaveMessage', InternalHubotReceiver, RocketChat.callbacks.priority.LOW, 'InternalHubot'
+		RocketChat.callbacks.add { hook: 'afterSaveMessage', callback: InternalHubotReceiver, priority: RocketChat.callbacks.priority.LOW, id: 'InternalHubot' }
 	else
 		InternalHubot = {}
 		RocketChat.callbacks.remove 'afterSaveMessage', 'InternalHubot'

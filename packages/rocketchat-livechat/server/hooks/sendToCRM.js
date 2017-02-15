@@ -42,10 +42,10 @@ function sendToCRM(hook, room) {
 	return room;
 }
 
-RocketChat.callbacks.add('livechat.closeRoom', (room) => {
+RocketChat.callbacks.add({ hook: 'livechat.closeRoom', callback: (room) => {
 	return sendToCRM('closeRoom', room);
-}, RocketChat.callbacks.priority.MEDIUM, 'livechat-send-crm-close-room');
+}, priority: RocketChat.callbacks.priority.MEDIUM, id: 'livechat-send-crm-close-room' });
 
-RocketChat.callbacks.add('livechat.saveInfo', (room) => {
+RocketChat.callbacks.add({ hook: 'livechat.saveInfo', callback: (room) => {
 	return sendToCRM('saveLivechatInfo', room);
-}, RocketChat.callbacks.priority.MEDIUM, 'livechat-send-crm-save-info');
+}, priority: RocketChat.callbacks.priority.MEDIUM, id: 'livechat-send-crm-save-info' });

@@ -16,7 +16,7 @@ Meteor.startup(function() {
 		return msg;
 	};
 
-	RocketChat.callbacks.add('streamMessage', roomSettingsChangedCallback, RocketChat.callbacks.priority.HIGH, 'room-settings-changed');
+	RocketChat.callbacks.add({ hook: 'streamMessage', callback: roomSettingsChangedCallback, priority: RocketChat.callbacks.priority.HIGH, id: 'room-settings-changed' });
 
 	const roomNameChangedCallback = (msg) => {
 		Tracker.nonreactive(() => {
@@ -32,5 +32,5 @@ Meteor.startup(function() {
 		return msg;
 	};
 
-	RocketChat.callbacks.add('streamMessage', roomNameChangedCallback, RocketChat.callbacks.priority.HIGH, 'room-name-changed');
+	RocketChat.callbacks.add({ hook: 'streamMessage', callback: roomNameChangedCallback, priority: RocketChat.callbacks.priority.HIGH, id: 'room-name-changed' });
 });
