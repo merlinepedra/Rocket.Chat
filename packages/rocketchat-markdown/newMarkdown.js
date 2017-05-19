@@ -6,7 +6,7 @@
 class MarkdownClass {
 
 	constructor() {
-		this.schemes = RocketChat.settings.get('Markdown_SupportSchemesForLink').split(',').join('|');
+		this.schemes = RocketChat.settings.get('Markdown_SupportSchemesForLink') && RocketChat.settings.get('Markdown_SupportSchemesForLink').split(',').join('|');
 		this.headers = RocketChat.settings.get('Markdown_Headers');
 	}
 	parse(text) {
@@ -95,6 +95,17 @@ class MarkdownClass {
 
 
 	parseNotEscaped(msg) {
+		console.log(Object.getOwnPropertyNames(MarkdownClass.prototype));
+		Object.getOwnPropertyNames(MarkdownClass.prototype).forEach(method =>{
+			if (method === 'constructor' || method === 'parseNotEscaped' || method === 'parse') {
+				return;
+			}
+			console.log(method);
+			msg = this[method](msg);
+		});
+
+		// Object.getOwnPropertyNames(MarkdownClass.prototype).reduce((msg, method) => ['constructor', 'parseNotEscaped', 'parse'].includes(method) ? msg : this[method](msg), msg);
+
 
 		// [
 		// 	this.parseLinkWithTitle,
@@ -119,24 +130,24 @@ class MarkdownClass {
 
 
 
-		msg = this.parseLinkWithTitle(msg);
-		msg = this.parseLinkWithText(msg);
-		msg = this.parseLink(msg);
+		// msg = this.parseLinkWithTitle(msg);
+		// msg = this.parseLinkWithText(msg);
+		// msg = this.parseLink(msg);
 
-		if (this.headers) {
-			msg = this.parseH1(msg);
-			msg = this.parseH2(msg);
-			msg = this.parseH3(msg);
-			msg = this.parseH4(msg);
-		}
+		// if (this.headers) {
+		// 	msg = this.parseH1(msg);
+		// 	msg = this.parseH2(msg);
+		// 	msg = this.parseH3(msg);
+		// 	msg = this.parseH4(msg);
+		// }
 
-		msg = this.parseBold(msg);
-		msg = this.parseItalic(msg);
-		msg = this.parseStrike(msg);
-		msg = this.parseBlockQuote(msg);
-		msg = this.parseQuote(msg);
-		msg = this.removeWhiteSpaceBlockQuote(msg);
-		msg = this.removeNewLineBlockQuote(msg);
+		// msg = this.parseBold(msg);
+		// msg = this.parseItalic(msg);
+		// msg = this.parseStrike(msg);
+		// msg = this.parseBlockQuote(msg);
+		// msg = this.parseQuote(msg);
+		// msg = this.removeWhiteSpaceBlockQuote(msg);
+		// msg = this.removeNewLineBlockQuote(msg);
 
 		if (typeof window !== 'undefined' && window !== null ? window.rocketDebug : undefined) { console.log('Markdown', msg); }
 
