@@ -16,7 +16,9 @@ Package.onUse(function(api) {
 
 	api.addFiles('settings.js', 'server');
 	api.addFiles('newMarkdown.js');
+	api.addFiles('newMarkdownClass.js');
 	api.addFiles('markdowncode.js');
+
 });
 
 Package.onTest(function(api) {
