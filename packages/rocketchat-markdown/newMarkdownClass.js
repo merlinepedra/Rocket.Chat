@@ -3,6 +3,8 @@
  * @param {Object} message - The message object
  */
 
+import _ from 'underscore.string';
+
 export default class MarkdownClass {
 	constructor(schemes, headers, currentUrl) {
 		this.schemes = schemes;
@@ -109,7 +111,8 @@ export default class MarkdownClass {
 				return;
 			}
 			msg = this[method](msg);
-			console.log(msg);
+			console.log(this.schemes);
+			//console.log(`${ method } ============== ${ msg }`);
 		});
 
 		// Object.getOwnPropertyNames(MarkdownClass.prototype).reduce((msg, method) => ['constructor', 'parseNotEscaped', 'parse'].includes(method) ? msg : this[method](msg), msg);
