@@ -21,25 +21,25 @@ const escapeHtml = function(text) {
 
 let markdown;
 beforeEach(() => {
-	markdown = new Markdown('http|https', true, true);
+	markdown = new Markdown('http|https', true);
 });
 
-describe.only('[Markdown]', () => {
+describe('[Markdown]', () => {
 	describe('[Bold Markdown]', () => {
-		describe('Should Parse:', () => {
+		describe('For Bold text:', () => {
 			[
 				'*Hello*',
 				'**Hello**',
 				'*Hello**',
 				'**Hello*'
 			].forEach(text => {
-				it(`it should return a html with the <strong> tag when sending the string ${ text }`, () => {
+				it(`it should return a <strong> tag when sending "${ text }"`, () => {
 					assert.strictEqual(markdown.parseBold(text), `<span class="copyonly">*</span><strong>${ text.replace(/\*/g, '') }</strong><span class="copyonly">*</span>`);
 				});
 			});
 		});
 
-		describe('Should NOT Parse: ', () => {
+		describe('For Other text and markdowns: ', () => {
 			[
 				'Hello',
 				'*Hello',
@@ -51,13 +51,13 @@ describe.only('[Markdown]', () => {
 				'`Hello`'
 			]
 			.forEach(text => {
-				it(`it should NOT return a html with the <strong> tag when sending the string ${ text }`, () => {
-					assert.notStrictEqual(markdown.parseBold(text), `<span class="copyonly">*</span><strong>${ text.replace(/\*/g, '') }</strong><span class="copyonly">*</span>`);
+				it(`it should return ${ text }`, () => {
+					assert.strictEqual(markdown.parseBold(text), text);
 				});
 			});
 		});
 
-		describe('Should Partially Parse: ', () => {
+		describe('For Partial Bold Text: ', () => {
 			[
 				'*Hello* this is dog',
 				'Rocket cat says *Hello*',
@@ -66,7 +66,7 @@ describe.only('[Markdown]', () => {
 				'Rocket cat says **Hello**',
 				'He said **Hello** to her'
 			].forEach(text => {
-				it('it should return a string containing a <strong> html tag when sending the string Hello', () => {
+				it(`it should return a <strong> tag in the string "${ text }"`, () => {
 					assert.equal(markdown.parseBold(text).includes('<span class="copyonly">*</span><strong>Hello</strong><span class="copyonly">*</span>'), true);
 				});
 			});
@@ -74,19 +74,19 @@ describe.only('[Markdown]', () => {
 	});
 
 	describe('[Italic Markdown]', () => {
-		describe('Should Parse:', () => {
+		describe('For Italic text:', () => {
 			[
 				'_Hello_',
 				'_Hi_',
 				'_Rocket.Cat_'
 			].forEach(text => {
-				it(`it should return a html with the <em> tag when sending the string ${ text }`, () => {
+				it(`it should return a <em> tag when sending "${ text }"`, () => {
 					assert.strictEqual(markdown.parseItalic(text), `<span class="copyonly">_</span><em>${ text.replace(/\_/g, '') }</em><span class="copyonly">_</span>`);
 				});
 			});
 		});
 
-		describe('Should Not Parse:', () => {
+		describe('For Other text and markdowns:', () => {
 			[
 				'*Hello*',
 				'__Hello__',
@@ -94,19 +94,19 @@ describe.only('[Markdown]', () => {
 				'_Hello',
 				'Hello_'
 			].forEach(text => {
-				it(`it should not return a html with the <em> tag when sending the string ${ text }`, () => {
-					assert.notStrictEqual(markdown.parseItalic(text), `<span class="copyonly">_</span><em>${ text.replace(/\_/g, '') }</em><span class="copyonly">_</span>`);
+				it(`it should return ${ text }`, () => {
+					assert.strictEqual(markdown.parseItalic(text), text);
 				});
 			});
 		});
 
-		describe('Should Partially Parse:', () => {
+		describe('For Partial Italic Text:', () => {
 			[
 				'_Hello_ this is dog',
 				'Rocket cat says _Hello_',
 				'He said _Hello_ to her'
 			].forEach(text => {
-				it(`it should return a string containing a <em> html tag when sending the string ${ text }`, () => {
+				it(`it should return a <em> tag in the string ${ text }`, () => {
 					assert.equal(markdown.parseItalic(text).includes('<span class="copyonly">_</span><em>Hello</em><span class="copyonly">_</span>'), true);
 				});
 			});
@@ -127,7 +127,7 @@ describe.only('[Markdown]', () => {
 			});
 		});
 
-		describe('For Other text and mardowns', () => {
+		describe('For Other text and markdowns', () => {
 			[
 				'Hello~',
 				'~Hello',
@@ -141,13 +141,13 @@ describe.only('[Markdown]', () => {
 			});
 		});
 
-		describe('For Partially Strike Text:', () => {
+		describe('For Partial Strike Text:', () => {
 			[
 				'~Hello~ this is dog',
 				'Rocket cat says ~Hello~',
 				'He said ~Hello~ to her'
 			].forEach(text => {
-				it(`it should return a string containing a <strike> tag when sending "${ text }"`, () => {
+				it(`it should return a <strike> tag in the string "${ text }"`, () => {
 					assert.strictEqual(markdown.parseStrike(text).includes('<span class="copyonly">~</span><strike>Hello</strike><span class="copyonly">~</span>'), true);
 				});
 			});
@@ -336,8 +336,8 @@ describe.only('[Markdown]', () => {
 	});
 
 	describe('[Link Markdown]', () => {
-		describe('[Simple Link]', () => {
-			describe('For Text Links:', () => {
+		describe('[http://Link|Text ]', () => {
+			describe('For |Text Links:', () => {
 				[
 					'<http://link|Text>',
 					'<https://demo.rocket.chat/|Demo Site For Rocket.Chat>',
@@ -372,6 +372,22 @@ describe.only('[Markdown]', () => {
 				});
 			});
 
+		});
+
+		describe('[[Text](http://Link)]', () => {
+			describe('For [Text] links ', () => {
+				[
+					'[Text](http://link)',
+					'[Rocket.ChatDemo]'
+				].forEach(text => {
+					const title = text.match(/\[(.*?)\]/)[1];
+					const link = text.match(/http*[^<>)]*/);
+					it(`it should return <a> tag with the adress ${ link } and the title ${ title }`, () => {
+						assert.strictEqual(markdown.parseLinkWithText(escapeHtml(text)), `<a href="${ link }" target="_blank">${ title }</a>`);
+					});
+				});
+
+			});
 		});
 
 	});
