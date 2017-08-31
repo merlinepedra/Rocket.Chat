@@ -22,6 +22,10 @@ Template.roomList.helpers({
 		let sort = { 't': 1, 'name': 1 };
 		if (this.identifier === 'f') {
 			query.f = favoritesEnabled;
+			query.$or = [
+				{ alert: { $ne: true } },
+				{ hideUnreadStatus: true }
+			];
 		} else {
 			let types = [this.identifier];
 			if (this.identifier === 'activity') {
