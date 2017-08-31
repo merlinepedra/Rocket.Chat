@@ -20,12 +20,16 @@ Template.roomList.helpers({
 			open: true
 		};
 		let sort = { 't': 1, 'name': 1 };
+		const user = Meteor.user();
+		const unread = user && user.settings && user.settings.preferences && user.settings.preferences.roomsListExhibitionMode === 'unread';
 		if (this.identifier === 'f') {
 			query.f = favoritesEnabled;
-			query.$or = [
-				{ alert: { $ne: true } },
-				{ hideUnreadStatus: true }
-			];
+			if (unread) {
+				query.$or = [
+					{ alert: { $ne: true } },
+					{ hideUnreadStatus: true }
+				];
+			}
 		} else {
 			let types = [this.identifier];
 			if (this.identifier === 'activity') {
@@ -35,8 +39,7 @@ Template.roomList.helpers({
 			if (this.identifier === 'channels' || this.identifier === 'unread') {
 				types= [ 'c', 'p'];
 			}
-			const user = Meteor.user();
-			if (user && user.settings && user.settings.preferences && user.settings.preferences.roomsListExhibitionMode === 'unread') {
+			if (unread) {
 				query.$or = [
 					{ alert: { $ne: true } },
 					{ hideUnreadStatus: true }
