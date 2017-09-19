@@ -1,3 +1,5 @@
+/* globals popover */
+
 Meteor.startup(function() {
 	RocketChat.MessageAction.addButton({
 		id: 'jump-to-search-message',
@@ -50,6 +52,38 @@ Template.messageSearch.helpers({
 });
 
 Template.messageSearch.events({
+	'focus #message-search'(e, template) {
+		const config = {
+			columns: [
+				{
+					groups: template.groups.get()
+				}
+			],
+
+			position: {
+				left: document.querySelector('#message-search').getBoundingClientRect().left,
+				top : document.querySelector('#message-search').getBoundingClientRect().bottom + 5
+			},
+			customCSSProperties: {
+				width: `${ e.currentTarget.offsetWidth }px`
+			},
+			data: this,
+
+			activeElement: $(e.currentTarget).parents('.message')[0]
+		};
+		console.log(template.currentSearchFilter.get());
+
+		popover.open(config);
+	},
+
+	'blur #message-search'() {
+		popover.close();
+	},
+
+	'change #message-search'(e, t) {
+		t.changeFilter(e.target.value);
+	},
+
 	'keydown #message-search'(e) {
 		if (e.keyCode === 13) {
 			return e.preventDefault();
@@ -57,6 +91,7 @@ Template.messageSearch.events({
 	},
 
 	'keyup #message-search': _.debounce(function(e, t) {
+		t.changeFilter(e.target.value);
 		const value = e.target.value.trim();
 		if ((value === '') && t.currentSearchTerm.get()) {
 			t.currentSearchTerm.set('');
@@ -88,25 +123,47 @@ Template.messageSearch.events({
 Template.messageSearch.onCreated(function() {
 	this.currentSearchTerm = new ReactiveVar('');
 	this.searchResult = new ReactiveVar;
+	this.allFilters = ['from', 'has', 'is', 'before', 'after', 'on', 'order'].map((filter) => {
+		return {
+			name: t(filter),
+			type: 'filter',
+			class: 'search-filter',
+			description: t(`${ filter }-description`)
+		};
+	});
+	this.currentSearchFilter = new ReactiveVar(this.allFilters);
 
 	this.hasMore = new ReactiveVar(true);
 	this.limit = new ReactiveVar(20);
 	this.ready = new ReactiveVar(true);
 
-	return this.search = () => {
+	this.changeFilter = (input) => {
+		const currFilter = this.allFilters.map((filter) => { console.log(filter); return filter.name.includes(input) ; });
+		this.currentSearchFilter.set(currFilter);
+	};
+
+	this.groups = new ReactiveVar();
+	this.groups.set([
+		{
+			title: t('Narrow your search'),
+			items: this.currentSearchFilter.get()
+		}
+	]);
+
+	this.search = () => {
 		this.ready.set(false);
 		const value = this.$('#message-search').val();
-		return Tracker.nonreactive(() => {
-			return Meteor.call('messageSearch', value, Session.get('openedRoom'), this.limit.get(), (error, result) => {
+		Tracker.nonreactive(() => {
+			Meteor.call('messageSearch', value, Session.get('openedRoom'), this.limit.get(), (error, result) => {
 				this.currentSearchTerm.set(value);
 				this.ready.set(true);
 				if ((result != null) && (((result.messages != null ? result.messages.length : undefined) > 0) || ((result.users != null ? result.users.length : undefined) > 0) || ((result.channels != null ? result.channels.length : undefined) > 0))) {
 					this.searchResult.set(result);
 					if (((result.messages != null ? result.messages.length : undefined) + (result.users != null ? result.users.length : undefined) + (result.channels != null ? result.channels.length : undefined)) < this.limit.get()) {
-						return this.hasMore.set(false);
+						this.hasMore.set(false);
 					}
 				} else {
-					return this.searchResult.set();
+					this.searchResult.set();
 				}
 			}
 			);

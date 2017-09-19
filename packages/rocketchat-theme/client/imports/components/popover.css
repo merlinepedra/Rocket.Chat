@@ -115,6 +115,12 @@
 		margin-left: 0.25rem;
 	}
 
+	&__item-description {
+		margin-left: 0.25rem;
+
+		color: var(--popover-description-color);
+	}
+
 	&__divider {
 		width: 100%;
 		height: var(--popover-divider-height);
