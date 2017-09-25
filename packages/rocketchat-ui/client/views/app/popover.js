@@ -14,6 +14,15 @@ this.popover = {
 		}
 	}
 };
+Template.popover.helpers({
+	getGroups() {
+		try {
+			return this.columns[0] && this.columns[0].groups.get();
+		} catch (e) {
+			return this.columns[0] && this.columns[0].groups;
+		}
+	}
+});
 
 Template.popover.onRendered(function() {
 	if (this.data.onRendered) {

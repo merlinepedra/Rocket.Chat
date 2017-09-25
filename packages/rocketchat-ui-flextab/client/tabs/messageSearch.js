@@ -56,7 +56,7 @@ Template.messageSearch.events({
 		const config = {
 			columns: [
 				{
-					groups: template.groups.get()
+					groups: template.groups
 				}
 			],
 
@@ -71,7 +71,6 @@ Template.messageSearch.events({
 
 			activeElement: $(e.currentTarget).parents('.message')[0]
 		};
-		console.log(template.currentSearchFilter.get());
 
 		popover.open(config);
 	},
@@ -128,7 +127,8 @@ Template.messageSearch.onCreated(function() {
 			name: t(filter),
 			type: 'filter',
 			class: 'search-filter',
-			description: t(`${ filter }-description`)
+			description: t(`${ filter }-description`),
+			value: `${ filter }:`
 		};
 	});
 	this.currentSearchFilter = new ReactiveVar(this.allFilters);
@@ -136,19 +136,25 @@ Template.messageSearch.onCreated(function() {
 	this.hasMore = new ReactiveVar(true);
 	this.limit = new ReactiveVar(20);
 	this.ready = new ReactiveVar(true);
-
-	this.changeFilter = (input) => {
-		const currFilter = this.allFilters.map((filter) => { console.log(filter); return filter.name.includes(input) ; });
-		this.currentSearchFilter.set(currFilter);
-	};
-
-	this.groups = new ReactiveVar();
-	this.groups.set([
+	this.groups = new ReactiveVar([
 		{
 			title: t('Narrow your search'),
-			items: this.currentSearchFilter.get()
+			items: this.allFilters
 		}
 	]);
+
+	this.changeFilter = (input) => {
+		const currFilter = this.allFilters.filter((filter) => { return filter.name.includes(input); });
+		console.log(currFilter);
+		this.groups.set([
+			{
+				title: t('Narrow your search'),
+				items: currFilter
+			}
+		]);
+	};
+
+
 
 	this.search = () => {
 		this.ready.set(false);
