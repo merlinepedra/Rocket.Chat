@@ -30,14 +30,13 @@ RocketChat.API.v1.addRoute('chat.delete', { authRequired: true }, {
 
 RocketChat.API.v1.addRoute('chat.getMessage', { authRequired: true }, {
 	get() {
-		if (!this.queryParams.msgId) {
+		if ((!this.queryParams.msgId || !this.queryParams.msgId.trim()) && (!this.queryParams.messageId || !this.queryParams.messageId.trim())) {
 			return RocketChat.API.v1.failure('The "msgId" query parameter must be provided.');
 		}
 
-
 		let msg;
 		Meteor.runAsUser(this.userId, () => {
-			msg = Meteor.call('getSingleMessage', this.queryParams.msgId);
+			msg = Meteor.call('getSingleMessage', this.queryParams.msgId || this.queryParams.messageId);
 		});
 
 		if (!msg) {
@@ -84,6 +83,22 @@ RocketChat.API.v1.addRoute('chat.postMessage', { authRequired: true }, {
 			channel: messageReturn.channel,
 			message: messageReturn.message
 		});
+	}
+});
+
+RocketChat.API.v1.addRoute('chat.react', { authRequired: true }, {
+	post() {
+		if (!this.bodyParams.messageId || !this.bodyParams.messageId.trim()) {
+			throw new Meteor.Error('error-messageid-param-not-provided', 'The required "messageId" param is required.');
+		}
+
+		if (!this.bodyParams.emoji || !this.bodyParams.emoji.trim()) {
+			throw new Meteor.Error('error-emoji-param-not-provided', 'The required "emoji" param is required.');
+		}
+
+		this.bodyParams.emoji = `:${ this.bodyParams.emoji.replace(/:/g, '') }:`;
+
+		Meteor.runAsUser(this.userId, () => Meteor.call('setReaction', this.bodyParams.emoji, this.bodyParams.messageId));
 	}
 });
 
