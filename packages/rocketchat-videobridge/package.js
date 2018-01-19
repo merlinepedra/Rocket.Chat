@@ -9,7 +9,8 @@ Package.onUse(function(api) {
 	api.use([
 		'ecmascript',
 		'less',
-		'rocketchat:lib'
+		'rocketchat:lib',
+		'rocketchat:bigbluebutton'
 	]);
 
 	api.use('templating', 'client');

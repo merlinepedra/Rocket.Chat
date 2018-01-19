@@ -1,6 +1,9 @@
 /* globals JitsiMeetExternalAPI */
 /* eslint new-cap: [2, {"capIsNewExceptions": ["MD5"]}] */
 
+import BigBlueButtonApi from 'meteor/rocketchat:bigbluebutton';
+console.log(BigBlueButtonApi);
+
 Template.videoFlexTab.helpers({
 	openInNewWindow() {
 		if (Meteor.isCordova) {
