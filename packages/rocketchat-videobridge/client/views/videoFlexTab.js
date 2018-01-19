@@ -20,15 +20,16 @@ Template.videoFlexTab.events({
 		$(e.currentTarget).prop('disabled', true);
 		Meteor.call('videobridge:join', {rid: this.rid}, (err, result) => {
 			console.log(err, result);
-			$(e.currentTarget).prop('disabled', false);
-			popout.open({
-				content: 'mconfLiveView',
-				data: {
-					source: result.url,
-					streamingOptions:  result
-				},
-				onCloseCallback: () => console.log('bye popout')
-			});
+			if (result) {
+				popout.open({
+					content: 'mconfLiveView',
+					data: {
+						source: result.url,
+						streamingOptions:  result
+					},
+					onCloseCallback: () => console.log('bye popout')
+				});
+			}
 		});
 		// Get the link and open the iframe
 	}

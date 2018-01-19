@@ -2,6 +2,9 @@
 	min-width: 380px;
 	max-width: 600px;
 
+	width: 800px;
+	height: 600px;
+
 	border: solid 4px var(--rc-color-primary-darkest);
 	background: var(--rc-color-primary-darkest);
 	color: var(--rc-color-primary-lightest);
