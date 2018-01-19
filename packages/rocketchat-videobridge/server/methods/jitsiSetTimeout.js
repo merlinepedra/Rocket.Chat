@@ -58,8 +58,11 @@ Meteor.methods({
 			voiceBridge: '71727',
 			welcome: '<br>Welcome to <b>%%CONFNAME%%</b>!',
 			publish: false,
-			random: '416074726'
+			random: '416074726',
+			clientURL: 'https://html5-dev.mconf.com/html5client/join'
 		};
+
+		// https://html5-dev.mconf.com/html5client/join?sessionToken=xpng6qe7cvnqf0cn
 
 		const createUrl = api.urlFor('create', params);
 		const createResult = HTTP.get(createUrl);
