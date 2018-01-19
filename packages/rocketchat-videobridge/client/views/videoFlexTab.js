@@ -17,9 +17,9 @@ Template.videoFlexTab.onCreated(function() {
 Template.videoFlexTab.events({
 	'click .join-meeting'(e) {
 		$(e.currentTarget).prop('disabled', true);
-		console.log(this);
 		Meteor.call('videobridge:join', {rid: this.rid}, (err, result) => {
 			console.log(err, result);
+			$(e.currentTarget).prop('disabled', false);
 		});
 		// Get the link and open the iframe
 	}

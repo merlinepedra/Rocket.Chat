@@ -1,4 +1,5 @@
 /* eslint-disable */
+import crypto from 'crypto';
 
 var BigBlueButtonApi, filterCustomParameters, include, noChecksumMethods, root,
 	__indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -134,12 +135,12 @@ BigBlueButtonApi = (function() {
 	}
 	str = method + query + this.salt;
 	if (this.opts.shaType === 'sha256') {
-		shaObj = new jsSHA("SHA-256", "TEXT");
+		shaObj = crypto.createHash('sha256', "TEXT")
 	} else {
-		shaObj = new jsSHA("SHA-1", "TEXT");
+		shaObj = crypto.createHash('sha1', "TEXT")
 	}
 	shaObj.update(str);
-	c = shaObj.getHash("HEX");
+	c = shaObj.digest('hex');
 	if (this.debug) {
 		console.log("- Checksum calculated:", c);
 	}
