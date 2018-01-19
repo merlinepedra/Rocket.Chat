@@ -63,6 +63,9 @@ Template.popout.helpers({
 	},
 	isPlaying() {
 		return Template.instance().isPlaying.get();
+	},
+	showVideoControls() {
+		return true;
 	}
 });
 

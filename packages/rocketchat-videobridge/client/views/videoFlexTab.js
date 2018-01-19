@@ -1,4 +1,5 @@
 /* eslint new-cap: [2, {"capIsNewExceptions": ["MD5"]}] */
+/* globals popout */
 
 Template.videoFlexTab.helpers({
 	openInNewWindow() {
@@ -20,6 +21,14 @@ Template.videoFlexTab.events({
 		Meteor.call('videobridge:join', {rid: this.rid}, (err, result) => {
 			console.log(err, result);
 			$(e.currentTarget).prop('disabled', false);
+			popout.open({
+				content: 'mconfLiveView',
+				data: {
+					source: result.url,
+					streamingOptions:  result
+				},
+				onCloseCallback: () => console.log('bye popout')
+			});
 		});
 		// Get the link and open the iframe
 	}
