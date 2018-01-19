@@ -30,5 +30,10 @@ Meteor.methods({
 		} else if ((jitsiTimeout - currentTime) / 1000 <= 15) {
 			RocketChat.models.Rooms.setJitsiTimeout(rid, new Date(jitsiTimeout + 25*1000));
 		}
+	},
+
+	'videobridge:join'({rid}) {
+		console.log(rid);
+		console.log(this.userId);
 	}
 });
