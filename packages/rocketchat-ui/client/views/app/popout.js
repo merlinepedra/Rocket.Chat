@@ -32,10 +32,24 @@ this.popout = {
 			this.onCloseCallback();
 		}
 	},
+	dragstart(event) {
+		if (!event.target.classList.contains('dropzone-overlay')) {
+			const popoutElement = document.querySelector('.rc-popout-wrapper');
+			setTimeout(function() {
+				popoutElement.style.display = 'none';
+			}, 0);
+		}
+	},
 	dragover(event) {
 		const e = event.originalEvent || event;
 		e.dataTransfer.dropEffect = 'move';
 		e.preventDefault();
+	},
+	dragend(event) {
+		if (!event.target.classList.contains('dropzone-overlay')) {
+			const popoutElement = document.querySelector('.rc-popout-wrapper');
+			popoutElement.style.display = 'initial';
+		}
 	},
 	drop(event) {
 		const e = event.originalEvent || event;
@@ -82,13 +96,17 @@ Template.popout.onCreated(function() {
 	this.isAudioOnly = new ReactiveVar(popout.isAudioOnly);
 	this.isMuted = new ReactiveVar(false);
 	this.isPlaying = new ReactiveVar(true);
+	document.body.addEventListener('dragstart', popout.dragstart, true);
 	document.body.addEventListener('dragover', popout.dragover, true);
+	document.body.addEventListener('dragend', popout.dragend, true);
 	document.body.addEventListener('drop', popout.drop, true);
 });
 
 Template.popout.onDestroyed(function() {
 	popout.context = null;
+	document.body.removeEventListener('dragstart', popout.dragstart, true);
 	document.body.removeEventListener('dragover', popout.dragover, true);
+	document.body.removeEventListener('dragend', popout.dragend, true);
 	document.body.removeEventListener('drop', popout.drop, true);
 });
 
