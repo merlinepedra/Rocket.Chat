@@ -8,5 +8,5 @@ Package.describe({
 Package.onUse(function(api) {
 	api.use('ecmascript');
 
-	api.mainModule('lib/bigbluebutton-api.js');
+	api.mainModule('server/bigbluebutton-api.js', 'server');
 });

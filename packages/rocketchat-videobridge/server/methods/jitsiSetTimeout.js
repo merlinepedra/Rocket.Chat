@@ -1,3 +1,12 @@
+import BigBlueButtonApi from 'meteor/rocketchat:bigbluebutton';
+import {HTTP} from 'meteor/http';
+import xml2js from 'xml2js';
+
+const parser = new xml2js.Parser({
+	explicitRoot: true
+});
+
+const parseString = Meteor.wrapAsync(parser.parseString);
 
 Meteor.methods({
 	'jitsi:updateTimeout': (rid) => {
@@ -33,7 +42,33 @@ Meteor.methods({
 	},
 
 	'videobridge:join'({rid}) {
-		console.log(rid);
-		console.log(this.userId);
+		const api = new BigBlueButtonApi('https://html5-dev.mconf.com/bigbluebutton/api', 'cda391c08ddc8322de34ec2823b1e0d1');
+
+		const params = {
+			allowStartStopRecording: false,
+			autoStartRecording: false,
+			meetingID: rid,
+			password: 'mp',
+			attendeePW: 'ap',
+			moderatorPW: 'mp',
+			name: rid,
+			fullName: 'User 8584148',
+			record: false,
+			recordID: 'random-9998650',
+			voiceBridge: '71727',
+			welcome: '<br>Welcome to <b>%%CONFNAME%%</b>!',
+			publish: false,
+			random: '416074726'
+		};
+
+		const createUrl = api.urlFor('create', params);
+		const createResult = HTTP.get(createUrl);
+		const doc = parseString(createResult.content);
+
+		if (doc.response.returncode[0]) {
+			return {
+				url: api.urlFor('join', params)
+			};
+		}
 	}
 });
