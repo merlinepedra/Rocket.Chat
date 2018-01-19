@@ -62,8 +62,6 @@ Meteor.methods({
 			clientURL: 'https://html5-dev.mconf.com/html5client/join'
 		};
 
-		// https://html5-dev.mconf.com/html5client/join?sessionToken=xpng6qe7cvnqf0cn
-
 		const createUrl = api.urlFor('create', params);
 		const createResult = HTTP.get(createUrl);
 		const doc = parseString(createResult.content);
