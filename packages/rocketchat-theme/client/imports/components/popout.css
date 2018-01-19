@@ -1,9 +1,7 @@
 .rc-popout {
 	min-width: 380px;
-	max-width: 600px;
+	max-width: 800px;
 
-	width: 800px;
-	height: 600px;
 
 	border: solid 4px var(--rc-color-primary-darkest);
 	background: var(--rc-color-primary-darkest);
@@ -15,8 +13,8 @@
 		position: absolute;
 		z-index: 10;
 
-		top: calc(var(--header-min-height) + 115px);
-		left: calc(100% - 390px - 45px);
+		top: calc(var(--header-min-height) + 15px);
+		left: calc(var(--sidebar-width) + 15px);
 		display: flex;
 
 		animation: dropdown-show 0.3s cubic-bezier(0.45, 0.05, 0.55, 0.95);
