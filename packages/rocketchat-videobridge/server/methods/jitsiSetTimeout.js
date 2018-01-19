@@ -42,33 +42,44 @@ Meteor.methods({
 	},
 
 	'videobridge:join'({rid}) {
-		const api = new BigBlueButtonApi('https://html5-dev.mconf.com/bigbluebutton/api', 'cda391c08ddc8322de34ec2823b1e0d1');
+		if (!this.userId) {
+			throw new Meteor.Error('error-invalid-user', 'Invalid user', { method: 'videobridge:join' });
+		}
 
-		const params = {
-			allowStartStopRecording: false,
-			autoStartRecording: false,
-			meetingID: rid,
-			password: 'mp',
+		if (!Meteor.call('canAccessRoom', rid, this.userId)) {
+			throw new Meteor.Error('error-invalid-user', 'Invalid user', { method: 'videobridge:join' });
+		}
+
+		const url = 'https://html5-dev.mconf.com';
+		const secret = 'cda391c08ddc8322de34ec2823b1e0d1';
+
+		const api = new BigBlueButtonApi(`${ url }/bigbluebutton/api`, secret);
+
+		const meetingID = RocketChat.settings.get('uniqueID') + rid;
+		const room = RocketChat.models.Rooms.findOneById(rid);
+
+		const createUrl = api.urlFor('create', {
+			name: room.t === 'd' ? 'Direct' : room.name,
+			meetingID,
 			attendeePW: 'ap',
 			moderatorPW: 'mp',
-			name: rid,
-			fullName: 'User 8584148',
-			record: false,
-			recordID: 'random-9998650',
-			voiceBridge: '71727',
-			welcome: '<br>Welcome to <b>%%CONFNAME%%</b>!',
-			publish: false,
-			random: '416074726',
-			clientURL: 'https://html5-dev.mconf.com/html5client/join'
-		};
+			welcome: '<br>Welcome to <b>%%CONFNAME%%</b>!'
+		});
 
-		const createUrl = api.urlFor('create', params);
 		const createResult = HTTP.get(createUrl);
 		const doc = parseString(createResult.content);
 
 		if (doc.response.returncode[0]) {
+			const user = RocketChat.models.Users.findOneById(this.userId);
 			return {
-				url: api.urlFor('join', params)
+				url: api.urlFor('join', {
+					password: 'mp', //mp if moderator ap if attendee
+					meetingID,
+					fullName: user.username,
+					userID: user._id,
+					avatarURL: Meteor.absoluteUrl(`avatar/${ user.username }`),
+					clientURL: `${ url }/html5client/join`
+				})
 			};
 		}
 	}
