@@ -24,7 +24,7 @@ Template.videoFlexTab.events({
 			popout.open({
 				content: 'mconfLiveView',
 				data: {
-					source: result ? result.url : 'https://html5-dev.mconf.com/html5client/join?sessionToken=y92eootxgli6xtiy',
+					source: result ? result.url : 'https://html5-dev.mconf.com/bigbluebutton/api/join?fullName=User+8584148&meetingID=9M62cjZXhurk7vt6HEoyAmF4mxx5HxJHJB&password=mp&checksum=dd84273bbaf31b5ebc631d71a51bb8f2d2defdee',
 					streamingOptions:  result
 				},
 				onCloseCallback: () => console.log('bye popout')
