@@ -3,6 +3,8 @@
 this.popout = {
 	context: null,
 	isAudioOnly: false,
+	canOpenExternal: false,
+	showVideoControls: true,
 	x: 0,
 	y: 0,
 	open(config = {}, fn) {
@@ -17,6 +19,8 @@ this.popout = {
 		}
 		if (config.data) {
 			this.isAudioOnly = config.data.isAudioOnly;
+			this.canOpenExternal = config.data.canOpenExternal;
+			this.showVideoControls = config.data.showVideoControls;
 		}
 	},
 	close() {
@@ -79,13 +83,18 @@ Template.popout.helpers({
 		return Template.instance().isPlaying.get();
 	},
 	showVideoControls() {
-		return true;
+		return Template.instance().showVideoControls.get();
+	},
+	canOpenExternal() {
+		return Template.instance().canOpenExternal.get();
 	}
 });
 
 Template.popout.onRendered(function() {
 	Template.instance().isMinimized.set(popout.isAudioOnly);
 	Template.instance().isAudioOnly.set(popout.isAudioOnly);
+	Template.instance().canOpenExternal.set(popout.canOpenExternal);
+	Template.instance().showVideoControls.set(popout.showVideoControls);
 
 	if (this.data.onRendered) {
 		this.data.onRendered();
@@ -94,6 +103,8 @@ Template.popout.onRendered(function() {
 Template.popout.onCreated(function() {
 	this.isMinimized = new ReactiveVar(popout.isAudioOnly);
 	this.isAudioOnly = new ReactiveVar(popout.isAudioOnly);
+	this.canOpenExternal = new ReactiveVar(popout.canOpenExternal);
+	this.showVideoControls = new ReactiveVar(popout.showVideoControls);
 	this.isMuted = new ReactiveVar(false);
 	this.isPlaying = new ReactiveVar(true);
 	document.body.addEventListener('dragstart', popout.dragstart, true);
@@ -129,6 +140,11 @@ Template.popout.events({
 			i.isMinimized.set(true);
 			window.liveStreamPlayer.setSize(0, 0);
 		}
+	},
+	'click .js-open-external'(e) {
+		e.stopPropagation();
+		window.open(popout.config.data.source, '_blank');
+		popout.close();
 	},
 	'dragstart .rc-popout-wrapper'(event) {
 		const e = event.originalEvent || event;

@@ -26,7 +26,9 @@ Template.videoFlexTab.events({
 					content: 'mconfLiveView',
 					data: {
 						source: result.url,
-						streamingOptions:  result
+						streamingOptions:  result,
+						canOpenExternal: true,
+						showVideoControls: false
 					},
 					onCloseCallback: () => console.log('bye popout')
 				});

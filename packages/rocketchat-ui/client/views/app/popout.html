@@ -17,6 +17,11 @@
 						{{/if}}
 					</div>
 				{{/if}}
+				{{#if canOpenExternal}}
+					<button class="contextual-bar__open-external js-open-external">
+						{{> icon classes="rc-popout__open-external" icon="jump"}}
+					</button>
+				{{/if}}
 				{{#unless isAudioOnly}}
 					<button class="contextual-bar__minimize js-minimize">
 						{{> icon classes="rc-popout__minimize" icon="angle-down"}}

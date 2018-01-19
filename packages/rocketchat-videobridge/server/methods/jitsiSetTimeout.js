@@ -63,7 +63,9 @@ Meteor.methods({
 			meetingID,
 			attendeePW: 'ap',
 			moderatorPW: 'mp',
-			welcome: '<br>Welcome to <b>%%CONFNAME%%</b>!'
+			welcome: '<br>Welcome to <b>%%CONFNAME%%</b>!',
+			meta_html5chat: false,
+			meta_html5navbar: false
 		});
 
 		const createResult = HTTP.get(createUrl);
