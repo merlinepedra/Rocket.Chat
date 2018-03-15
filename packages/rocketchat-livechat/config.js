@@ -193,6 +193,13 @@ Meteor.startup(function() {
 		i18nLabel: 'Send_Visitor_navigation_history_as_a_message'
 	});
 
+	RocketChat.settings.add('Livechat_continuous_sound_notification_new_livechat_message', false, {
+		type: 'boolean',
+		group: 'Livechat',
+		public: true,
+		i18nLabel: 'Continuous_sound_notifications_for_new_livechat_message'
+	});
+
 	RocketChat.settings.add('Livechat_enable_office_hours', false, {
 		type: 'boolean',
 		group: 'Livechat',
