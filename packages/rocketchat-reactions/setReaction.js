@@ -2,7 +2,7 @@
 import _ from 'underscore';
 
 Meteor.methods({
-	setReaction(reaction, messageId) {
+	setReaction(emoji, messageId) {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('error-invalid-user', 'Invalid user', { method: 'setReaction' });
 		}
@@ -19,9 +19,10 @@ Meteor.methods({
 			throw new Meteor.Error('error-not-allowed', 'Not allowed', { method: 'setReaction' });
 		}
 
-		reaction = `:${ reaction.replace(/:/g, '') }:`;
+		const reactionWithoutColon = emoji.replace(/:/g, '');
+		const reactionWithColon = `:${ reactionWithoutColon }:`;
 
-		if (!RocketChat.emoji.list[reaction] && RocketChat.models.EmojiCustom.findByNameOrAlias(reaction).count() === 0) {
+		if (!RocketChat.emoji.list[reactionWithColon] && RocketChat.models.EmojiCustom.findByNameOrAlias(reactionWithoutColon).count() === 0) {
 			throw new Meteor.Error('error-not-allowed', 'Invalid emoji provided.', { method: 'setReaction' });
 		}
 
@@ -39,34 +40,34 @@ Meteor.methods({
 			return false;
 		}
 
-		if (message.reactions && message.reactions[reaction] && message.reactions[reaction].usernames.indexOf(user.username) !== -1) {
-			message.reactions[reaction].usernames.splice(message.reactions[reaction].usernames.indexOf(user.username), 1);
+		if (message.reactions && message.reactions[reactionWithColon] && message.reactions[reactionWithColon].usernames.indexOf(user.username) !== -1) {
+			message.reactions[reactionWithColon].usernames.splice(message.reactions[reactionWithColon].usernames.indexOf(user.username), 1);
 
-			if (message.reactions[reaction].usernames.length === 0) {
-				delete message.reactions[reaction];
+			if (message.reactions[reactionWithColon].usernames.length === 0) {
+				delete message.reactions[reactionWithColon];
 			}
 
 			if (_.isEmpty(message.reactions)) {
 				delete message.reactions;
 				RocketChat.models.Messages.unsetReactions(messageId);
-				RocketChat.callbacks.run('unsetReaction', messageId, reaction);
+				RocketChat.callbacks.run('unsetReaction', messageId, reactionWithColon);
 			} else {
 				RocketChat.models.Messages.setReactions(messageId, message.reactions);
-				RocketChat.callbacks.run('setReaction', messageId, reaction);
+				RocketChat.callbacks.run('setReaction', messageId, reactionWithColon);
 			}
 		} else {
 			if (!message.reactions) {
 				message.reactions = {};
 			}
-			if (!message.reactions[reaction]) {
-				message.reactions[reaction] = {
+			if (!message.reactions[reactionWithColon]) {
+				message.reactions[reactionWithColon] = {
 					usernames: []
 				};
 			}
-			message.reactions[reaction].usernames.push(user.username);
+			message.reactions[reactionWithColon].usernames.push(user.username);
 
 			RocketChat.models.Messages.setReactions(messageId, message.reactions);
-			RocketChat.callbacks.run('setReaction', messageId, reaction);
+			RocketChat.callbacks.run('setReaction', messageId, reactionWithColon);
 		}
 
 		msgStream.emit(message.rid, message);
