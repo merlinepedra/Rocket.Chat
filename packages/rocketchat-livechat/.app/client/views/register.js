@@ -20,7 +20,15 @@ Template.register.helpers({
 	},
 	selectedDepartment() {
 		return this._id === Livechat.department;
-	}
+	},
+	showNameFieldRegisterForm() {
+		console.log(Livechat.nameFieldRegistrationForm);
+		return Livechat.nameFieldRegistrationForm;
+	},
+	showEmailFieldRegisterForm() {
+		console.log(Livechat.emailFieldRegistrationForm);
+		return Livechat.emailFieldRegistrationForm;
+	}	
 });
 
 Template.register.events({
