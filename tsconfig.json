@@ -1,0 +1,26 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+	  "sourceMap": true,
+	  "target": "es6",
+	  "module": "commonjs",
+	  "allowJs": true,
+	  "alwaysStrict": true,
+	  "declaration": true,
+	  "noImplicitAny": false,
+	  "noUnusedLocals": true,
+	  "strictNullChecks": false,
+	  "removeComments": false,
+	  "emitDecoratorMetadata": true,
+	  "experimentalDecorators": true,
+	  "moduleResolution": "node",
+	  "lib": ["es2017", "dom"]
+	},
+	"include": [
+		"packages/**/*"
+	],
+	"exclude": [
+	  "node_modules",
+	  ".meteor"
+	]
+  }

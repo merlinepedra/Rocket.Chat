@@ -5,6 +5,7 @@ Package.describe({
 
 Package.onUse(function(api) {
 	api.use([
+		'barbatus:typescript',
 		'ecmascript',
 		'rocketchat:lib',
 		'rocketchat:api',
@@ -26,10 +27,11 @@ Package.onUse(function(api) {
 
 	// Bridges
 	api.addFiles([
-		'server/bridges/activation.js',
+		'server/bridges/activation.ts',
 		'server/bridges/bridges.js',
 		'server/bridges/commands.js',
 		'server/bridges/environmental.js',
+		'server/bridges/listeners.ts',
 		'server/bridges/messages.js',
 		'server/bridges/persistence.js',
 		'server/bridges/rooms.js',
@@ -55,8 +57,11 @@ Package.onUse(function(api) {
 		'server/converters/index.js'
 	], 'server');
 
-	// Server Orchestrator
-	api.addFiles('server/orchestrator.js', 'server');
+	// Server Orchestrator & Startup
+	api.addFiles([
+		'server/orchestrator.js',
+		'server/startup.js'
+	], 'server');
 
 	// Client communication pieces
 	api.addFiles([
@@ -86,7 +91,5 @@ Package.onUse(function(api) {
 });
 
 Npm.depends({
-	'busboy': '0.2.13',
-	'@rocket.chat/apps-engine': '0.5.11',
-	'@rocket.chat/apps-ts-definition': '0.9.8'
+	'busboy': '0.2.13'
 });

@@ -1,4 +1,10 @@
-export class AppActivationBridge {
+import { IAppActivationBridge } from "@rocket.chat/apps-engine/server/bridges";
+
+import { AppServerOrchestrator } from '../orchestrator';
+
+export class AppActivationBridge implements IAppActivationBridge {
+	private orch: AppServerOrchestrator;
+
 	constructor(orch) {
 		this.orch = orch;
 	}
