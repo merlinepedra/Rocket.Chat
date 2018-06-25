@@ -1,5 +1,7 @@
 /* global Restivus, DDP, DDPCommon */
 import _ from 'underscore';
+import jwt from 'jsonwebtoken';
+
 const logger = new Logger('API', {});
 
 class API extends Restivus {
@@ -291,12 +293,15 @@ class API extends Restivus {
 					}
 				});
 
+				const token = process.env.JWT_SECRET && jwt.sign({ _id: this.userId }, process.env.JWT_SECRET);
+
 				const response = {
 					status: 'success',
 					data: {
 						userId: this.userId,
 						authToken: auth.token,
-						me: getUserInfo(this.user)
+						me: getUserInfo(this.user),
+						jwt: token
 					}
 				};
 
