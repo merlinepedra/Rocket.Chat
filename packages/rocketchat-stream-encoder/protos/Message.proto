@@ -1,0 +1,8 @@
+syntax = "proto3";
+message Message {
+    string _id = 1;
+    string rid = 2;
+    string msg = 3;
+    double ts = 4;
+    string u = 5;
+}
