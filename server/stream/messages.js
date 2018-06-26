@@ -1,4 +1,4 @@
-import { encoder } from 'meteor/rocketchat:stream-encoder';
+import { encoder } from 'rocket.chat.proto';
 
 const msgStream = new Meteor.Streamer('room-messages', { encoder: encoder('message') });
 this.msgStream = msgStream;
