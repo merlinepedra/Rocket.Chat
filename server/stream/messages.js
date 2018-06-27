@@ -1,6 +1,20 @@
 import { encoder } from 'rocket.chat.proto';
+import mq from './mq';
 
-const msgStream = new Meteor.Streamer('room-messages', { encoder: encoder('message') });
+const messageEncoder = encoder('message');
+
+class Streamer extends Meteor.Streamer {
+	emit(...args) {
+		const [eventName, arg] = args;
+		mq && mq.emit({
+			topic: `${ this.name }/${ eventName }`,
+			payload: messageEncoder(arg)
+		});
+		super.emit(...args);
+	}
+}
+
+const msgStream = new Streamer('room-message');
 this.msgStream = msgStream;
 
 msgStream.allowWrite('none');
