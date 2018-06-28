@@ -1,20 +1,10 @@
+import { mq } from 'meteor/rocketchat:lib';
 import { encoder } from 'rocket.chat.proto';
-import mq from './mq';
+
 
 const messageEncoder = encoder('message');
 
-class Streamer extends Meteor.Streamer {
-	emit(...args) {
-		const [eventName, arg] = args;
-		mq && mq.emit({
-			topic: `${ this.name }/${ eventName }`,
-			payload: messageEncoder(arg)
-		});
-		super.emit(...args);
-	}
-}
-
-const msgStream = new Streamer('room-message');
+const msgStream = new Meteor.Streamer('room-messages');
 this.msgStream = msgStream;
 
 msgStream.allowWrite('none');
@@ -74,6 +64,10 @@ Meteor.startup(function() {
 					mention.name = user && user.name;
 				});
 			}
+			mq.emit({
+				topic: `room-messages/${ record.rid }`,
+				payload: messageEncoder([record])
+			});
 			msgStream.emitWithoutBroadcast('__my_messages__', record, {});
 			return msgStream.emitWithoutBroadcast(record.rid, record);
 		}
