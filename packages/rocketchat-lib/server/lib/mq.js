@@ -1,7 +1,8 @@
 /* global EJSON */
-import mq from 'mqemitter';
+import mqemitter from 'mqemitter';
 import redisMq from 'mqemitter-redis';
-export default process.env.REDIS ? redisMq({ host: process.env.REDIS }) : mq();
+const mq = process.env.REDIS ? redisMq({ host: process.env.REDIS }) : mqemitter();
+export default mq;
 
 export class Streamer extends Meteor.Streamer {
 	constructor(name, { encoder = (args) => EJSON.stringify(args) } = {}) {
