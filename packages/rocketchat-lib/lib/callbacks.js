@@ -162,7 +162,7 @@ if(Meteor.isServer) {
 		monitor: {
 			enabled: true,
 			host: '127.0.0.1',
-			port: 3000
+			port: 4000
 		}
 	};
 
@@ -170,37 +170,32 @@ if(Meteor.isServer) {
 		afterSaveMessage: new Producer('afterSaveMessage', options)
 	};
 
-	RocketChat.callbacks.runAsync = function(hook, item) {
-		return producer[hook] && producer[hook].produce(EJSON.stringify(item), console.log);
+	RocketChat.callbacks.runAsync = function(hook, ...args) {
+		return producer[hook] && producer[hook].produce(EJSON.stringify(args), console.log);
 	};
 
 	// const run = Meteor.bindEnviroment(RocketChat.callbacks.run);
 
-	const run = Meteor.bindEnvironment((queueName, message, cb) => {
-		RocketChat.callbacks.run(queueName, message);
+	const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
+		RocketChat.callbacks.run(queueName, message, constant);
 		cb();
 	});
 
-	class TestQueueConsumer extends Consumer {
+	class AfterSaveMessageConsumer extends Consumer {
 		/**
 		 *
 		 * @param message
 		 * @param cb
 		 */
 		consume(message, cb) {
-			run(this.queueName, EJSON.parse(message), cb);
+			const [item, constant] = EJSON.parse(message);
+			run('afterSaveMessage', item, constant, cb);
 		}
 	}
 
-	TestQueueConsumer.queueName = 'afterSaveMessage';
+	AfterSaveMessageConsumer.queueName = 'afterSaveMessage';
 
-	const consumer = new TestQueueConsumer(options, { messageConsumeTimeout: 2000 });
+	const consumer = new AfterSaveMessageConsumer(options);
 
 	consumer.run();
-
 }
-RocketChat.callbacks.add(
-	"afterSaveMessage",
-	item => console.log("terminei", item),
-	RocketChat.callbacks.priority
-);
