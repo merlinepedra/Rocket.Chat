@@ -1,6 +1,11 @@
+const log = (name, fn) => function() {
+	console.log(name, arguments);
+	fn.apply(this, arguments);
+};
+const debug = false;
 RocketChat.Notifications = new class {
 	constructor() {
-		this.debug = false;
+
 		this.streamAll = new Meteor.Streamer('notify-all');
 		this.streamLogged = new Meteor.Streamer('notify-logged');
 		this.streamRoom = new Meteor.Streamer('notify-room');
@@ -26,6 +31,11 @@ RocketChat.Notifications = new class {
 		this.streamAll.allowRead('all');
 		this.streamLogged.allowRead('logged');
 		this.streamRoom.allowRead(function(eventName, extraData) {
+
+			if (this.userId == null) {
+				return false;
+			}
+
 			const [roomId] = eventName.split('/');
 			const user = Meteor.users.findOne(this.userId, {
 				fields: {
@@ -40,78 +50,61 @@ RocketChat.Notifications = new class {
 			if (room.t === 'l' && extraData && extraData.token && room.v.token === extraData.token) {
 				return true;
 			}
-			if (this.userId == null) {
-				return false;
-			}
 			return room.usernames.indexOf(user.username) > -1;
 		});
+
 		this.streamRoomUsers.allowRead('none');
+
 		this.streamUser.allowRead(function(eventName) {
 			const [userId] = eventName.split('/');
 			return (this.userId != null) && this.userId === userId;
 		});
+
+		if (debug) {
+			Object.getOwnPropertyNames(this).forEach(prop => {
+				if (typeof this[prop] === 'function') {
+					this[prop] = log(prop, this[prop]);
+				}
+			});
+		}
 	}
 
 	notifyAll(eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyAll', arguments);
-		}
 		args.unshift(eventName);
 		return this.streamAll.emit.apply(this.streamAll, args);
 	}
 
 	notifyLogged(eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyLogged', arguments);
-		}
 		args.unshift(eventName);
 		return this.streamLogged.emit.apply(this.streamLogged, args);
 	}
 
 	notifyRoom(room, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyRoom', arguments);
-		}
 		args.unshift(`${ room }/${ eventName }`);
 		return this.streamRoom.emit.apply(this.streamRoom, args);
 	}
 
 	notifyUser(userId, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyUser', arguments);
-		}
 		args.unshift(`${ userId }/${ eventName }`);
 		return this.streamUser.emit.apply(this.streamUser, args);
 	}
 
 	notifyAllInThisInstance(eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyAll', arguments);
-		}
 		args.unshift(eventName);
 		return this.streamAll.emitWithoutBroadcast.apply(this.streamAll, args);
 	}
 
 	notifyLoggedInThisInstance(eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyLogged', arguments);
-		}
 		args.unshift(eventName);
 		return this.streamLogged.emitWithoutBroadcast.apply(this.streamLogged, args);
 	}
 
 	notifyRoomInThisInstance(room, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyRoomAndBroadcast', arguments);
-		}
 		args.unshift(`${ room }/${ eventName }`);
 		return this.streamRoom.emitWithoutBroadcast.apply(this.streamRoom, args);
 	}
 
 	notifyUserInThisInstance(userId, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('notifyUserAndBroadcast', arguments);
-		}
 		args.unshift(`${ userId }/${ eventName }`);
 		return this.streamUser.emitWithoutBroadcast.apply(this.streamUser, args);
 	}
@@ -126,20 +119,18 @@ RocketChat.Notifications.streamRoom.allowWrite(function(eventName, username, typ
 
 		// typing from livechat widget
 		if (extraData && extraData.token) {
-			const room = RocketChat.models.Rooms.findOneById(roomId);
-			if (room && room.t === 'l' && room.v.token === extraData.token) {
+			const room = RocketChat.models.Rooms.findOne({ rid: roomId, t: 'l', 'v.token': extraData.token }, { fields: {} });
+			// TODO verify if we can just return !!room @sampaio.diego
+			if (room) {
 				return true;
 			}
 		}
 
-		const user = Meteor.users.findOne(this.userId, {
-			fields: {
-				username: 1
-			}
-		});
-		if (user != null && user.username === username) {
-			return true;
-		}
+		const user = Meteor.users.findOne({
+			_id: this.userId,
+			username
+		}, { fields: {} });
+		return !!user;
 	}
 	return false;
 });

@@ -22,7 +22,8 @@ Meteor.methods({
 					message_ts: message.ts,
 					server_ts: new Date().getTime()
 				});
-			} else if (tsDiff > 10000) {
+			}
+			if (tsDiff > 10000) {
 				message.ts = new Date();
 			}
 		} else {

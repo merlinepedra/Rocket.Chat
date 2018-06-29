@@ -72,9 +72,6 @@ RocketChat.sendMessage = function(user, message, room, upsert = false) {
 		validateBodyAttachments(message.attachments);
 	}
 
-	if (!message.ts) {
-		message.ts = new Date();
-	}
 	const { _id, username, name } = user;
 	message.u = {
 		_id,
@@ -87,9 +84,7 @@ RocketChat.sendMessage = function(user, message, room, upsert = false) {
 		message.msg = '';
 	}
 
-	if (message.ts == null) {
-		message.ts = new Date();
-	}
+	message.ts = message.ts || new Date();
 
 	if (!room.usernames || room.usernames.length === 0) {
 		const updated_room = RocketChat.models.Rooms.findOneById(room._id);
