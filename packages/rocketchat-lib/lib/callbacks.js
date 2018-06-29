@@ -137,13 +137,70 @@ RocketChat.callbacks.run = function(hook, item, constant) {
 * @param {Object} item - The post, comment, modifier, etc. on which to run the callbacks
 * @param {Object} [constant] - An optional constant that will be passed along to each callback
 */
+if(Meteor.isServer) {
+	import { Producer, Consumer } from "redis-smq"; //eslint ignore-line
+	const options = {
+		namespace: 'rocketchat',
+		redis: {
+			host: '127.0.0.1',
+			port: 6379,
+			connect_timeout: 3600000
+		},
+		log: {
+			enabled: 0,
+			options: {
+				level: 'trace'
+				/*
+					streams: [
+						{
+							path: path.normalize(`${__dirname}/../logs/redis-smq.log`)
+						},
+					],
+					*/
+			}
+		},
+		monitor: {
+			enabled: true,
+			host: '127.0.0.1',
+			port: 3000
+		}
+	};
 
-RocketChat.callbacks.runAsync = function(hook, item, constant) {
-	const callbacks = RocketChat.callbacks[hook];
-	if (Meteor.isServer && callbacks && callbacks.length) {
-		Meteor.defer(function() {
-			callbacks.forEach(callback => callback(item, constant));
-		});
+	const producer = {
+		afterSaveMessage: new Producer('afterSaveMessage', options)
+	};
+
+	RocketChat.callbacks.runAsync = function(hook, item) {
+		return producer[hook] && producer[hook].produce(EJSON.stringify(item), console.log);
+	};
+
+	// const run = Meteor.bindEnviroment(RocketChat.callbacks.run);
+
+	const run = Meteor.bindEnvironment((queueName, message, cb) => {
+		RocketChat.callbacks.run(queueName, message);
+		cb();
+	});
+
+	class TestQueueConsumer extends Consumer {
+		/**
+		 *
+		 * @param message
+		 * @param cb
+		 */
+		consume(message, cb) {
+			run(this.queueName, EJSON.parse(message), cb);
+		}
 	}
-	return item;
-};
+
+	TestQueueConsumer.queueName = 'afterSaveMessage';
+
+	const consumer = new TestQueueConsumer(options, { messageConsumeTimeout: 2000 });
+
+	consumer.run();
+
+}
+RocketChat.callbacks.add(
+	"afterSaveMessage",
+	item => console.log("terminei", item),
+	RocketChat.callbacks.priority
+);

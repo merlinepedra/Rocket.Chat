@@ -26,7 +26,7 @@ Meteor.methods({
 					username:'here'
 				}
 			];
-			RocketChat.callbacks.run('afterSaveMessage', message, room);
+			RocketChat.callbacks.runAsync('afterSaveMessage', message, room);
 		} else if ((jitsiTimeout - currentTime) / 1000 <= 15) {
 			RocketChat.models.Rooms.setJitsiTimeout(rid, new Date(jitsiTimeout + 25*1000));
 		}

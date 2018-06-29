@@ -160,11 +160,8 @@ RocketChat.sendMessage = function(user, message, room, upsert = false) {
 		/*
 		Defer other updates as their return is not interesting to the user
 		*/
-		Meteor.defer(() => {
-			// Execute all callbacks
-			message.sandstormSessionId = sandstormSessionId;
-			return RocketChat.callbacks.run('afterSaveMessage', message, room, user._id);
-		});
+		message.sandstormSessionId = sandstormSessionId;
+		RocketChat.callbacks.runAsync('afterSaveMessage', message, room, user._id);
 		return message;
 	}
 };
