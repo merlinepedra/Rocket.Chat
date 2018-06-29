@@ -1,3 +1,5 @@
+import { Streamer } from 'meteor/rocketchat:lib';
+
 const log = (name, fn) => function() {
 	console.log(name, arguments);
 	fn.apply(this, arguments);
@@ -6,11 +8,11 @@ const debug = false;
 RocketChat.Notifications = new class {
 	constructor() {
 
-		this.streamAll = new Meteor.Streamer('notify-all');
-		this.streamLogged = new Meteor.Streamer('notify-logged');
-		this.streamRoom = new Meteor.Streamer('notify-room');
-		this.streamRoomUsers = new Meteor.Streamer('notify-room-users');
-		this.streamUser = new Meteor.Streamer('notify-user');
+		this.streamAll = new Streamer('notify-all');
+		this.streamLogged = new Streamer('notify-logged');
+		this.streamRoom = new Streamer('notify-room');
+		this.streamRoomUsers = new Streamer('notify-room-users');
+		this.streamUser = new Streamer('notify-user');
 		this.streamAll.allowWrite('none');
 		this.streamLogged.allowWrite('none');
 		this.streamRoom.allowWrite('none');
@@ -81,6 +83,9 @@ RocketChat.Notifications = new class {
 
 	notifyRoom(room, eventName, ...args) {
 		args.unshift(`${ room }/${ eventName }`);
+		// if (/typing/.test(eventName)) {
+		console.log(arguments);
+		// }
 		return this.streamRoom.emit.apply(this.streamRoom, args);
 	}
 

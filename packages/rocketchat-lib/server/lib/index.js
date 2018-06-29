@@ -7,9 +7,10 @@
 */
 
 import { RoomSettingsEnum, RoomTypeConfig, RoomTypeRouteConfig } from '../../lib/RoomTypeConfig';
-import mq from './mq';
+import mq, { Streamer } from './mq';
 
 export {
+	Streamer,
 	mq,
 	RoomSettingsEnum,
 	RoomTypeConfig,
