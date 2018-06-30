@@ -1,5 +1,4 @@
 import _ from 'underscore';
-
 /*
 * Callback hooks provide an easy way to add extra steps to common operations.
 * @namespace RocketChat.callbacks
@@ -137,65 +136,22 @@ RocketChat.callbacks.run = function(hook, item, constant) {
 * @param {Object} item - The post, comment, modifier, etc. on which to run the callbacks
 * @param {Object} [constant] - An optional constant that will be passed along to each callback
 */
-if(Meteor.isServer) {
-	import { Producer, Consumer } from "redis-smq"; //eslint ignore-line
-	const options = {
-		namespace: 'rocketchat',
-		redis: {
-			host: '127.0.0.1',
-			port: 6379,
-			connect_timeout: 3600000
-		},
-		log: {
-			enabled: 0,
-			options: {
-				level: 'trace'
-				/*
-					streams: [
-						{
-							path: path.normalize(`${__dirname}/../logs/redis-smq.log`)
-						},
-					],
-					*/
-			}
-		},
-		monitor: {
-			enabled: true,
-			host: '127.0.0.1',
-			port: 4000
-		}
-	};
+if (Meteor.isServer) {
+	import { createQueue } from "meteor/rocketchat:lib";
 
-	const producer = {
-		afterSaveMessage: new Producer('afterSaveMessage', options)
-	};
-
+	const Producers = {
+		afterSaveMessage: createQueue('afterSaveMessage', (message, cb) => {
+			const [item, constant] = EJSON.parse(message);
+			run('afterSaveMessage', item, constant, cb);
+		})
+	}
 	RocketChat.callbacks.runAsync = function(hook, ...args) {
-		return producer[hook] && producer[hook].produce(EJSON.stringify(args), console.log);
+		return Producers[hook] && Producers[hook].produce(EJSON.stringify(args), console.log);
 	};
-
-	// const run = Meteor.bindEnviroment(RocketChat.callbacks.run);
-
 	const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
 		RocketChat.callbacks.run(queueName, message, constant);
 		cb();
 	});
 
-	class AfterSaveMessageConsumer extends Consumer {
-		/**
-		 *
-		 * @param message
-		 * @param cb
-		 */
-		consume(message, cb) {
-			const [item, constant] = EJSON.parse(message);
-			run('afterSaveMessage', item, constant, cb);
-		}
-	}
 
-	AfterSaveMessageConsumer.queueName = 'afterSaveMessage';
-
-	const consumer = new AfterSaveMessageConsumer(options);
-
-	consumer.run();
 }
