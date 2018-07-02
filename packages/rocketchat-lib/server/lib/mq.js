@@ -47,14 +47,16 @@ class ConsumerLocal {
 		this.fn = fn;
 		this.queueName = queueName;
 	}
-	done() {
+	_done() {
 		this.counter--;
 		this.consume();
 	}
 	consume() {
 		if (this.counter < this.limit && queues[this.queueName].length) {
 			this.counter++;
-			this.fn(queues[this.queueName].shift(), () => this.done());
+			process.nextTick(() => {
+				this.fn(queues[this.queueName].shift(), () => this._done());
+			});
 		}
 	}
 }
@@ -91,7 +93,7 @@ export const createQueue = process.env.REDIS ? (queueName, consume) => {
 			consume(message, cb);
 		}
 	}
-	_Consumer.queueName = 'afterSaveMessage';
+	_Consumer.queueName = queueName;
 	const consumer = new _Consumer(options);
 	consumer.run();
 	return new Producer(queueName);

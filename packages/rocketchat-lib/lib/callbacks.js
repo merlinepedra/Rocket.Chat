@@ -139,6 +139,10 @@ RocketChat.callbacks.run = function(hook, item, constant) {
 if (Meteor.isServer) {
 	import { createQueue } from "meteor/rocketchat:lib";
 
+	const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
+		RocketChat.callbacks.run(queueName, message, constant);
+		cb();
+	});
 	const Producers = {
 		afterSaveMessage: createQueue('afterSaveMessage', (message, cb) => {
 			const [item, constant] = EJSON.parse(message);
@@ -148,10 +152,5 @@ if (Meteor.isServer) {
 	RocketChat.callbacks.runAsync = function(hook, ...args) {
 		return Producers[hook] && Producers[hook].produce(EJSON.stringify(args), console.log);
 	};
-	const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
-		RocketChat.callbacks.run(queueName, message, constant);
-		cb();
-	});
-
 
 }

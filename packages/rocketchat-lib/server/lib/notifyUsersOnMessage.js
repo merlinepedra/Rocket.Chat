@@ -3,7 +3,7 @@ import s from 'underscore.string';
 import moment from 'moment';
 
 /**
- * Chechs if a messages contains a user highlight
+ * Chechk if a messages contains a user highlight
  *
  * @param {string} message
  * @param {array|undefined} highlights
