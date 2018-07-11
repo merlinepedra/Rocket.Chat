@@ -1,3 +1,4 @@
+const debug = false;
 RocketChat.Notifications = new class {
 	constructor() {
 		this.logged = Meteor.userId() !== null;
@@ -8,18 +9,28 @@ RocketChat.Notifications = new class {
 			}
 			return this.logged = Meteor.userId() !== null;
 		});
-		this.debug = false;
+
 		this.streamAll = new Meteor.Streamer('notify-all');
 		this.streamLogged = new Meteor.Streamer('notify-logged');
 		this.streamRoom = new Meteor.Streamer('notify-room');
 		this.streamRoomUsers = new Meteor.Streamer('notify-room-users');
 		this.streamUser = new Meteor.Streamer('notify-user');
-		if (this.debug === true) {
+
+		if (debug) {
 			this.onAll(function() {
 				return console.log('RocketChat.Notifications: onAll', arguments);
 			});
 			this.onUser(function() {
 				return console.log('RocketChat.Notifications: onAll', arguments);
+			});
+
+			['notifyRoom', 'notifyUser', 'notifyUsersOfRoom'].forEach(event => {
+				const fn = this[event];
+
+				this[event] = (...args) => {
+					console.log(`RocketChat.Notifications: ${ event }`, args);
+					return fn(...args);
+				};
 			});
 		}
 	}
@@ -31,23 +42,14 @@ RocketChat.Notifications = new class {
 		}
 	}
 	notifyRoom(room, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('RocketChat.Notifications: notifyRoom', arguments);
-		}
 		args.unshift(`${ room }/${ eventName }`);
 		return this.streamRoom.emit.apply(this.streamRoom, args);
 	}
 	notifyUser(userId, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('RocketChat.Notifications: notifyUser', arguments);
-		}
 		args.unshift(`${ userId }/${ eventName }`);
 		return this.streamUser.emit.apply(this.streamUser, args);
 	}
 	notifyUsersOfRoom(room, eventName, ...args) {
-		if (this.debug === true) {
-			console.log('RocketChat.Notifications: notifyUsersOfRoom', arguments);
-		}
 		args.unshift(`${ room }/${ eventName }`);
 		return this.streamRoomUsers.emit.apply(this.streamRoomUsers, args);
 	}
@@ -60,10 +62,8 @@ RocketChat.Notifications = new class {
 		});
 	}
 	onRoom(room, eventName, callback) {
-		if (this.debug === true) {
-			this.streamRoom.on(room, function() {
-				return console.log(`RocketChat.Notifications: onRoom ${ room }`, arguments);
-			});
+		if (debug) {
+			this.streamRoom.on(room, () => console.log(`RocketChat.Notifications: onRoom ${ room }`, arguments));
 		}
 		return this.streamRoom.on(`${ room }/${ eventName }`, callback);
 	}

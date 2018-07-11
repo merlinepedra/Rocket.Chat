@@ -134,7 +134,7 @@ rocketchat:slider
 rocketchat:smarsh-connector
 rocketchat:spotify
 rocketchat:statistics
-rocketchat:streamer
+
 rocketchat:theme
 rocketchat:tokenpass
 rocketchat:tooltip
@@ -194,3 +194,4 @@ chatpal:search
 rocketchat:lazy-load
 tap:i18n
 underscore
+rocketchat:streamer
