@@ -8,7 +8,7 @@ Meteor.startup(function() {
 	});
 	connect({
 		mq,
-		persistence: process.env.REDIS && require('aedes-persistence-redis')(),
+		persistence: process.env.REDIS_HOST && require('aedes-persistence-redis')(),
 		...options
 	});
 });

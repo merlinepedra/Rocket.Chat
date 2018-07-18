@@ -5,10 +5,38 @@ import redisMq from 'mqemitter-redis';
 
 import { Producer, Consumer } from 'redis-smq'; //eslint ignore-line
 
+import { redisConfig } from './redis';
 
-const mq = process.env.REDIS ? redisMq({ host: process.env.REDIS }) : mqemitter();
+const mq = process.env.REDIS_HOST ? redisMq(redisConfig) : mqemitter();
 export default mq;
 
+// elect master server from cluster
+import { Democracy } from './democracy';
+
+const dem = new Democracy({
+	source: `${ process.env.INSTANCE_IP || 'localhost' }:${ process.env.PORT }`
+	//   peers: ['127.0.0.1:12345', '127.0.0.1:12346', '127.0.0.1:12347']
+});
+
+dem.on('added', function(data) {
+	console.log('Added: ', data);
+});
+
+dem.on('removed', function(data) {
+	console.log('Removed: ', data);
+});
+
+dem.on('elected', function(data) {
+	console.log('You are elected leader!');
+});
+
+dem.on('leader', function(data) {
+	console.log('New Leader: ', data);
+});
+
+setInterval(() => {
+	console.log('am I leader ->', dem._id, dem.isLeader());
+}, 2000);
 
 export class Streamer extends Meteor.Streamer {
 	constructor(name, { encoder = (args) => EJSON.stringify(args) } = {}) {
@@ -16,6 +44,7 @@ export class Streamer extends Meteor.Streamer {
 		this.encoder = encoder;
 	}
 	_emit(eventName, args, origin, broadcast) {
+		// emit only if is master
 		mq.emit({
 			topic: `${ this.name }/${ eventName }`,
 			payload: this.encoder(args)
@@ -64,8 +93,7 @@ class ConsumerLocal {
 const options = {
 	namespace: 'rocketchat',
 	redis: {
-		host: process.env.REDIS,
-		port: 6379,
+		...redisConfig,
 		connect_timeout: 3600000
 	},
 	log: {
@@ -87,7 +115,8 @@ const options = {
 		port: 4000
 	}
 };
-export const createQueue = process.env.REDIS ? (queueName, consume) => {
+
+export const createQueue = process.env.REDIS_HOST ? (queueName, consume) => {
 	class _Consumer extends Consumer {
 		consume(message, cb) {
 			consume(message, cb);

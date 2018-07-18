@@ -7,7 +7,7 @@
 */
 
 import { RoomSettingsEnum, RoomTypeConfig, RoomTypeRouteConfig } from '../../lib/RoomTypeConfig';
-import mq, { Streamer, createQueue } from './mq';
+import mq, { Streamer, createQueue } from '../mq/mq';
 
 export {
 	createQueue,
