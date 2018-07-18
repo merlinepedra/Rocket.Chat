@@ -8,7 +8,7 @@ const trimUsername = username => username.trim();
 const toRegExp = username => new RegExp(`^${s.escapeRegExp(username)}$`, 'i');
 
 RocketChat.settings.get('Accounts_BlockedUsernameList', (key, value) => {
-	usernameBlackList = value.split(',').map(value).map(toRegExp);
+	usernameBlackList = value.split(',').map(trimUsername).map(toRegExp);
 });
 
 const usernameIsBlocked = (username, usernameBlackList) => usernameBlackList.length
