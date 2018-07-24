@@ -173,7 +173,7 @@
 		"queue-fifo": "^0.2.4",
 		"redis": "^2.8.0",
 		"redis-smq": "^1.0.20",
-		"rocket.chat.mqtt": "0.0.2",
+		"rocket.chat.mqtt": "0.0.4",
 		"rocket.chat.proto": "^1.0.7",
 		"semver": "^5.5.0",
 		"sharp": "^0.20.3",
