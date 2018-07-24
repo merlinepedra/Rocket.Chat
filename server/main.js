@@ -1,6 +1,6 @@
 import '/imports/startup/server';
 import { init, connect } from 'rocket.chat.mqtt';
-import { mq } from 'meteor/rocketchat:lib';
+import { mq, queuePersistence as persistence } from 'meteor/rocketchat:lib';
 
 Meteor.startup(function() {
 	const options = init({
@@ -8,7 +8,7 @@ Meteor.startup(function() {
 	});
 	connect({
 		mq,
-		persistence: process.env.REDIS_HOST && require('aedes-persistence-redis')(),
+		persistence,
 		...options
 	});
 });

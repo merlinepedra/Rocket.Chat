@@ -1,8 +1,6 @@
 import { Streamer } from 'meteor/rocketchat:lib';
-import { encoder } from 'rocket.chat.proto';
-const messageEncoder = encoder('message');
 
-const msgStream = new Streamer('room-messages', { encoder: messageEncoder });
+const msgStream = new Streamer('room-messages');
 
 this.msgStream = msgStream;
 
