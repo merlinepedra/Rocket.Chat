@@ -137,20 +137,21 @@ RocketChat.callbacks.run = function(hook, item, constant) {
 * @param {Object} [constant] - An optional constant that will be passed along to each callback
 */
 if (Meteor.isServer) {
-	import { createQueue } from "meteor/rocketchat:lib";
+	Meteor.startup(() => {
+		const { createQueue } = require('meteor/rocketchat:lib');
 
-	const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
-		RocketChat.callbacks.run(queueName, message, constant);
-		cb();
+		const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
+			RocketChat.callbacks.run(queueName, message, constant);
+			cb();
+		});
+		const Producers = {
+			afterSaveMessage: createQueue('afterSaveMessage', (message, cb) => {
+				const [item, constant] = EJSON.parse(message);
+				run('afterSaveMessage', item, constant, cb);
+			})
+		}
+		RocketChat.callbacks.runAsync = function(hook, ...args) {
+			return Producers[hook] && Producers[hook].produce(EJSON.stringify(args), console.log);
+		};
 	});
-	const Producers = {
-		afterSaveMessage: createQueue('afterSaveMessage', (message, cb) => {
-			const [item, constant] = EJSON.parse(message);
-			run('afterSaveMessage', item, constant, cb);
-		})
-	}
-	RocketChat.callbacks.runAsync = function(hook, ...args) {
-		return Producers[hook] && Producers[hook].produce(EJSON.stringify(args), console.log);
-	};
-
 }
