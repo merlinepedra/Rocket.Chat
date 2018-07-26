@@ -1,5 +1,3 @@
-import { Streamer } from 'meteor/rocketchat:lib';
-
 const log = (name, fn) => function() {
 	console.log(name, arguments);
 	fn.apply(this, arguments);
@@ -8,11 +6,11 @@ const debug = false;
 RocketChat.Notifications = new class {
 	constructor() {
 
-		this.streamAll = new Streamer('notify-all');
-		this.streamLogged = new Streamer('notify-logged');
-		this.streamRoom = new Streamer('notify-room');
-		this.streamRoomUsers = new Streamer('notify-room-users');
-		this.streamUser = new Streamer('notify-user');
+		this.streamAll = new Meteor.Streamer('notify-all');
+		this.streamLogged = new Meteor.Streamer('notify-logged');
+		this.streamRoom = new Meteor.Streamer('notify-room');
+		this.streamRoomUsers = new Meteor.Streamer('notify-room-users');
+		this.streamUser = new Meteor.Streamer('notify-user');
 		this.streamAll.allowWrite('none');
 		this.streamLogged.allowWrite('none');
 		this.streamRoom.allowWrite('none');
@@ -33,11 +31,6 @@ RocketChat.Notifications = new class {
 		this.streamAll.allowRead('all');
 		this.streamLogged.allowRead('logged');
 		this.streamRoom.allowRead(function(eventName, extraData) {
-
-			if (this.userId == null) {
-				return false;
-			}
-
 			const [roomId] = eventName.split('/');
 			const room = RocketChat.models.Rooms.findOneById(roomId);
 			if (!room) {
@@ -82,9 +75,6 @@ RocketChat.Notifications = new class {
 
 	notifyRoom(room, eventName, ...args) {
 		args.unshift(`${ room }/${ eventName }`);
-		// if (/typing/.test(eventName)) {
-		console.log(arguments);
-		// }
 		return this.streamRoom.emit.apply(this.streamRoom, args);
 	}
 
@@ -125,7 +115,6 @@ RocketChat.Notifications.streamRoom.allowWrite(function(eventName, username, typ
 		// typing from livechat widget
 		if (extraData && extraData.token) {
 			const room = RocketChat.models.Rooms.findOne({ rid: roomId, t: 'l', 'v.token': extraData.token }, { fields: {} });
-			// TODO verify if we can just return !!room @sampaio.diego
 			if (room) {
 				return true;
 			}
@@ -133,7 +122,7 @@ RocketChat.Notifications.streamRoom.allowWrite(function(eventName, username, typ
 
 		const user = Meteor.users.findOne({
 			_id: this.userId,
-			key: username
+			[key]: username
 		}, { fields: {} });
 		return !!user;
 	}

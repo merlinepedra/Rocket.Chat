@@ -1,7 +1,4 @@
-import { Streamer } from 'meteor/rocketchat:lib';
-
-const msgStream = new Streamer('room-messages');
-
+const msgStream = new Meteor.Streamer('room-messages');
 this.msgStream = msgStream;
 
 msgStream.allowWrite('none');
@@ -61,7 +58,6 @@ Meteor.startup(function() {
 					mention.name = user && user.name;
 				});
 			}
-
 			msgStream.emitWithoutBroadcast('__my_messages__', record, {});
 			return msgStream.emitWithoutBroadcast(record.rid, record);
 		}

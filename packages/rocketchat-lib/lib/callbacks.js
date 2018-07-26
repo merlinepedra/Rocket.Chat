@@ -1,4 +1,5 @@
 import _ from 'underscore';
+
 /*
 * Callback hooks provide an easy way to add extra steps to common operations.
 * @namespace RocketChat.callbacks
@@ -136,22 +137,13 @@ RocketChat.callbacks.run = function(hook, item, constant) {
 * @param {Object} item - The post, comment, modifier, etc. on which to run the callbacks
 * @param {Object} [constant] - An optional constant that will be passed along to each callback
 */
-if (Meteor.isServer) {
-	Meteor.startup(() => {
-		const { createQueue } = require('meteor/rocketchat:lib');
 
-		const run = Meteor.bindEnvironment((queueName, message, constant, cb) => {
-			RocketChat.callbacks.run(queueName, message, constant);
-			cb();
+RocketChat.callbacks.runAsync = function(hook, item, constant) {
+	const callbacks = RocketChat.callbacks[hook];
+	if (Meteor.isServer && callbacks && callbacks.length) {
+		Meteor.defer(function() {
+			callbacks.forEach(callback => callback(item, constant));
 		});
-		const Producers = {
-			afterSaveMessage: createQueue('afterSaveMessage', (message, cb) => {
-				const [item, constant] = EJSON.parse(message);
-				run('afterSaveMessage', item, constant, cb);
-			})
-		}
-		RocketChat.callbacks.runAsync = function(hook, ...args) {
-			return Producers[hook] && Producers[hook].produce(EJSON.stringify(args), console.log);
-		};
-	});
-}
+	}
+	return item;
+};

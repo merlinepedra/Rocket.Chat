@@ -13,7 +13,6 @@ Package.onUse(function(api) {
 	api.use('reactive-dict');
 	api.use('accounts-base');
 	api.use('ecmascript');
-	api.use('ejson');
 	api.use('random');
 	api.use('check');
 	api.use('tracker');
