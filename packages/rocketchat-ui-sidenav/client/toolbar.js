@@ -91,7 +91,7 @@ const getFromServer = (cb, type) => {
 	});
 };
 
-const getFromServerDebounced = _.debounce(getFromServer, 1500);
+const getFromServerDebounced = _.debounce(getFromServer, 500);
 
 Template.toolbar.helpers({
 	results() {
