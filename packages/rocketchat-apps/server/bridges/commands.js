@@ -1,4 +1,4 @@
-import { SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { SlashCommandContext } from '@rocket.chat/apps-engine';
 
 export class AppCommandsBridge {
 	constructor(orch) {
