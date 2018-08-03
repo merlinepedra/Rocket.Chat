@@ -43,6 +43,11 @@ export class AppRoomBridge {
 		return this.orch.getConverters().get('rooms').convertByName(roomName);
 	}
 
+	async getDirectByUsernames(usernames, appId) {
+		console.log(`The App ${ appId } is getting the direct room by usernames: "${ usernames.join(', ') }"`);
+		return this.orch.getConverters().get('rooms').convertDirectByUsernames(usernames);
+	}
+
 	async getCreatorById(roomId, appId) {
 		console.log(`The App ${ appId } is getting the room's creator by id: "${ roomId }"`);
 

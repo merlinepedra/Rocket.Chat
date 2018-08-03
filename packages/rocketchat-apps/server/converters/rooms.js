@@ -17,6 +17,14 @@ export class AppRoomsConverter {
 		return this.convertRoom(room);
 	}
 
+	convertDirectByUsernames(usernames) {
+		const rooms = RocketChat.models.Rooms.findDirectRoomContainingUsername({ $all: usernames }).fetch();
+		if (rooms && rooms.length > 0) {
+			return this.convertRoom(room[0]);
+		}
+		return undefined;
+	}
+
 	convertAppRoom(room) {
 		if (!room) {
 			return undefined;
