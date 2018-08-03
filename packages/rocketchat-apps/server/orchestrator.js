@@ -1,6 +1,6 @@
 import { RealAppBridges } from './bridges';
 import { AppMethods, AppsRestApi, AppServerNotifier } from './communication';
-import { AppMessagesConverter, AppRoomsConverter, AppSettingsConverter, AppSubscriptionsConverter, AppUsersConverter } from './converters';
+import { AppMessagesConverter, AppRoomsConverter, AppRoomSubscriptionsConverter, AppSettingsConverter, AppUsersConverter } from './converters';
 import { AppsLogsModel, AppsModel, AppsPersistenceModel, AppRealStorage, AppRealLogsStorage } from './storage';
 
 import { AppManager } from '@rocket.chat/apps-engine/server/AppManager';
@@ -21,7 +21,7 @@ class AppServerOrchestrator {
 		this._converters.set('messages', new AppMessagesConverter(this));
 		this._converters.set('rooms', new AppRoomsConverter(this));
 		this._converters.set('settings', new AppSettingsConverter(this));
-		this._converters.set('subscriptions', new AppSubscriptionsConverter(this));
+		this._converters.set('roomSubscriptions', new AppRoomSubscriptionsConverter(this));
 		this._converters.set('users', new AppUsersConverter(this));
 
 		this._bridges = new RealAppBridges(this);

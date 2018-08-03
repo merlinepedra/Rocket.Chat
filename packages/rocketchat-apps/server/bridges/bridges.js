@@ -9,8 +9,8 @@ import { AppListenerBridge } from './listeners';
 import { AppMessageBridge } from './messages';
 import { AppPersistenceBridge } from './persistence';
 import { AppRoomBridge } from './rooms';
+import { AppRoomSubscriptionBridge } from './roomSubscription';
 import { AppSettingBridge } from './settings';
-import { AppSubscriptionBridge } from './subscription';
 import { AppUserBridge } from './users';
 
 export class RealAppBridges extends AppBridges {
@@ -26,8 +26,8 @@ export class RealAppBridges extends AppBridges {
 		this._msgBridge = new AppMessageBridge(orch);
 		this._persistBridge = new AppPersistenceBridge(orch);
 		this._roomBridge = new AppRoomBridge(orch);
+		this._roomSubscriptionBridge = new AppRoomSubscriptionBridge(orch);
 		this._setsBridge = new AppSettingBridge(orch);
-		this._subscriptionBridge = new AppSubscriptionBridge(orch);
 		this._userBridge = new AppUserBridge(orch);
 	}
 
@@ -67,8 +67,8 @@ export class RealAppBridges extends AppBridges {
 		return this._roomBridge;
 	}
 
-	getSubscriptionBridge() {
-		return this._subscriptionBridge;
+	getRoomSubscriptionBridge() {
+		return this._roomSubscriptionBridge;
 	}
 
 	getServerSettingBridge() {
