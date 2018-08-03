@@ -1,7 +1,23 @@
+@keyframes loading {
+	0% {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+}
+
+
+
 .rc-popout {
 	min-width: 380px;
 	max-width: 800px;
-
 
 	border: solid 4px var(--rc-color-primary-darkest);
 	background: var(--rc-color-primary-darkest);
@@ -13,8 +29,8 @@
 		position: absolute;
 		z-index: 10;
 
-		top: calc(var(--header-min-height) + 15px);
-		left: calc(var(--sidebar-width) + 15px);
+		top: calc(var(--header-min-height) + 60px);
+		left: calc(100% - 395px);
 		display: flex;
 
 		animation: dropdown-show 0.3s cubic-bezier(0.45, 0.05, 0.55, 0.95);
@@ -91,6 +107,24 @@
 		& button {
 			font-size: 16px;
 			margin: 0 5px;
+
+			& > .rc-icon {
+				fill: currentColor;
+				stroke: currentColor;
+			}
+
+			&.preparing {
+				animation: loading 2s infinite;
+				pointer-events: none;
+			}
+			&.broadcasting {
+				color: red;
+			}
+		}
+		& span {
+			text-transform: capitalize;
+			font-size: 15px;
+			line-height: 18px;
 		}
 	}
 
@@ -146,7 +180,7 @@
 
 		&.rc-popout__content {
 			height: 0px;
-			visibility: hidden;
+			overflow: hidden;
 
 			& .streaming-object {
 				visibility: 'hidden';

@@ -3,8 +3,8 @@
 this.popout = {
 	context: null,
 	isAudioOnly: false,
-	canOpenExternal: false,
 	showVideoControls: true,
+	showStreamControls: false,
 	x: 0,
 	y: 0,
 	open(config = {}, fn) {
@@ -19,8 +19,8 @@ this.popout = {
 		}
 		if (config.data) {
 			this.isAudioOnly = config.data.isAudioOnly;
-			this.canOpenExternal = config.data.canOpenExternal;
 			this.showVideoControls = config.data.showVideoControls;
+			this.showStreamControls = config.data.showStreamControls;
 		}
 	},
 	close() {
@@ -85,16 +85,20 @@ Template.popout.helpers({
 	showVideoControls() {
 		return Template.instance().showVideoControls.get();
 	},
-	canOpenExternal() {
-		return Template.instance().canOpenExternal.get();
+	showStreamControls() {
+		return Template.instance().showStreamControls.get();
+	},
+	getStreamStatus() {
+		return Template.instance().streamStatus.get();
 	}
 });
 
 Template.popout.onRendered(function() {
 	Template.instance().isMinimized.set(popout.isAudioOnly);
 	Template.instance().isAudioOnly.set(popout.isAudioOnly);
-	Template.instance().canOpenExternal.set(popout.canOpenExternal);
 	Template.instance().showVideoControls.set(popout.showVideoControls);
+	Template.instance().showStreamControls.set(popout.showStreamControls);
+
 
 	if (this.data.onRendered) {
 		this.data.onRendered();
@@ -105,8 +109,11 @@ Template.popout.onCreated(function() {
 	this.isAudioOnly = new ReactiveVar(popout.isAudioOnly);
 	this.canOpenExternal = new ReactiveVar(popout.canOpenExternal);
 	this.showVideoControls = new ReactiveVar(popout.showVideoControls);
+	this.showStreamControls = new ReactiveVar(popout.showStreamControls);
+
 	this.isMuted = new ReactiveVar(false);
 	this.isPlaying = new ReactiveVar(true);
+	this.streamStatus = new ReactiveVar('preparing');
 	document.body.addEventListener('dragstart', popout.dragstart, true);
 	document.body.addEventListener('dragover', popout.dragover, true);
 	document.body.addEventListener('dragend', popout.dragend, true);
@@ -141,14 +148,9 @@ Template.popout.events({
 			window.liveStreamPlayer.setSize(0, 0);
 		}
 	},
-	'click .js-open-external'(e) {
-		e.stopPropagation();
-		window.open(popout.config.data.source, '_blank');
-		popout.close();
-	},
 	'dragstart .rc-popout-wrapper'(event) {
 		const e = event.originalEvent || event;
-		const url = this.data.streamingSource || '.rc-popout-wrapper';
+		const url = (this.data && this.data.streamingSource) || '.rc-popout-wrapper';
 		popout.x = e.offsetX;
 		popout.y = e.offsetY;
 		e.dataTransfer.setData('application/x-moz-node', e.currentTarget);
@@ -157,6 +159,25 @@ Template.popout.events({
 	},
 	'dragend .rc-popout-wrapper'(event) {
 		event.preventDefault();
+	},
+	'click .rc-popout__controls--record'(e, i) {
+		e.preventDefault();
+		if (i.streamStatus.get() === 'ready') {
+			document.querySelector('.streaming-popup').dispatchEvent(new Event('startStreaming'));
+			i.streamStatus.set('starting');
+		} else if (i.streamStatus.get() === 'broadcasting') {
+			document.querySelector('.streaming-popup').dispatchEvent(new Event('stopStreaming'));
+			i.streamStatus.set('finished');
+			setTimeout(() => popout && popout.close(), 2000);
+		}
+	},
+	'broadcastStreamReady .streaming-popup'(e, i) {
+		e.preventDefault();
+		i.streamStatus.set('ready');
+	},
+	'broadcastStream .streaming-popup'(e, i) {
+		e.preventDefault();
+		i.streamStatus.set('broadcasting');
 	},
 	'click .rc-popout__controls--play'(e, i) {
 		window.liveStreamPlayer.playVideo();

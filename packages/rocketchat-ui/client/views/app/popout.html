@@ -17,10 +17,11 @@
 						{{/if}}
 					</div>
 				{{/if}}
-				{{#if canOpenExternal}}
-					<button class="contextual-bar__open-external js-open-external">
-						{{> icon classes="rc-popout__open-external" icon="jump"}}
-					</button>
+				{{#if showStreamControls}}
+					<div class="rc-popout__controls">
+							<button class="rc-popout__controls--record {{ getStreamStatus }}"> {{> icon icon="circle" }} </button>
+							<span> {{ getStreamStatus }} </span>
+					</div>
 				{{/if}}
 				{{#unless isAudioOnly}}
 					<button class="contextual-bar__minimize js-minimize">
@@ -49,6 +50,12 @@
 						{{else}}
 							<button class="rc-popout__controls--mute"> {{> icon icon="volume" }} </button>
 						{{/if}}
+					</div>
+				{{/if}}
+				{{#if showStreamControls}}
+					<div class="rc-popout__controls">
+						<button class="rc-popout__controls--record {{ getStreamStatus }}"> {{> icon icon="circle" }} </button>
+						<span> {{ getStreamStatus }} </span>
 					</div>
 				{{/if}}
 			</main>

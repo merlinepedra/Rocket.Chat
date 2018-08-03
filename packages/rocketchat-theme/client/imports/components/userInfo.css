@@ -9,11 +9,10 @@
 
 	&-container {
 		position: absolute;
+
 		top: 0;
 		right: 0;
 		left: 0;
-
-		padding: 0 1.5rem;
 
 		display: flex;
 		flex-direction: column;
@@ -74,9 +73,13 @@
 	}
 
 	&__name {
+		text-align: center;
+		word-wrap: break-word;
+
 		font-size: 22px;
 		font-weight: 500;
 		line-height: 28px;
+		width: 100%;
 	}
 
 	&__username {
@@ -88,8 +91,9 @@
 	&__scroll {
 		overflow-x: hidden;
 		overflow-y: auto;
+
 		margin: 0 -1.5rem;
-    padding: 0 1.5rem;
+		padding: 0 1.5rem;
 
 		&.archived .rc-user-info__name,
 		&.archived .rc-user-info__label {
@@ -248,6 +252,10 @@
 
 				font-size: 1.25rem;
 			}
+
+			& .icon-play-circled {
+				cursor: pointer;
+			}
 		}
 
 		&-name,
@@ -270,6 +278,7 @@
 
 			color: #1d73f3;
 			align-items: flex-end;
+			text-transform: capitalize;
 		}
 	}
 }
@@ -278,6 +287,10 @@
 	display: flex;
 
 	width: 100%;
+
+	word-break: break-word;
+
+	color: #444;
 
 	&__description {
 		margin: 5px 2px;
@@ -299,7 +312,7 @@
 		}
 
 		&.disabled {
-			color: #a1a1a1;
+			opacity: 0.3;
 		}
 	}
 

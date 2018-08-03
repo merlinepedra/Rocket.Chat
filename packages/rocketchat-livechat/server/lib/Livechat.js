@@ -105,6 +105,10 @@ RocketChat.Livechat = {
 			throw new Meteor.Error('cannot-access-room');
 		}
 
+		if (newRoom) {
+			RocketChat.models.Messages.setRoomIdByToken(guest.token, room._id);
+		}
+
 		return { room, newRoom };
 	},
 	sendMessage({ guest, message, roomInfo, agent }) {
@@ -234,6 +238,7 @@ RocketChat.Livechat = {
 		}
 
 		RocketChat.models.Rooms.closeByRoomId(room._id, closeData);
+		RocketChat.models.LivechatInquiry.closeByRoomId(room._id, closeData);
 
 		const message = {
 			t: 'livechat-close',
@@ -243,8 +248,10 @@ RocketChat.Livechat = {
 
 		RocketChat.sendMessage(user, message, room);
 
-		RocketChat.models.Subscriptions.hideByRoomIdAndUserId(room._id, room.servedBy._id);
-		RocketChat.models.Messages.createCommandWithRoomIdAndUser('promptTranscript', room._id, room.servedBy);
+		if (room.servedBy) {
+			RocketChat.models.Subscriptions.hideByRoomIdAndUserId(room._id, room.servedBy._id);
+		}
+		RocketChat.models.Messages.createCommandWithRoomIdAndUser('promptTranscript', room._id, closeData.closedBy);
 
 		Meteor.defer(() => {
 			RocketChat.callbacks.run('livechat.closeRoom', room);
@@ -272,7 +279,13 @@ RocketChat.Livechat = {
 			'Jitsi_Enabled',
 			'Language',
 			'Livechat_enable_transcript',
-			'Livechat_transcript_message'
+			'Livechat_transcript_message',
+			'Livechat_fileupload_enabled',
+			'FileUpload_Enabled',
+			'Livechat_conversation_finished_message',
+			'Livechat_name_field_registration_form',
+			'Livechat_email_field_registration_form'
+
 		]).forEach((setting) => {
 			settings[setting._id] = setting.value;
 		});
@@ -290,7 +303,7 @@ RocketChat.Livechat = {
 		});
 
 		if (!_.isEmpty(guestData.name)) {
-			return RocketChat.models.Rooms.setLabelByRoomId(roomData._id, guestData.name) && RocketChat.models.Subscriptions.updateNameByRoomId(roomData._id, guestData.name);
+			return RocketChat.models.Rooms.setFnameById(roomData._id, guestData.name) && RocketChat.models.Subscriptions.updateDisplayNameByRoomId(roomData._id, guestData.name);
 		}
 	},
 
@@ -303,14 +316,36 @@ RocketChat.Livechat = {
 
 	forwardOpenChats(userId) {
 		RocketChat.models.Rooms.findOpenByAgent(userId).forEach((room) => {
-			const guest = RocketChat.models.Users.findOneById(room.v._id);
+			const guest = LivechatVisitors.findOneById(room.v._id);
 			this.transfer(room, guest, { departmentId: guest.department });
 		});
 	},
 
-	savePageHistory(token, pageInfo) {
+	savePageHistory(token, roomId, pageInfo) {
 		if (pageInfo.change === RocketChat.Livechat.historyMonitorType) {
-			return RocketChat.models.LivechatPageVisited.saveByToken(token, pageInfo);
+
+			const user = RocketChat.models.Users.findOneById('rocket.cat');
+
+			const pageTitle = pageInfo.title;
+			const pageUrl = pageInfo.location.href;
+			const extraData = {
+				navigation: {
+					page: pageInfo,
+					token
+				}
+			};
+
+			if (!roomId) {
+				// keep history of unregistered visitors for 1 month
+				const keepHistoryMiliseconds = 2592000000;
+				extraData.expireAt = new Date().getTime() + keepHistoryMiliseconds;
+			}
+
+			if (!RocketChat.settings.get('Livechat_Visitor_navigation_as_a_message')) {
+				extraData._hidden = true;
+			}
+
+			return RocketChat.models.Messages.createNavigationHistoryWithRoomIdMessageAndUser(roomId, `${ pageTitle } - ${ pageUrl }`, user, extraData);
 		}
 
 		return;
@@ -325,15 +360,15 @@ RocketChat.Livechat = {
 				agentId: user._id,
 				username: user.username
 			};
-		} else {
+		} else if (RocketChat.settings.get('Livechat_Routing_Method') !== 'Guest_Pool') {
 			agent = RocketChat.Livechat.getNextAgent(transferData.departmentId);
+		} else {
+			return RocketChat.Livechat.returnRoomAsInquiry(room._id, transferData.departmentId);
 		}
 
 		const servedBy = room.servedBy;
 
 		if (agent && agent.agentId !== servedBy._id) {
-			room.usernames = _.without(room.usernames, servedBy.username).concat(agent.username);
-
 			RocketChat.models.Rooms.changeAgentByRoomId(room._id, agent);
 
 			const subscriptionData = {
@@ -344,7 +379,6 @@ RocketChat.Livechat = {
 				unread: 1,
 				userMentions: 1,
 				groupMentions: 0,
-				code: room.code,
 				u: {
 					_id: agent.agentId,
 					username: agent.username
@@ -357,6 +391,7 @@ RocketChat.Livechat = {
 			RocketChat.models.Subscriptions.removeByRoomIdAndUserId(room._id, servedBy._id);
 
 			RocketChat.models.Subscriptions.insert(subscriptionData);
+			RocketChat.models.Rooms.incUsersCountById(room._id);
 
 			RocketChat.models.Messages.createUserLeaveWithRoomIdAndUser(room._id, { _id: servedBy._id, username: servedBy.username });
 			RocketChat.models.Messages.createUserJoinWithRoomIdAndUser(room._id, { _id: agent.agentId, username: agent.username });
@@ -370,6 +405,71 @@ RocketChat.Livechat = {
 		}
 
 		return false;
+	},
+
+	returnRoomAsInquiry(rid, departmentId) {
+		const room = RocketChat.models.Rooms.findOneById(rid);
+		if (!room) {
+			throw new Meteor.Error('error-invalid-room', 'Invalid room', { method: 'livechat:returnRoomAsInquiry' });
+		}
+
+		if (!room.servedBy) {
+			return false;
+		}
+
+		const user = RocketChat.models.Users.findOne(room.servedBy._id);
+		if (!user || !user._id) {
+			throw new Meteor.Error('error-invalid-user', 'Invalid user', { method: 'livechat:returnRoomAsInquiry' });
+		}
+
+		const agentIds = [];
+		//get the agents of the department
+		if (departmentId) {
+			let agents = RocketChat.Livechat.getOnlineAgents(departmentId);
+
+			if (agents.count() === 0 && RocketChat.settings.get('Livechat_guest_pool_with_no_agents')) {
+				agents = RocketChat.Livechat.getAgents(departmentId);
+			}
+
+			if (agents.count() === 0) {
+				return false;
+			}
+
+			agents.forEach((agent) => {
+				agentIds.push(agent.agentId);
+			});
+		}
+
+		//delete agent and room subscription
+		RocketChat.models.Subscriptions.removeByRoomId(rid);
+
+		// remove user from room
+		RocketChat.models.Rooms.removeUsernameById(rid, user.username);
+
+		// find inquiry corresponding to room
+		const inquiry = RocketChat.models.LivechatInquiry.findOne({rid});
+		if (!inquiry) {
+			return false;
+		}
+
+		let openInq;
+		// mark inquiry as open
+		if (agentIds.length === 0) {
+			openInq = RocketChat.models.LivechatInquiry.openInquiry(inquiry._id);
+		} else {
+			openInq = RocketChat.models.LivechatInquiry.openInquiryWithAgents(inquiry._id, agentIds);
+		}
+
+		if (openInq) {
+			RocketChat.models.Messages.createUserLeaveWithRoomIdAndUser(rid, { _id: room.servedBy._id, username: room.servedBy.username });
+
+			RocketChat.Livechat.stream.emit(room._id, {
+				type: 'agentData',
+				data: null
+			});
+		}
+
+		return openInq;
 	},
 
 	sendRequest(postData, callback, trying = 1) {
@@ -396,22 +496,22 @@ RocketChat.Livechat = {
 
 	getLivechatRoomGuestInfo(room) {
 		const visitor = LivechatVisitors.findOneById(room.v._id);
-		const agent = RocketChat.models.Users.findOneById(room.servedBy._id);
+		const agent = RocketChat.models.Users.findOneById(room.servedBy && room.servedBy._id);
 
 		const ua = new UAParser();
 		ua.setUA(visitor.userAgent);
 
 		const postData = {
 			_id: room._id,
-			label: room.label,
+			label: room.fname || room.label, // using same field for compatibility
 			topic: room.topic,
-			code: room.code,
 			createdAt: room.ts,
 			lastMessageAt: room.lm,
 			tags: room.tags,
 			customFields: room.livechatData,
 			visitor: {
 				_id: visitor._id,
+				token: visitor.token,
 				name: visitor.name,
 				username: visitor.username,
 				email: null,
@@ -421,14 +521,21 @@ RocketChat.Livechat = {
 				os: ua.getOS().name && (`${ ua.getOS().name } ${ ua.getOS().version }`),
 				browser: ua.getBrowser().name && (`${ ua.getBrowser().name } ${ ua.getBrowser().version }`),
 				customFields: visitor.livechatData
-			},
-			agent: {
+			}
+		};
+
+		if (agent) {
+			postData.agent = {
 				_id: agent._id,
 				username: agent.username,
 				name: agent.name,
 				email: null
+			};
+
+			if (agent.emails && agent.emails.length > 0) {
+				postData.agent.email = agent.emails[0].address;
 			}
-		};
+		}
 
 		if (room.crmData) {
 			postData.crmData = room.crmData;
@@ -439,10 +546,6 @@ RocketChat.Livechat = {
 		}
 		if (visitor.phone && visitor.phone.length > 0) {
 			postData.visitor.phone = visitor.phone;
-		}
-
-		if (agent.emails && agent.emails.length > 0) {
-			postData.agent.email = agent.emails;
 		}
 
 		return postData;
