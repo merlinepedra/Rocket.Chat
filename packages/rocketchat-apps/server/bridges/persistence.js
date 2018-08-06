@@ -92,4 +92,18 @@ export class AppPersistenceBridge {
 
 		throw new Error('Not implemented.');
 	}
+
+	async updateByAssociations(associations, data, upsert, appId) {
+		console.log(`The App ${appId} is updating the record with the following associations: `, associations, data);
+
+		if (typeof data !== 'object') {
+			throw new Error('Attempted to store an invalid data type, it must be an object.');
+		}
+
+		if (upsert) {
+			return this.orch.getPersistenceModel().upsert({ appId, associations: { $all: associations } }, { $set: { data, associations } });
+		} else {
+			return this.orch.getPersistenceModel().update({ appId, associations: { $all: associations } }, { $set: { data } });
+		}
+	}
 }
