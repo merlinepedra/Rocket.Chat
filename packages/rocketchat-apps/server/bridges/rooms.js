@@ -18,8 +18,14 @@ export class AppRoomBridge {
 			case RoomType.PRIVATE_GROUP:
 				method = 'createPrivateGroup';
 				break;
+			case RoomType.DIRECT_MESSAGE:
+				Meteor.runAsUser(room.creator.id, () => {
+					const info = Meteor.call('createDirectMessage', room.usernames[0]);
+					return info.rid;
+				});
+				break;
 			default:
-				throw new Error('Only channels and private groups can be created.');
+				throw new Error('This channel type creation has not been implemented.');
 		}
 
 		let rid;
