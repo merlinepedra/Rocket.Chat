@@ -6,6 +6,7 @@ Package.describe({
 Package.onUse(function(api) {
 	api.use([
 		'ecmascript',
+		'barbatus:typescript',
 		'rocketchat:lib',
 		'rocketchat:api',
 		'templating',
@@ -56,7 +57,7 @@ Package.onUse(function(api) {
 	], 'server');
 
 	// Server Orchestrator
-	api.addFiles('server/orchestrator.js', 'server');
+	api.addFiles('server/orchestrator.ts', 'server');
 
 	// Client communication pieces
 	api.addFiles([

@@ -1,23 +1,26 @@
-import express from 'express';
+import * as express from 'express';
 import { WebApp } from 'meteor/webapp';
 
 const apiServer = express();
 WebApp.connectHandlers.use(apiServer);
 
 export class AppApisBridge {
+	public orch: any;
+	public appRouters: Map<string, any>;
+
 	constructor(orch) {
 		this.orch = orch;
 		this.appRouters = new Map();
 
-		// apiServer.use('/api/apps', (req, res, next) => {
-		// 	console.log({
-		// 		method: req.method.toLowerCase(),
-		// 		url: req.url,
-		// 		query: req.query,
-		// 		body: req.body,
-		// 	});
-		// 	next();
-		// });
+		apiServer.use('/api/apps', (req, res, next) => {
+			console.log(JSON.stringify({
+				method: req.method.toLowerCase(),
+				url: req.url,
+				query: req.query,
+				body: req.body,
+			}, null, 2));
+			next();
+		});
 
 		apiServer.use('/api/apps/private/:appId/:hash', (req, res) => {
 			const notFound = () => res.send(404);
@@ -25,7 +28,7 @@ export class AppApisBridge {
 			const router = this.appRouters.get(req.params.appId);
 
 			if (router) {
-				req._privateHash = req.params.hash;
+				res.locals._privateHash
 				return router(req, res, notFound);
 			}
 
@@ -92,7 +95,7 @@ export class AppApisBridge {
 				query: req.query || {},
 				params: req.params || {},
 				content: req.body,
-				privateHash: req._privateHash,
+				privateHash: res.locals._privateHash,
 			};
 
 			this.orch.getManager().getApiManager().executeApi(appId, endpoint.path, request)

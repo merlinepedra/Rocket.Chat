@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"alwaysStrict": true,
+		"sourceMap": true,
+		"jsx": "react",
+		"allowJs": true,
+		"noImplicitAny": true,
+		"strictNullChecks": false,
+		"declaration": true,
+		"noUnusedLocals": true,
+		"removeComments": false,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true
+	},
+	"exclude": [
+		"node_modules",
+		".meteor"
+	],
+	"files": [
+		"asd"
+	]
+}
