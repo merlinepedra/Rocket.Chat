@@ -24,9 +24,10 @@
 							<div class="rc-input">
 								<label class="rc-input__label" for="emailOrUsername">
 									<div class="rc-input__wrapper">
-										<input name="emailOrUsername" id="emailOrUsername" type="text" class="rc-input__element"
-											autocapitalize="off" autocorrect="off"
-											placeholder="{{emailOrUsernamePlaceholder}}" autofocus>
+										<input name="emailOrUsername" id="emailOrUsername" type="text"
+											   class="rc-input__element"
+											   autocapitalize="off" autocorrect="off"
+											   placeholder="{{emailOrUsernamePlaceholder}}" autofocus>
 										<div class="input-error"></div>
 									</div>
 								</label>
@@ -38,66 +39,67 @@
 								<label class="rc-input__label" for="pass">
 									<div class="rc-input__wrapper">
 										<input name="pass" id="pass" type="password" class="rc-input__element"
-											autocapitalize="off" autocorrect="off"
-											placeholder="{{passwordPlaceholder}}" autofocus>
+											   autocapitalize="off" autocorrect="off"
+											   placeholder="{{passwordPlaceholder}}" autofocus>
 										<div class="input-error"></div>
 									</div>
 								</label>
 							</div>
 						{{/if}}
 						{{#if state 'register'}}
-						<div class="rc-input">
-							<label class="rc-input__label" for="name">
-							<div class="rc-input__wrapper">
-								<input name="name" id="name" type="text" class="rc-input__element"
-									autocapitalize="off" autocorrect="off"
-									placeholder="{{namePlaceholder}}" autofocus>
-								<div class="input-error"></div>
+							<div class="rc-input">
+								<label class="rc-input__label" for="name">
+									<div class="rc-input__wrapper">
+										<input name="name" id="name" type="text" class="rc-input__element"
+											   autocapitalize="off" autocorrect="off"
+											   placeholder="{{namePlaceholder}}" autofocus>
+										<div class="input-error"></div>
+									</div>
+								</label>
 							</div>
-						</label>
-						</div>
-						<div class="rc-input">
-							<label class="rc-input__label" for="email">
-								<div class="rc-input__wrapper">
-									<input name="email" id="email" type="text" class="rc-input__element"
-										autocapitalize="off" autocorrect="off"
-										placeholder="{{_ "Email"}}" autofocus>
-									<div class="input-error"></div>
-								</div>
-							</label>
-						</div>
-
-							{{> customFieldsForm hideFromForm=true}}
-
+							<div class="rc-input">
+								<label class="rc-input__label" for="email">
+									<div class="rc-input__wrapper">
+										<input name="email" id="email" type="text" class="rc-input__element"
+											   autocapitalize="off" autocorrect="off"
+											   placeholder="{{_ "Email"}}" autofocus>
+										<div class="input-error"></div>
+									</div>
+								</label>
+							</div>
+							{{#if customFieldsAllowed}}
+								{{> customFieldsForm hideFromForm=true canChange=customFieldsAllowed}}
+							{{/if}}
 							<div class="rc-input">
 								<label class="rc-input__label" for="pass">
 									<div class="rc-input__wrapper">
 										<input name="pass" id="pass" type="password" class="rc-input__element"
-											autocapitalize="off" autocorrect="off"
-											placeholder="{{passwordPlaceholder}}" autofocus>
+											   autocapitalize="off" autocorrect="off"
+											   placeholder="{{passwordPlaceholder}}" autofocus>
 										<div class="input-error"></div>
 									</div>
 								</label>
 							</div>
 							{{#if requirePasswordConfirmation}}
-							<div class="rc-input">
-								<label class="rc-input__label" for="confirm-pass">
-									<div class="rc-input__wrapper">
-										<input name="confirm-pass" id="confirm-pass" type="password" class="rc-input__element"
-											autocapitalize="off" autocorrect="off"
-											placeholder="{{confirmPasswordPlaceholder}}" autofocus>
-										<div class="input-error"></div>
-									</div>
-								</label>
-							</div>
+								<div class="rc-input">
+									<label class="rc-input__label" for="confirm-pass">
+										<div class="rc-input__wrapper">
+											<input name="confirm-pass" id="confirm-pass" type="password"
+												   class="rc-input__element"
+												   autocapitalize="off" autocorrect="off"
+												   placeholder="{{confirmPasswordPlaceholder}}" autofocus>
+											<div class="input-error"></div>
+										</div>
+									</label>
+								</div>
 							{{/if}}
 							{{#if manuallyApproveNewUsers}}
 								<div class="rc-input">
 									<label class="rc-input__label" for="confirm-pass">
 										<div class="rc-input__wrapper">
 											<input name="reason" id="reason" type="text" class="rc-input__element"
-												autocapitalize="off" autocorrect="off"
-												placeholder="{{_ 'Reason_To_Join'}}" autofocus>
+												   autocapitalize="off" autocorrect="off"
+												   placeholder="{{_ 'Reason_To_Join'}}" autofocus>
 											<div class="input-error"></div>
 										</div>
 									</label>
@@ -105,39 +107,39 @@
 							{{/if}}
 						{{/if}}
 						{{#if state 'forgot-password' 'email-verification'}}
-						<div class="rc-input">
-							<label class="rc-input__label" for="email">
-							<div class="rc-input__wrapper">
-								<input name="email" id="email" type="text" class="rc-input__element"
-									autocapitalize="off" autocorrect="off"
-									placeholder="{{_ "Email"}}" autofocus>
-									<div class="input-error"></div>
-								</div>
-							</label>
-						</div>
+							<div class="rc-input">
+								<label class="rc-input__label" for="email">
+									<div class="rc-input__wrapper">
+										<input name="email" id="email" type="text" class="rc-input__element"
+											   autocapitalize="off" autocorrect="off"
+											   placeholder="{{_ "Email"}}" autofocus>
+										<div class="input-error"></div>
+									</div>
+								</label>
+							</div>
 						{{/if}}
 					</div>
-						<div class="submit">
-							<button class='rc-button rc-button--primary login'><span>{{btnLoginSave}}</span></button>
-						</div>
-						{{#if state 'login'}}
-							{{#if registrationAllowed}}
-								<div>
-									<button type="button" class="register">{{_ 'Register'}}</button>
-								</div>
-							{{else}}
-								{{#if linkReplacementText}}
-									<div class="register-link-replacement">
-										{{{linkReplacementText}}}
-									</div>
-								{{/if}}
-							{{/if}}
-							{{#if passwordResetAllowed}}
-								<div>
-									<button type="button" class="forgot-password">{{_ 'Forgot_password'}}</button>
+					<div class="submit">
+						<button class='rc-button rc-button--primary login'><span>{{btnLoginSave}}</span></button>
+					</div>
+					{{#if state 'login'}}
+						{{#if registrationAllowed}}
+							<div>
+								<button type="button" class="register">{{_ 'Register'}}</button>
+							</div>
+						{{else}}
+							{{#if linkReplacementText}}
+								<div class="register-link-replacement">
+									{{{linkReplacementText}}}
 								</div>
 							{{/if}}
 						{{/if}}
+						{{#if passwordResetAllowed}}
+							<div>
+								<button type="button" class="forgot-password">{{_ 'Forgot_password'}}</button>
+							</div>
+						{{/if}}
+					{{/if}}
 				{{/if}}
 			{{/if}}
 			{{#unless state 'login'}}
@@ -149,7 +151,8 @@
 		<div class='login-terms'>
 			{{{loginTerms}}}
 			<div class="powered-by">
-				Powered by <a class="color-tertiary-font-color" href="https://rocket.chat">Open Source Chat Platform Rocket.Chat</a>.
+				Powered by <a class="color-tertiary-font-color" href="https://rocket.chat">Open Source Chat Platform
+				Rocket.Chat</a>.
 			</div>
 		</div>
 	{{/if}}

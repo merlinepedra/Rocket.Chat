@@ -152,6 +152,9 @@ Template.accountProfile.helpers({
 	allowPasswordChange() {
 		return RocketChat.settings.get('Accounts_AllowPasswordChange');
 	},
+	allowCustomFieldsChange() {
+		return RocketChat.settings.get('Accounts_AllowCustomFieldsChange');
+	},
 	canConfirmNewPassword() {
 		const password = Template.instance().password.get();
 		return RocketChat.settings.get('Accounts_AllowPasswordChange') && password && password !== '';

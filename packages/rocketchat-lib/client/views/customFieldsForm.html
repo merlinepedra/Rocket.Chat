@@ -8,25 +8,31 @@
 						<div class="input-line">
 							<label for="{{fieldName}}">{{_ fieldName}}</label>
 							<div>
-								<select name="{{fieldName}}" data-customfield="true">
+								<select name="{{fieldName}}" data-customfield="true" disabled="{{not ../canChange}}">
 									{{#each field.options}}
 										<option value="{{.}}" selected="{{selectedField . ..}}">{{_ .}}</option>
 									{{/each}}
 								</select>
 								<div class="input-error"></div>
 							</div>
+							{{# unless ../canChange}}
+								<div class="rc-input__description">{{_ 'CustomFields_Change_Disabled'}}</div>
+							{{/unless}}
 						</div>
 					{{else}}
 						<label class="rc-input__label">
 							<div class="rc-input__title">{{_ fieldName}}</div>
 							<div class="rc-input__wrapper">
-								<select name="{{fieldName}}" data-customfield="true" class="rc-input__element">
+								<select name="{{fieldName}}" data-customfield="true" class="rc-input__element" disabled="{{not ../canChange}}">
 									<option></option>
 									{{#each field.options}}
 										<option value="{{.}}" selected="{{selectedField . ..}}">{{_ .}}</option>
 									{{/each}}
 								</select>
 							</div>
+							{{# unless ../canChange}}
+								<div class="rc-input__description">{{_ 'CustomFields_Change_Disabled'}}</div>
+							{{/unless}}
 						</label>
 					{{/unless}}
 				{{/if}}
@@ -35,16 +41,22 @@
 						<div class="input-line">
 							<label for="{{fieldName}}">{{_ fieldName}}</label>
 							<div>
-								<input type="text" name="{{fieldName}}" id="{{fieldName}}" data-customfield="true" value="{{fieldValue}}" maxlength="{{field.maxLength}}" />
+								<input type="text" name="{{fieldName}}" id="{{fieldName}}" data-customfield="true" value="{{fieldValue}}" maxlength="{{field.maxLength}}" disabled="{{not ../canChange}}" />
 								<div class="input-error"></div>
 							</div>
+							{{# unless ../canChange}}
+								<div class="rc-input__description">{{_ 'CustomFields_Change_Disabled'}}</div>
+							{{/unless}}
 						</div>
 					{{else}}
 						<label class="rc-input__label">
 							<div class="rc-input__title">{{_ fieldName}}</div>
 							<div class="rc-input__wrapper">
-								<input type="text" class="rc-input__element"  name="{{fieldName}}" id="{{fieldName}}" data-customfield="true" value="{{fieldValue}}" maxlength="{{field.maxLength}}">
+								<input type="text" class="rc-input__element"  name="{{fieldName}}" id="{{fieldName}}" data-customfield="true" value="{{fieldValue}}" maxlength="{{field.maxLength}}" disabled="{{not ../canChange}}">
 							</div>
+							{{# unless ../canChange}}
+								<div class="rc-input__description">{{_ 'CustomFields_Change_Disabled'}}</div>
+							{{/unless}}
 						</label>
 					{{/unless}}
 				{{/if}}

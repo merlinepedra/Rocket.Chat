@@ -43,6 +43,9 @@ Template.loginForm.helpers({
 		const validSecretUrl = Template.instance().validSecretURL;
 		return RocketChat.settings.get('Accounts_RegistrationForm') === 'Public' || (validSecretUrl && validSecretUrl.get());
 	},
+	customFieldsAllowed() {
+		return RocketChat.settings.get('Accounts_AllowCustomFieldsChange');
+	},
 	linkReplacementText() {
 		return RocketChat.settings.get('Accounts_RegistrationForm_LinkReplacementText');
 	},

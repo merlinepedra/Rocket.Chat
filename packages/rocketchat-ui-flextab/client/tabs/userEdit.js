@@ -30,6 +30,9 @@ Template.userEdit.helpers({
 	name() {
 		return this.description || this._id;
 	},
+	customFields() {
+		return Meteor.user().customFields;
+	},
 });
 
 Template.userEdit.events({
@@ -109,6 +112,10 @@ Template.userEdit.onCreated(function() {
 		userData.name = s.trim(this.$('#name').val());
 		userData.username = s.trim(this.$('#username').val());
 		userData.email = s.trim(this.$('#email').val());
+		userData.customFields = {};
+		$('[data-customfield=true]').each(function() {
+			userData.customFields[this.name] = $(this).val() || '';
+		});
 		userData.verified = this.$('#verified:checked').length > 0;
 		userData.password = s.trim(this.$('#password').val());
 		userData.requirePasswordChange = this.$('#changePassword:checked').length > 0;

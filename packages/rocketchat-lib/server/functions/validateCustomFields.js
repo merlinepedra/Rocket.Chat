@@ -21,12 +21,13 @@ RocketChat.validateCustomFields = function(fields) {
 
 		customFields[fieldName] = fields[fieldName];
 		const fieldValue = s.trim(fields[fieldName]);
+		const isRequiredError = field.required && fieldValue === '';
 
-		if (field.required && fieldValue === '') {
+		if (isRequiredError) {
 			throw new Meteor.Error('error-user-registration-custom-field', `Field ${ fieldName } is required`, { method: 'registerUser' });
 		}
 
-		if (field.type === 'select' && field.options.indexOf(fields[fieldName]) === -1) {
+		if (field.type === 'select' && field.options.indexOf(fieldValue) === -1 && isRequiredError) {
 			throw new Meteor.Error('error-user-registration-custom-field', `Value for field ${ fieldName } is invalid`, { method: 'registerUser' });
 		}
 
