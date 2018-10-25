@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import toastr from 'toastr';
+import 'fast-text-encoding';
 /* globals crypto */
 
 RocketChat.OTR.Room = class {

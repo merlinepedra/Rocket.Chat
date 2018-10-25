@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import 'fast-text-encoding';
 
 import { Base64 } from 'meteor/base64';
 import { ReactiveVar } from 'meteor/reactive-var';
