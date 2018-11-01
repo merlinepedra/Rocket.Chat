@@ -1,4 +1,5 @@
 import { RoomType } from '@rocket.chat/apps-engine/definition/rooms';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 export class AppRoomsConverter {
 	constructor(orch) {

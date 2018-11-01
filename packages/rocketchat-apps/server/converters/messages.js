@@ -1,4 +1,5 @@
 import { Random } from 'meteor/random';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 export class AppMessagesConverter {
 	constructor(orch) {

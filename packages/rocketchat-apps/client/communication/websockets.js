@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 export const AppEvents = Object.freeze({
 	APP_ADDED: 'app/added',

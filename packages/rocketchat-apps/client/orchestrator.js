@@ -1,11 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { AppWebsocketReceiver } from './communication';
 import { Utilities } from '../lib/misc/Utilities';
-import { FlowRouter } from 'meteor/kadira:flow-router';
-import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 import { TAPi18next } from 'meteor/tap:i18n';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
-class AppClientOrchestrator {
+export class AppClientOrchestrator {
 	constructor() {
 		this._isLoaded = false;
 		this._isEnabled = false;
@@ -96,65 +95,3 @@ class AppClientOrchestrator {
 		return result.apis;
 	}
 }
-
-Meteor.startup(function _rlClientOrch() {
-	window.Apps = new AppClientOrchestrator();
-
-	RocketChat.CachedCollectionManager.onLogin(() => {
-		Meteor.call('apps/is-enabled', (error, isEnabled) => {
-			window.Apps.load(isEnabled);
-		});
-	});
-});
-
-const appsRouteAction = function _theRealAction(whichCenter) {
-	Meteor.defer(() => window.Apps.getLoadingPromise().then((isEnabled) => {
-		if (isEnabled) {
-			BlazeLayout.render('main', { center: whichCenter, old: true }); // TODO remove old
-		} else {
-			FlowRouter.go('app-what-is-it');
-		}
-	}));
-};
-
-// Bah, this has to be done *before* `Meteor.startup`
-FlowRouter.route('/admin/apps', {
-	name: 'apps',
-	action() {
-		appsRouteAction('apps');
-	},
-});
-
-FlowRouter.route('/admin/app/install', {
-	name: 'app-install',
-	action() {
-		appsRouteAction('appInstall');
-	},
-});
-
-FlowRouter.route('/admin/apps/:appId', {
-	name: 'app-manage',
-	action() {
-		appsRouteAction('appManage');
-	},
-});
-
-FlowRouter.route('/admin/apps/:appId/logs', {
-	name: 'app-logs',
-	action() {
-		appsRouteAction('appLogs');
-	},
-});
-
-FlowRouter.route('/admin/app/what-is-it', {
-	name: 'app-what-is-it',
-	action() {
-		Meteor.defer(() => window.Apps.getLoadingPromise().then((isEnabled) => {
-			if (isEnabled) {
-				FlowRouter.go('apps');
-			} else {
-				BlazeLayout.render('main', { center: 'appWhatIsIt' });
-			}
-		}));
-	},
-});

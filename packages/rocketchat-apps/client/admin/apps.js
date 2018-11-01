@@ -2,8 +2,11 @@ import toastr from 'toastr';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
-
+import { RocketChat } from 'meteor/rocketchat:lib';
+import { Apps } from 'meteor/rocketchat:apps';
 import { AppEvents } from '../communication';
+import { t } from 'meteor/rocketchat:ui';
+
 const ENABLED_STATUS = ['auto_enabled', 'manually_enabled'];
 const HOST = 'https://marketplace.rocket.chat';
 const enabled = ({ status }) => ENABLED_STATUS.includes(status);
@@ -107,15 +110,15 @@ Template.apps.onCreated(function() {
 		instance.apps.set(apps);
 	};
 
-	window.Apps.getWsListener().registerListener(AppEvents.APP_ADDED, instance.onAppAdded);
-	window.Apps.getWsListener().registerListener(AppEvents.APP_REMOVED, instance.onAppAdded);
+	Apps.getWsListener().registerListener(AppEvents.APP_ADDED, instance.onAppAdded);
+	Apps.getWsListener().registerListener(AppEvents.APP_REMOVED, instance.onAppAdded);
 });
 
 Template.apps.onDestroyed(function() {
 	const instance = this;
 
-	window.Apps.getWsListener().unregisterListener(AppEvents.APP_ADDED, instance.onAppAdded);
-	window.Apps.getWsListener().unregisterListener(AppEvents.APP_REMOVED, instance.onAppAdded);
+	Apps.getWsListener().unregisterListener(AppEvents.APP_ADDED, instance.onAppAdded);
+	Apps.getWsListener().unregisterListener(AppEvents.APP_REMOVED, instance.onAppAdded);
 });
 
 Template.apps.helpers({

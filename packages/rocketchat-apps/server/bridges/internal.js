@@ -1,3 +1,5 @@
+import { RocketChat } from 'meteor/rocketchat:lib';
+
 export class AppInternalBridge {
 	constructor(orch) {
 		this.orch = orch;

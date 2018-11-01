@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 const waitToLoad = function(orch) {
 	return new Promise((resolve) => {

@@ -1,4 +1,5 @@
 import { UserStatusConnection, UserType } from '@rocket.chat/apps-engine/definition/users';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 export class AppUsersConverter {
 	constructor(orch) {

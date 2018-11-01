@@ -4,6 +4,8 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { TAPi18next } from 'meteor/tap:i18n';
+import { RocketChat } from 'meteor/rocketchat:lib';
+import { Apps } from 'meteor/rocketchat:apps';
 import _ from 'underscore';
 import s from 'underscore.string';
 import toastr from 'toastr';
@@ -44,10 +46,10 @@ function getApps(instance) {
 
 			instance.onSettingUpdated({ appId: id });
 
-			window.Apps.getWsListener().unregisterListener(AppEvents.APP_STATUS_CHANGE, instance.onStatusChanged);
-			window.Apps.getWsListener().unregisterListener(AppEvents.APP_SETTING_UPDATED, instance.onSettingUpdated);
-			window.Apps.getWsListener().registerListener(AppEvents.APP_STATUS_CHANGE, instance.onStatusChanged);
-			window.Apps.getWsListener().registerListener(AppEvents.APP_SETTING_UPDATED, instance.onSettingUpdated);
+			Apps.getWsListener().unregisterListener(AppEvents.APP_STATUS_CHANGE, instance.onStatusChanged);
+			Apps.getWsListener().unregisterListener(AppEvents.APP_SETTING_UPDATED, instance.onSettingUpdated);
+			Apps.getWsListener().registerListener(AppEvents.APP_STATUS_CHANGE, instance.onStatusChanged);
+			Apps.getWsListener().registerListener(AppEvents.APP_SETTING_UPDATED, instance.onSettingUpdated);
 		}
 
 		instance.app.set(localApp || remoteApp);
@@ -75,7 +77,7 @@ Template.appManage.onCreated(function() {
 	const id = this.id.get();
 
 	this.getApis = async() => {
-		this.apis.set(await window.Apps.getAppApis(id));
+		this.apis.set(await Apps.getAppApis(id));
 	};
 
 	this.getApis();
@@ -122,8 +124,8 @@ Template.appManage.onCreated(function() {
 Template.apps.onDestroyed(function() {
 	const instance = this;
 
-	window.Apps.getWsListener().unregisterListener(AppEvents.APP_STATUS_CHANGE, instance.onStatusChanged);
-	window.Apps.getWsListener().unregisterListener(AppEvents.APP_SETTING_UPDATED, instance.onSettingUpdated);
+	Apps.getWsListener().unregisterListener(AppEvents.APP_STATUS_CHANGE, instance.onStatusChanged);
+	Apps.getWsListener().unregisterListener(AppEvents.APP_SETTING_UPDATED, instance.onSettingUpdated);
 });
 
 Template.appManage.helpers({

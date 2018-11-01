@@ -1,4 +1,5 @@
 import { SettingType } from '@rocket.chat/apps-engine/definition/settings';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 export class AppSettingsConverter {
 	constructor(orch) {

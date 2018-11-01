@@ -1,4 +1,4 @@
-import { Meteor } from 'meteor/meteor';
+import { RocketChat } from 'meteor/rocketchat:lib';
 import { RealAppBridges } from './bridges';
 import { AppMethods, AppsRestApi, AppServerNotifier } from './communication';
 import { AppMessagesConverter, AppRoomsConverter, AppSettingsConverter, AppUsersConverter } from './converters';
@@ -6,7 +6,7 @@ import { AppsLogsModel, AppsModel, AppsPersistenceModel, AppRealStorage, AppReal
 
 import { AppManager } from '@rocket.chat/apps-engine/server/AppManager';
 
-class AppServerOrchestrator {
+export class AppServerOrchestrator {
 	constructor() {
 		if (RocketChat.models && RocketChat.models.Permissions) {
 			RocketChat.models.Permissions.createOrUpdate('manage-apps', ['admin']);
@@ -106,25 +106,4 @@ RocketChat.settings.addGroup('General', function() {
 			hidden: false,
 		});
 	});
-});
-
-RocketChat.settings.get('Apps_Framework_enabled', (key, isEnabled) => {
-	// In case this gets called before `Meteor.startup`
-	if (!global.Apps) {
-		return;
-	}
-
-	if (isEnabled) {
-		global.Apps.load();
-	} else {
-		global.Apps.unload();
-	}
-});
-
-Meteor.startup(function _appServerOrchestrator() {
-	global.Apps = new AppServerOrchestrator();
-
-	if (global.Apps.isEnabled()) {
-		global.Apps.load();
-	}
 });

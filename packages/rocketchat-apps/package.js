@@ -6,83 +6,87 @@ Package.describe({
 Package.onUse(function(api) {
 	api.use([
 		'ecmascript',
-		'rocketchat:lib',
-		'rocketchat:api',
+		//'rocketchat:lib',
+		// 'rocketchat:api',
 		'templating',
 	]);
+	// api.use('rocketchat:lib', { unordered: true });
 
-	api.use(['reactive-var', 'kadira:flow-router', 'kadira:blaze-layout', 'underscore'], 'client');
+	// api.use(['reactive-var', 'kadira:flow-router', 'kadira:blaze-layout', 'underscore'], 'client');
 
-	api.addFiles('lib/Apps.js', ['client', 'server']);
+	api.mainModule('client/index.js', 'client');
+	api.mainModule('server/index.js', 'server');
 
-	// Storage
-	api.addFiles([
-		'server/storage/apps-logs-model.js',
-		'server/storage/apps-model.js',
-		'server/storage/apps-persistence-model.js',
-		'server/storage/storage.js',
-		'server/storage/index.js',
-	], 'server');
+	// api.addFiles('lib/Apps.js', ['client', 'server']);
 
-	// Bridges
-	api.addFiles([
-		'server/bridges/activation.js',
-		'server/bridges/bridges.js',
-		'server/bridges/commands.js',
-		'server/bridges/environmental.js',
-		'server/bridges/messages.js',
-		'server/bridges/persistence.js',
-		'server/bridges/rooms.js',
-		'server/bridges/settings.js',
-		'server/bridges/users.js',
-		'server/bridges/index.js',
-	], 'server');
+	// // Storage
+	// api.addFiles([
+	// 	'server/storage/apps-logs-model.js',
+	// 	'server/storage/apps-model.js',
+	// 	'server/storage/apps-persistence-model.js',
+	// 	'server/storage/storage.js',
+	// 	'server/storage/index.js',
+	// ], 'server');
 
-	// Communication pieces
-	api.addFiles([
-		'server/communication/methods.js',
-		'server/communication/rest.js',
-		'server/communication/websockets.js',
-		'server/communication/index.js',
-	], 'server');
+	// // Bridges
+	// api.addFiles([
+	// 	'server/bridges/activation.js',
+	// 	'server/bridges/bridges.js',
+	// 	'server/bridges/commands.js',
+	// 	'server/bridges/environmental.js',
+	// 	'server/bridges/messages.js',
+	// 	'server/bridges/persistence.js',
+	// 	'server/bridges/rooms.js',
+	// 	'server/bridges/settings.js',
+	// 	'server/bridges/users.js',
+	// 	'server/bridges/index.js',
+	// ], 'server');
 
-	// RocketChat <-> App Data Converters
-	api.addFiles([
-		'server/converters/messages.js',
-		'server/converters/rooms.js',
-		'server/converters/settings.js',
-		'server/converters/users.js',
-		'server/converters/index.js',
-	], 'server');
+	// // Communication pieces
+	// api.addFiles([
+	// 	'server/communication/methods.js',
+	// 	'server/communication/rest.js',
+	// 	'server/communication/websockets.js',
+	// 	'server/communication/index.js',
+	// ], 'server');
 
-	// Server Orchestrator
-	api.addFiles('server/orchestrator.js', 'server');
+	// // RocketChat <-> App Data Converters
+	// api.addFiles([
+	// 	'server/converters/messages.js',
+	// 	'server/converters/rooms.js',
+	// 	'server/converters/settings.js',
+	// 	'server/converters/users.js',
+	// 	'server/converters/index.js',
+	// ], 'server');
 
-	// Client communication pieces
-	api.addFiles([
-		'client/communication/websockets.js',
-		'client/communication/index.js',
-	], 'client');
+	// // Server Orchestrator
+	// api.addFiles('server/orchestrator.js', 'server');
 
-	// Client Admin Management
-	api.addFiles([
-		'client/admin/apps.html',
-		'client/admin/apps.js',
-		'client/admin/appManage.html',
-		'client/admin/appManage.js',
-		'client/admin/appInstall.html',
-		'client/admin/appInstall.js',
-		'client/admin/appLogs.html',
-		'client/admin/appLogs.js',
-		'client/admin/appWhatIsIt.html',
-		'client/admin/appWhatIsIt.js',
-	], 'client');
+	// // Client communication pieces
+	// api.addFiles([
+	// 	'client/communication/websockets.js',
+	// 	'client/communication/index.js',
+	// ], 'client');
 
-	api.addFiles('assets/stylesheets/apps.css', 'client');
+	// // Client Admin Management
+	// api.addFiles([
+	// 	'client/admin/apps.html',
+	// 	'client/admin/apps.js',
+	// 	'client/admin/appManage.html',
+	// 	'client/admin/appManage.js',
+	// 	'client/admin/appInstall.html',
+	// 	'client/admin/appInstall.js',
+	// 	'client/admin/appLogs.html',
+	// 	'client/admin/appLogs.js',
+	// 	'client/admin/appWhatIsIt.html',
+	// 	'client/admin/appWhatIsIt.js',
+	// ], 'client');
 
-	// Client orchestrator
-	api.addFiles('client/orchestrator.js', 'client');
+	// api.addFiles('assets/stylesheets/apps.css', 'client');
 
-	// Add what this package actually does export (needs updated to the module import style)
-	api.export('Apps');
+	// // Client orchestrator
+	// api.addFiles('client/orchestrator.js', 'client');
+
+	// // Add what this package actually does export (needs updated to the module import style)
+	// api.export('Apps');
 });
