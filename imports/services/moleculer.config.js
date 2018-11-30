@@ -5,7 +5,7 @@ export default {
 	logLevel: 'info',
 	sampleCount: 1,
 	metrics: true,
-	transporter: 'NATS',
+	transporter: process.env.TRANSPORTER || 'nats://localhost:4222',
 	cacher: 'Memory',
 	serializer: 'MsgPack',
 

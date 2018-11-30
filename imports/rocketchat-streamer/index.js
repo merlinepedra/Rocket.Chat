@@ -5,14 +5,16 @@ import { STREAM_NAMES } from './constants';
 
 const roomMessages = Streamer[STREAM_NAMES['room-messages']];
 const notifyUser = Streamer[STREAM_NAMES['notify-user']];
+const notifyLogged = Streamer[STREAM_NAMES['notify-logged']];
 
 const events = EXPERIMENTAL || EXPERIMENTAL_HUB ? {
 	'message'({ message }) {
 		// roomMessages.emitWithoutBroadcast('__my_messages__', record, {});
 		roomMessages.emit(message.rid, message);
 	},
-	'users.*'() {
-		// return Streamer.streams[stream] && Streamer.streams[stream].emit(eventName, ...args);
+	'user.name'({ user }) {
+		return notifyLogged.emit('Users:NameChanged', user);
+		// Streamer.streams[stream] && Streamer.streams[stream].emit(eventName, ...args);
 	},
 	// 'setting'() { },
 	'subscription'({ action, subscription }) {

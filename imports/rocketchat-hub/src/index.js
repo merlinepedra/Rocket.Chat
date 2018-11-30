@@ -25,6 +25,11 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 						const { status, username, _id } = user;
 						return RocketChat.Services.broadcast('userpresence', { action: normalize[operationType], user: { status, username, _id } });
 					}
+
+					if (updatedFields.username || updatedFields.name) {
+						const { name, username, _id } = user;
+						return RocketChat.Services.broadcast('user.name', { action: normalize[operationType], user: { name, username, _id } });
+					}
 					RocketChat.Services.broadcast('user', { action: normalize[operationType], user });
 				// return Streamer.broadcast({ stream: STREA	M_NAMES['room-messages'], eventName: message.rid, args: message });
 				// publishMessage(operationType, message);
