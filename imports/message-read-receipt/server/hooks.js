@@ -12,4 +12,4 @@ RocketChat.callbacks.add('afterSaveMessage', (message, room) => {
 
 	// mark message as read as well
 	ReadReceipt.markMessageAsReadBySender(message, room._id, message.u._id);
-});
+}, RocketChat.callbacks.priority.MEDIUM, 'ReadReceipt');

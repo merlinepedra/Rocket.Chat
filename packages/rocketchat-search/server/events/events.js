@@ -23,7 +23,7 @@ const eventService = new EventService();
  */
 RocketChat.callbacks.add('afterSaveMessage', function(m) {
 	eventService.promoteEvent('message.save', m._id, m);
-});
+}, null, 'rocketchat-search');
 
 RocketChat.callbacks.add('afterDeleteMessage', function(m) {
 	eventService.promoteEvent('message.delete', m._id);

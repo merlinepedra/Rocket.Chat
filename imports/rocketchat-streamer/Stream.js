@@ -112,6 +112,7 @@ export class Stream extends EventEmitter {
 			eventName,
 			args,
 		}, this.subscriptionName);
+		this.internals.emit('emit', eventName, this.listenerCount(eventName), msg);
 		return super.emit(eventName, msg);
 	}
 

@@ -52,7 +52,5 @@ RocketChat.updateMessage = function(message, user, originalMessage) {
 		Apps.getBridges().getListenerBridge().messageEvent('IPostMessageUpdated', message);
 	}
 
-	Meteor.defer(function() {
-		RocketChat.callbacks.run('afterSaveMessage', RocketChat.models.Messages.findOneById(tempid), room, user._id);
-	});
+	RocketChat.callbacks.run('afterSaveMessage', RocketChat.models.Messages.findOneById(tempid), room, user._id);
 };

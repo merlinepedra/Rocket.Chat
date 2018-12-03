@@ -17,7 +17,7 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 			switch (operationType) {
 				case 'insert':
 				case 'update':
-					const { updatedFields } = updateDescription;
+					const { updatedFields } = updateDescription || {};
 					// const message = await Messages.findOne(documentKey);
 					const user = fullDocument;
 					// Streamer.emitWithoutBroadcast('__my_messages__', message, {});
@@ -96,7 +96,8 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 			RocketChat.Services.broadcast('room', { action: normalize[operationType], room });
 			// RocketChat.Notifications.streamUser.__emit(data._id, operationType, data);
 		});
-		Settings.watch([], { fullDocument: 'updateLookup' }).on('change', async({ operationType, documentKey, fullDocument }) => {
+		Settings.watch([], { fullDocument: 'updateLookup' }).on('change', async({ operationType, documentKey, fullDocument, updateDescription }) => {
+			console.log(updateDescription);
 			let setting;
 			switch (operationType) {
 				case 'insert':
