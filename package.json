@@ -175,7 +175,7 @@
 		"mime-db": "^1.37.0",
 		"mime-type": "^3.0.7",
 		"mkdirp": "^0.5.1",
-		"moleculer": "^0.13.4",
+		"moleculer": "^0.13.5",
 		"moment": "^2.22.2",
 		"moment-timezone": "^0.5.23",
 		"msgpack5": "^4.2.1",
