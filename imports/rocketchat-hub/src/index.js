@@ -96,8 +96,22 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 			RocketChat.Services.broadcast('room', { action: normalize[operationType], room });
 			// RocketChat.Notifications.streamUser.__emit(data._id, operationType, data);
 		});
-		Settings.watch([], { fullDocument: 'updateLookup' }).on('change', async({ operationType, documentKey, fullDocument, updateDescription }) => {
-			console.log(updateDescription);
+		Settings.watch([{
+			$addFields: {
+				tmpfields: {
+					$objectToArray: '$updateDescription.updatedFields',
+				},
+			},
+		}, {
+			$match: {
+				'tmpfields.k': {
+					$in: ['value'], // avoid flood the streamer with messages changes (by username change)
+				},
+			},
+		}], { fullDocument: 'updateLookup' }).on('change', async({ operationType, documentKey, fullDocument, updateDescription }) => {
+			if (updateDescription && updateDescription.updatedFields._updatedAt) {
+				return;
+			}
 			let setting;
 			switch (operationType) {
 				case 'insert':
