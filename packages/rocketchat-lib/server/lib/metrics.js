@@ -81,7 +81,6 @@ client.register.setDefaultLabels({
 });
 
 const setPrometheusData = () => {
-	const init = Date.now();
 	const date = new Date();
 
 	client.register.setDefaultLabels({
@@ -131,7 +130,6 @@ const setPrometheusData = () => {
 	RocketChat.metrics.totalPrivateGroupMessages.set(statistics.totalPrivateGroupMessages, date);
 	RocketChat.metrics.totalDirectMessages.set(statistics.totalDirectMessages, date);
 	RocketChat.metrics.totalLivechatMessages.set(statistics.totalLivechatMessages, date);
-	console.log('AAUO->', Date.now() - init);
 };
 
 const app = connect();
