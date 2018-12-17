@@ -18,15 +18,23 @@ export default ({ UserSession, User }) => ({
 	},
 	events: {
 		async '$node.disconnected'({ node }) {
-			const { affectedUsers } = await this.broker.call('presence.removeLostConnections', { nodeID: node.id });
-
-			return affectedUsers.map((uid) => this.afterAll({ params: { uid } })); // TODO wtf?
+			this.removeNode(node._id);
 		},
 	},
 	actions,
 	methods:{
+		async removeNode(nodeID) {
+			const affectedUsers = await this.broker.call('presence.removeLostConnections', { nodeID });
+			return affectedUsers.forEach(({ _id: uid }) => this.broker.call('presence.updateUserPresence', { uid }));
+		},
 		afterAll,
 		userSession() { return UserSession ; },
 		user() { return User ; },
+	},
+	started() {
+		setTimeout(async() => {
+			const affectedUsers = await this.broker.call('presence.removeLostConnections');
+			return affectedUsers.forEach(({ _id: uid }) => this.broker.call('presence.updateUserPresence', { uid }));
+		}, 1000);
 	},
 });

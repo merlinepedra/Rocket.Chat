@@ -1,6 +1,5 @@
 async function getAffectedUsers(model, query) {
 	const list = await model.find(query, { projection: { _id: 1 } }).toArray();
-
 	return list.map(({ _id }) => _id);
 }
 
@@ -46,5 +45,5 @@ export async function removeLostConnections(ctx) {
 
 	await this.userSession().updateMany({}, update);
 
-	return { affectedUsers };
+	return affectedUsers;
 }
