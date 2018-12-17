@@ -18,9 +18,13 @@ export async function removeLostConnections(ctx) {
 		};
 		const affectedUsers = await getAffectedUsers(this.userSession(), query);
 
-		await this.userSession().updateMany(query, update);
+		const { modifiedCount } = await this.userSession().updateMany(query, update);
 
-		return { affectedUsers };
+		if (modifiedCount === 0) {
+			return [];
+		}
+
+		return affectedUsers;
 	}
 
 	const nodes = await ctx.call('$node.list');
@@ -42,8 +46,11 @@ export async function removeLostConnections(ctx) {
 			},
 		},
 	};
+	const { modifiedCount } = await this.userSession().updateMany({}, update);
 
-	await this.userSession().updateMany({}, update);
+	if (modifiedCount === 0) {
+		return [];
+	}
 
 	return affectedUsers;
 }
