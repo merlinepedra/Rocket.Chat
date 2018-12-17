@@ -21,8 +21,7 @@ export async function afterAll(ctx) {
 	const userSession = await this.userSession().findOne(key);
 	const connection = statusDefault === 'offline' || !userSession ? 'offline' : userSession.connections.reduce(_processConnectionStatus, 'offline');
 
-
-	return this.user().updateOne(key, {
+	this.user().updateOne(key, {
 		$set: {
 			status: connection === 'online' ? statusDefault : connection,
 		},

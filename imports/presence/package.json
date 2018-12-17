@@ -12,7 +12,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"moleculer": "^0.13.4",
+		"moleculer": "^0.13.5",
 		"moleculer-prometheus": "^0.2.0",
 		"mongodb": "^3.1.10",
 		"msgpack5": "^4.2.1",

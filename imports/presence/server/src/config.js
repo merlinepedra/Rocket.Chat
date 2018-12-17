@@ -1,3 +1,4 @@
+// More info about options: https://moleculer.services/docs/0.13/broker.html#Broker-options
 export default {
 
 
@@ -51,7 +52,7 @@ export default {
 	},
 
 	bulkhead: {
-		enabled: false,
+		enabled: true,
 		concurrency: 10,
 		// maxQueueSize: 100,
 	},
