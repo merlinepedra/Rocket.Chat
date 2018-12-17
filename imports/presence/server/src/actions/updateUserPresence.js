@@ -25,7 +25,7 @@ export default {
 
 		return this.user().updateOne(key, {
 			$set: {
-				status: connection === 'online' ? statusDefault : connection,
+				status: connection === 'online' ? statusDefault || connection : connection,
 			},
 		});
 	},
