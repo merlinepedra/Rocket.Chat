@@ -6,7 +6,6 @@ import blockUser from './actions/blockUser';
 import checkUsernameAvailability from './actions/checkUsernameAvailability';
 import cleanRoomHistory from './actions/cleanRoomHistory';
 import createRoom from './actions/createRoom';
-import sendMessage from './actions/sendMessage';
 
 // import blockUser from './actions/blockUser';
 // import blockUser from './actions/blockUser';
@@ -24,7 +23,5 @@ export default {
 		...checkUsernameAvailability,
 		...cleanRoomHistory,
 		...createRoom,
-
-		...sendMessage,
 	},
 };
