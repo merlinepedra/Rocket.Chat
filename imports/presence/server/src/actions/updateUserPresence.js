@@ -19,7 +19,7 @@ export default {
 		const user = await this.user().findOne(key);
 		if (!user) { return; }
 
-		const { statusDefault } = user;
+		const { statusDefault = 'online' } = user;
 		const userSession = await this.userSession().findOne(key);
 		const connection = statusDefault === 'offline' || !userSession ? 'offline' : userSession.connections.reduce(_processConnectionStatus, 'offline');
 
