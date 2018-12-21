@@ -16,8 +16,15 @@ export default {
 		},
 	},
 	actions: {
-		sendNotificationOnMessage({ params }) {
-			return this.createJob('sendNotificationOnMessage', params);
+		sendNotificationOnMessage: {
+			bulkhead: {
+				enabled: true,
+				concurrency: 1,
+				maxQueueSize: Infinity,
+			},
+			handler({ params }) {
+				return this.createJob('sendNotificationOnMessage', params);
+			},
 		},
 	},
 	queues: {
