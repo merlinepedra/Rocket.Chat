@@ -5,6 +5,7 @@ import _ from 'underscore';
 import { DDP } from 'meteor/ddp';
 import { DDPCommon } from 'meteor/ddp-common';
 import { Logger, LoggerManager } from 'meteor/rocketchat:logger';
+import { ServiceBroker } from 'moleculer';
 
 process.env.PORT = String(process.env.PORT).trim();
 process.env.INSTANCE_IP = String(process.env.INSTANCE_IP).trim();
@@ -48,72 +49,39 @@ function authorizeConnection(instance) {
 }
 
 function startMatrixBroadcast() {
-	const query = {
-		'extraInformation.port': {
-			$exists: true,
-		},
-	};
+	const broker = new ServiceBroker({
+		transporter: 'TCP',
+	});
 
-	const options = {
-		sort: {
-			_createdAt: -1,
-		},
-	};
+	broker.createService({
+		name: 'broadcast',
+		events: {
+			'broadcast.notify'({ streamName, eventName, args }, sender) {
 
-	return InstanceStatus.getCollection().find(query, options).observe({
-		added(record) {
-			let instance = `${ record.extraInformation.host }:${ record.extraInformation.port }`;
-
-			if (record.extraInformation.port === process.env.PORT && record.extraInformation.host === process.env.INSTANCE_IP) {
-				logger.auth.info('prevent self connect', instance);
-				return;
-			}
-
-			if (record.extraInformation.host === process.env.INSTANCE_IP && RocketChat.isDocker() === false) {
-				instance = `localhost:${ record.extraInformation.port }`;
-			}
-
-			if (connections[instance] && connections[instance].instanceRecord) {
-				if (connections[instance].instanceRecord._createdAt < record._createdAt) {
-					connections[instance].disconnect();
-					delete connections[instance];
-				} else {
+				// skip local broadcasts
+				if (broker.nodeID === sender) {
 					return;
 				}
-			}
 
-			logger.connection.info('connecting in', instance);
+				const instance = Meteor.StreamerCentral.instances[streamName];
+				if (!instance) {
+					return 'stream-not-exists';
+				}
 
-			connections[instance] = DDP.connect(instance, {
-				_dontPrintErrors: LoggerManager.logLevel < 2,
-			});
-
-			connections[instance].instanceRecord = record;
-			connections[instance].instanceId = record._id;
-
-			return connections[instance].onReconnect = function() {
-				return authorizeConnection(instance);
-			};
+				if (instance.serverOnly) {
+					const scope = {};
+					instance.emitWithScope(eventName, scope, ...args);
+				} else {
+					Meteor.StreamerCentral.instances[streamName]._emit(eventName, args);
+				}
+			},
 		},
+	});
 
-		removed(record) {
-			let instance = `${ record.extraInformation.host }:${ record.extraInformation.port }`;
+	broker.start();
 
-			if (record.extraInformation.host === process.env.INSTANCE_IP && RocketChat.isDocker() === false) {
-				instance = `localhost:${ record.extraInformation.port }`;
-			}
-
-			const query = {
-				'extraInformation.host': record.extraInformation.host,
-				'extraInformation.port': record.extraInformation.port,
-			};
-
-			if (connections[instance] && !InstanceStatus.getCollection().findOne(query)) {
-				logger.connection.info('disconnecting from', instance);
-				connections[instance].disconnect();
-				return delete connections[instance];
-			}
-		},
+	Meteor.StreamerCentral.on('broadcast', function(streamName, eventName, args) {
+		broker.broadcast('broadcast.notify', { streamName, eventName, args });
 	});
 }
 
@@ -223,47 +191,6 @@ function startStreamBroadcast() {
 		} else {
 			return startMatrixBroadcast();
 		}
-	});
-
-	function broadcast(streamName, eventName, args/* , userId*/) {
-		const fromInstance = `${ process.env.INSTANCE_IP }:${ process.env.PORT }`;
-		const results = [];
-
-		for (const instance of Object.keys(connections)) {
-			const connection = connections[instance];
-
-			if (connection.status().connected === true) {
-				connection.call('stream', streamName, eventName, args, function(error, response) {
-					if (error) {
-						logger.error('Stream broadcast error', error);
-					}
-
-					switch (response) {
-						case 'self-not-authorized':
-							logger.stream.error((`Stream broadcast from '${ fromInstance }' to '${ connection._stream.endpoint }' with name ${ streamName } to self is not authorized`).red);
-							logger.stream.debug('    -> connection authorized'.red, connection.broadcastAuth);
-							logger.stream.debug('    -> connection status'.red, connection.status());
-							return logger.stream.debug('    -> arguments'.red, eventName, args);
-						case 'not-authorized':
-							logger.stream.error((`Stream broadcast from '${ fromInstance }' to '${ connection._stream.endpoint }' with name ${ streamName } not authorized`).red);
-							logger.stream.debug('    -> connection authorized'.red, connection.broadcastAuth);
-							logger.stream.debug('    -> connection status'.red, connection.status());
-							logger.stream.debug('    -> arguments'.red, eventName, args);
-							return authorizeConnection(instance);
-						case 'stream-not-exists':
-							logger.stream.error((`Stream broadcast from '${ fromInstance }' to '${ connection._stream.endpoint }' with name ${ streamName } does not exist`).red);
-							logger.stream.debug('    -> connection authorized'.red, connection.broadcastAuth);
-							logger.stream.debug('    -> connection status'.red, connection.status());
-							return logger.stream.debug('    -> arguments'.red, eventName, args);
-					}
-				});
-			}
-		}
-		return results;
-	}
-
-	return Meteor.StreamerCentral.on('broadcast', function(streamName, eventName, args) {
-		return broadcast(streamName, eventName, args);
 	});
 }
 
