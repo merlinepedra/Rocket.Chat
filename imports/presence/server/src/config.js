@@ -54,7 +54,7 @@ export default {
 	bulkhead: {
 		enabled: true,
 		concurrency: 10,
-		// maxQueueSize: 100,
+		maxQueueSize: Infinity,
 	},
 
 	validation: true,
