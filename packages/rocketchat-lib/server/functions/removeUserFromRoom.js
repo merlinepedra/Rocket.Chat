@@ -1,5 +1,3 @@
-import { Meteor } from 'meteor/meteor';
-
 RocketChat.removeUserFromRoom = function(rid, user) {
 	const room = RocketChat.models.Rooms.findOneById(rid);
 
@@ -19,9 +17,8 @@ RocketChat.removeUserFromRoom = function(rid, user) {
 
 		RocketChat.models.Subscriptions.removeByRoomIdAndUserId(rid, user._id);
 
-		Meteor.defer(function() {
-			// TODO: CACHE: maybe a queue?
-			RocketChat.callbacks.run('afterLeaveRoom', user, room);
-		});
+		// TODO: CACHE: maybe a queue?
+		RocketChat.callbacks.run('afterLeaveRoom', user, room);
+
 	}
 };

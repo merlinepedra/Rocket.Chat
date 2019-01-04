@@ -61,8 +61,8 @@ function notifyUsersOnMessage(message, room) {
 		}
 
 		highlights.forEach(function(subscription) {
-			if (subscription.userHighlights && messageContainsHighlight(message, subscription.userHighlights)) {
-				if (subscription.u._id !== message.u._id) {
+			if (subscription.u._id !== message.u._id) {
+				if (subscription.userHighlights && messageContainsHighlight(message, subscription.userHighlights)) {
 					highlightsIds.push(subscription.u._id);
 				}
 			}

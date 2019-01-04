@@ -11,8 +11,7 @@ export const setStatus = {
 			return;
 		}
 
-		await this.user().updateOne({ _id: uid, statusDefault: { $ne: status } }, { $set: { statusDefault: status } });
-		return true;
+		return this.user().updateOne({ _id: uid, statusDefault: { $ne: status } }, { $set: { statusDefault: status } });
 	},
 };
 

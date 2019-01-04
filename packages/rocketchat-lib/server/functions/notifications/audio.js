@@ -5,6 +5,7 @@ export function shouldNotifyAudio({
 	hasMentionToAll,
 	hasMentionToHere,
 	isHighlighted,
+	statusConnection,
 	hasMentionToUser,
 	roomType,
 }) {
@@ -12,7 +13,7 @@ export function shouldNotifyAudio({
 		return false;
 	}
 
-	if (status === 'busy' || audioNotifications === 'nothing') {
+	if (statusConnection === 'offline' || status === 'busy' || audioNotifications === 'nothing') {
 		return false;
 	}
 

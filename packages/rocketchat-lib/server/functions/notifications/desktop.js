@@ -44,6 +44,7 @@ export function shouldNotifyDesktop({
 	hasMentionToAll,
 	hasMentionToHere,
 	isHighlighted,
+	statusConnection,
 	hasMentionToUser,
 	roomType,
 }) {
@@ -51,7 +52,7 @@ export function shouldNotifyDesktop({
 		return false;
 	}
 
-	if (status === 'busy' || desktopNotifications === 'nothing') {
+	if (statusConnection === 'offline' || status === 'busy' || desktopNotifications === 'nothing') {
 		return false;
 	}
 

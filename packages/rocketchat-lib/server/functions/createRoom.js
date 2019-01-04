@@ -92,17 +92,17 @@ RocketChat.createRoom = function(type, name, owner, members, readOnly, extraData
 	RocketChat.authz.addUserRoles(owner._id, ['owner'], room._id);
 
 	if (type === 'c') {
-		Meteor.defer(() => {
-			RocketChat.callbacks.run('afterCreateChannel', owner, room);
-		});
+
+		RocketChat.callbacks.run('afterCreateChannel', owner, room);
+
 	} else if (type === 'p') {
-		Meteor.defer(() => {
-			RocketChat.callbacks.run('afterCreatePrivateGroup', owner, room);
-		});
+
+		RocketChat.callbacks.run('afterCreatePrivateGroup', owner, room);
+
 	}
-	Meteor.defer(() => {
-		RocketChat.callbacks.run('afterCreateRoom', owner, room);
-	});
+
+	RocketChat.callbacks.run('afterCreateRoom', owner, room);
+
 
 	if (Apps && Apps.isLoaded()) {
 		// This returns a promise, but it won't mutate anything about the message

@@ -31,10 +31,8 @@ export async function newConnection(ctx) {
 	// 	connection.metadata = metadata;
 	// }
 
-	// make sure closed connections are being created
-	if (!connection.closed) {
-		await (this.userSession().updateOne(query, update, { upsert: true }));
-	}
+	await (this.userSession().updateOne(query, update, { upsert: true }));
+
 
 	return {
 		uid,

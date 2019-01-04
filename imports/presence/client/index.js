@@ -1,5 +1,5 @@
 /* globals UserPresence */
-import { debounce } from '../utils';
+import { debounce } from 'underscore';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 

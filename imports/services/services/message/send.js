@@ -63,8 +63,10 @@ export default {
 					name: 1,
 				},
 			});
-
-			const room = await RocketChat.Services.call('authorization.canAccessRoom', { rid: message.rid, uid: user._id });
+			if (!user) {
+				return;
+			}
+			const room = await RocketChat.Services.call('authorization.canAccessRoom', { rid: message.rid, uid });
 			if (!room) {
 				return false;
 			}

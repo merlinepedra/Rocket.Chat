@@ -15,9 +15,7 @@ Accounts.onLogin((login) => {
 // capture browser close/refresh event
 Meteor.onConnection((connection) => {
 	connection.onClose(async() => {
-		// mark connection as closed so if it drops in the middle of the process it is not even created
-		connection.closed = true;
-		if (connection.presenceUserId !== undefined && connection.presenceUserId !== null) {
+		if (connection.presenceUserId) {
 			broker.call('presence.removeConnection', {
 				uid: connection.presenceUserId,
 				connectionId: connection.id,
@@ -28,7 +26,7 @@ Meteor.onConnection((connection) => {
 
 // capture log out event
 Meteor.publish(null, function() {
-	if (this.userId == null && this.connection.presenceUserId !== undefined && this.connection.presenceUserId !== null) {
+	if (this.userId == null && this.connection.presenceUserId) {
 		broker.call('presence.removeConnection', {
 			uid: this.connection.presenceUserId,
 			connectionId: this.connection.id,
@@ -47,8 +45,8 @@ Meteor.methods({
 		const uid = Meteor.userId();
 		return broker.call('presence.setStatus', { uid, status: 'online' });
 	},
-	// 'UserPresence:away'() {
-	// 	const uid = Meteor.userId();
-	// 	return broker.call('presence.setStatus', { uid, status: 'away', connection: this.connection });
-	// },
+	'UserPresence:away'() {
+		const uid = Meteor.userId();
+		return broker.call('presence.setStatus', { uid, status: 'away', connection: this.connection });
+	},
 });
