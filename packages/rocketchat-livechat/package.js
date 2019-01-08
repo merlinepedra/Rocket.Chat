@@ -32,7 +32,7 @@ Package.onUse(function(api) {
 		'rocketchat:api',
 		'rocketchat:theme',
 		'rocketchat:streamer',
-		'konecty:user-presence',
+		// 'konecty:user-presence',
 		'rocketchat:ui',
 		'kadira:flow-router',
 		'kadira:blaze-layout',

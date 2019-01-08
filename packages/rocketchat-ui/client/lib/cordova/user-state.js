@@ -1,27 +1,27 @@
-import { Meteor } from 'meteor/meteor';
-import { UserPresence } from 'meteor/konecty:user-presence';
-import _ from 'underscore';
+// import { Meteor } from 'meteor/meteor';
+// import { UserPresence } from 'meteor/konecty:user-presence';
+// import _ from 'underscore';
 
-let timer = undefined;
-if (Meteor.isCordova) {
-	document.addEventListener('pause', () => {
-		UserPresence.setAway();
-		readMessage.disable();
+// let timer = undefined;
+// if (Meteor.isCordova) {
+// 	document.addEventListener('pause', () => {
+// 		UserPresence.setAway();
+// 		readMessage.disable();
 
-		// Only disconnect after one minute of being in the background
-		timer = setTimeout(() => {
-			Meteor.disconnect();
-			timer = undefined;
-		}, 60000);
-	}, true);
+// 		// Only disconnect after one minute of being in the background
+// 		timer = setTimeout(() => {
+// 			Meteor.disconnect();
+// 			timer = undefined;
+// 		}, 60000);
+// 	}, true);
 
-	document.addEventListener('resume', () => {
-		if (!_.isUndefined(timer)) {
-			clearTimeout(timer);
-		}
+// 	document.addEventListener('resume', () => {
+// 		if (!_.isUndefined(timer)) {
+// 			clearTimeout(timer);
+// 		}
 
-		Meteor.reconnect();
-		UserPresence.setOnline();
-		readMessage.enable();
-	}, true);
-}
+// 		Meteor.reconnect();
+// 		UserPresence.setOnline();
+// 		readMessage.enable();
+// 	}, true);
+// }
