@@ -1,5 +1,5 @@
-// /* globals UserPresenceMonitor */
 import { Meteor } from 'meteor/meteor';
+import { RocketChat } from 'meteor/rocketchat:lib';
 
 let agentsHandler;
 // let monitorAgents = false;
