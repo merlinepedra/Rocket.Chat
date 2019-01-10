@@ -1,7 +1,8 @@
 import { Base } from './_Base';
 import { Match } from 'meteor/check';
 import Rooms from './Rooms';
-import { getDefaultSubscriptionPref } from 'meteor/rocketchat:utils';
+import Users from './Users';
+import _ from 'underscore';
 
 export class Subscriptions extends Base {
 	constructor(...args) {
@@ -28,6 +29,78 @@ export class Subscriptions extends Base {
 		this.tryEnsureIndex({ 'userHighlights.0': 1 }, { sparse: 1 });
 	}
 
+	roleBaseQuery(userId, scope) {
+		if (scope == null) {
+			return;
+		}
+
+		const query = { 'u._id': userId };
+		if (!_.isUndefined(scope)) {
+			query.rid = scope;
+		}
+		return query;
+	}
+
+	findByRidWithoutE2EKey(rid, options) {
+		const query = {
+			rid,
+			E2EKey: {
+				$exists: false,
+			},
+		};
+
+		return this.find(query, options);
+	}
+
+	resetUserE2EKey(userId) {
+		this.update({ 'u._id': userId }, {
+			$unset: {
+				E2EKey: '',
+			},
+		}, {
+			multi: true,
+		});
+	}
+
+	findByUserIdWithoutE2E(userId, options) {
+		const query = {
+			'u._id': userId,
+			E2EKey: {
+				$exists: false,
+			},
+		};
+
+		return this.find(query, options);
+	}
+
+	updateGroupE2EKey(_id, key) {
+		const query = { _id };
+		const update = { $set: { E2EKey: key } };
+		this.update(query, update);
+		return this.findOne({ _id });
+	}
+
+	findUsersInRoles(roles, scope, options) {
+		roles = [].concat(roles);
+
+		const query = {
+			roles: { $in: roles },
+		};
+
+		if (scope) {
+			query.rid = scope;
+		}
+
+		const subscriptions = this.find(query).fetch();
+
+		const users = _.compact(_.map(subscriptions, function(subscription) {
+			if ('undefined' !== typeof subscription.u && 'undefined' !== typeof subscription.u._id) {
+				return subscription.u._id;
+			}
+		}));
+
+		return Users.find({ _id: { $in: users } }, options);
+	}
 
 	// FIND ONE
 	findOneByRoomIdAndUserId(roomId, userId, options) {
@@ -773,7 +846,11 @@ export class Subscriptions extends Base {
 	}
 
 	// INSERT
-	createWithRoomAndUser(room, user, extraData) {
+	async createWithRoomAndUser(room, user, extraData) {
+		if (!this.getDefaultSubscriptionPref) {
+			const Utils = await import('meteor/rocketchat:utils');
+			this.getDefaultSubscriptionPref = Utils.getDefaultSubscriptionPref;
+		}
 		const subscription = {
 			open: false,
 			alert: false,
@@ -791,7 +868,7 @@ export class Subscriptions extends Base {
 				username: user.username,
 				name: user.name,
 			},
-			...getDefaultSubscriptionPref(user),
+			...this.getDefaultSubscriptionPref(user),
 			...extraData,
 		};
 

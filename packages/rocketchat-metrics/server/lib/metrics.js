@@ -1,7 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { settings } from 'meteor/rocketchat:settings';
-import { Statistics } from 'meteor/rocketchat:models';
-import { Info } from 'meteor/rocketchat:utils';
 import { Migrations } from 'meteor/rocketchat:migrations';
 import client from 'prom-client';
 import connect from 'connect';
@@ -11,6 +8,7 @@ import _ from 'underscore';
 client.collectDefaultMetrics();
 
 export const metrics = {};
+let Info;
 
 // one sample metrics only - a counter
 
@@ -78,13 +76,17 @@ metrics.totalPrivateGroupMessages = new client.Gauge({ name: 'rocketchat_private
 metrics.totalDirectMessages = new client.Gauge({ name: 'rocketchat_direct_messages_total', help: 'total of messages in direct rooms' });
 metrics.totalLivechatMessages = new client.Gauge({ name: 'rocketchat_livechat_messages_total', help: 'total of messages in livechat rooms' });
 
-client.register.setDefaultLabels({
-	uniqueId: settings.get('uniqueID'),
-	siteUrl: settings.get('Site_Url'),
-});
-
-const setPrometheusData = () => {
+const setPrometheusData = async() => {
+	const { settings } = await import('meteor/rocketchat:settings');
+	client.register.setDefaultLabels({
+		uniqueId: settings.get('uniqueID'),
+		siteUrl: settings.get('Site_Url'),
+	});
 	const date = new Date();
+	if (!Info) {
+		const Utils = await import('meteor/rocketchat:utils');
+		Info = Utils.Info;
+	}
 
 	client.register.setDefaultLabels({
 		unique_id: settings.get('uniqueID'),
@@ -97,6 +99,7 @@ const setPrometheusData = () => {
 	metrics.ddpSessions.set(sessions.length, date);
 	metrics.ddpAthenticatedSessions.set(authenticatedSessions.length, date);
 	metrics.ddpConnectedUsers.set(_.unique(authenticatedSessions.map((s) => s.userId)).length, date);
+	const { Statistics } = await import('meteor/rocketchat:models');
 
 	if (!Statistics) {
 		return;
@@ -163,10 +166,10 @@ app.use('/', (req, res) => {
 const server = http.createServer(app);
 
 let timer;
-const updatePrometheusConfig = () => {
+const updatePrometheusConfig = async() => {
+	const { settings } = await import('meteor/rocketchat:settings');
 	const port = settings.get('Prometheus_Port');
 	const enabled = settings.get('Prometheus_Enabled');
-
 	if (port == null || enabled == null) {
 		return;
 	}
@@ -183,5 +186,8 @@ const updatePrometheusConfig = () => {
 	}
 };
 
-settings.get('Prometheus_Enabled', updatePrometheusConfig);
-settings.get('Prometheus_Port', updatePrometheusConfig);
+Meteor.startup(async() => {
+	const { settings } = await import('meteor/rocketchat:settings');
+	settings.get('Prometheus_Enabled', updatePrometheusConfig);
+	settings.get('Prometheus_Port', updatePrometheusConfig);
+});
