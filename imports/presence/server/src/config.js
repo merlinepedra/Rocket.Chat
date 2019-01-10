@@ -6,12 +6,12 @@ export default {
 	sampleCount: 1,
 	metrics: true,
 	transporter: process.env.TRANSPORTER || 'nats://localhost:4222',
-	cacher: 'Memory',
+	cacher: process.env.CACHE || 'Memory',
 	serializer: 'MsgPack',
 
 	registry: {
-		strategy: 'Random',
-		preferLocal: false,
+		strategy: process.env.BALANCE_STRATEGY || 'Random',
+		preferLocal: process.env.BALANCE_PREFER_LOCAL || false,
 	},
 
 	namespace: '',

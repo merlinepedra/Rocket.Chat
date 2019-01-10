@@ -119,7 +119,7 @@ function createRedisQueue() {
 			 * @returns {Job}
 			 */
 			createJob(name, payload) {
-				return this.getQueue(name).create(msgpack.encode(payload)).save();
+				return this.getQueue(name).create(name, msgpack.encode(payload)).save();
 			},
 
 			/**
@@ -138,16 +138,18 @@ function createRedisQueue() {
 		},
 
 		/**
-		 * Service created lifecycle event handler
+		 * Service created lifecycle event handler0
 		 */
 		created() {
 			this.$queues = {};
 
 			if (this.schema.queues) {
 				Object.entries(this.schema.queues).forEach(([name, fn]) => {
-					this.getQueue(name).process(name, async(payload, done) => {
+					console.log(name);
+					this.getQueue(name).process(name, async({ data }, done) => {
 						try {
-							await fn(msgpack.encode(payload));
+							console.log(msgpack.decode(data));
+							await fn(this, msgpack.decode(data));
 							done();
 						} catch (error) {
 							done(error);
