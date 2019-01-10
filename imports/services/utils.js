@@ -145,10 +145,8 @@ function createRedisQueue() {
 
 			if (this.schema.queues) {
 				Object.entries(this.schema.queues).forEach(([name, fn]) => {
-					console.log(name);
 					this.getQueue(name).process(name, async({ data }, done) => {
 						try {
-							console.log(msgpack.decode(data));
 							await fn(this, msgpack.decode(data));
 							done();
 						} catch (error) {
