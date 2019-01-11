@@ -176,7 +176,6 @@ const project = {
 const filter = {
 	$match: {
 		'u.active': true,
-		'u.statusConnection': { $ne: 'online' },
 	},
 };
 const lookup = {
