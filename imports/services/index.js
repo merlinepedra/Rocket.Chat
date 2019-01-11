@@ -16,7 +16,12 @@ import config from './moleculer.config';
 
 const broker = new ServiceBroker(config);
 
-broker.createService(Notifications);
+const { EXPERIMENTAL_DISABLE_NOTIFICATION, EXPERIMENTAL_IS_HUB, EXPERIMENTAL_PRESENCE_SERVICE } = process.env;
+
+if (!EXPERIMENTAL_DISABLE_NOTIFICATION) {
+	broker.createService(Notifications);
+}
+
 broker.createService(Authorization);
 broker.createService(User);
 broker.createService(Settings);
@@ -32,7 +37,6 @@ broker.createService(Streamer);
 RocketChat.Services = broker;
 
 Meteor.startup(() => {
-	const { EXPERIMENTAL_IS_HUB, EXPERIMENTAL_PRESENCE_SERVICE } = process.env;
 	if (EXPERIMENTAL_IS_HUB) {
 		broker.createService(require('../rocketchat-hub/').default);
 	}
