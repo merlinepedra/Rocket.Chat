@@ -1,11 +1,14 @@
 import { Meteor } from 'meteor/meteor';
 
+const cache = process.env.TEST_MODE === 'true' ? {} : {
+	type: 'memory',
+	keys: ['rid', 'uid', 'extraData'],
+	ttl: 5,
+};
+
 export default {
 	canAccessRoom: {
-		cache: {
-			keys: ['rid', 'uid', 'extraData'],
-			ttl: 5,
-		},
+		...cache,
 		params: {
 			rid: 'string',
 			uid: 'string',

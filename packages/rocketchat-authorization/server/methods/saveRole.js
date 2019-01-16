@@ -3,6 +3,6 @@ import { RocketChat } from 'meteor/rocketchat:lib';
 
 Meteor.methods({
 	'authorization:saveRole'(roleData) {
-		return RocketChat.Services.call('authorization.saveRole', { uid: Meteor.userId(), roleData });
+		return RocketChat.Services.call('authorization.saveRole', { uid: Meteor.userId(), ...roleData });
 	},
 });

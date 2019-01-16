@@ -19,11 +19,11 @@ export default {
 
 			// Can add to any room you're in, with permission, otherwise need specific room type permission
 			let canAddUser = false;
-			if (userInRoom && await RocketChat.call('authorization.hasPermission', { uid, permission: 'add-user-to-joined-room', scope: room._id })) {
+			if (userInRoom && await RocketChat.Services.call('authorization.hasPermission', { uid, permission: 'add-user-to-joined-room', scope: room._id })) {
 				canAddUser = true;
-			} else if (room.t === 'c' && await RocketChat.call('authorization.hasPermission', { uid, permission: 'add-user-to-any-c-room' })) {
+			} else if (room.t === 'c' && await RocketChat.Services.call('authorization.hasPermission', { uid, permission: 'add-user-to-any-c-room' })) {
 				canAddUser = true;
-			} else if (room.t === 'p' && await RocketChat.call('authorization.hasPermission', { uid, permission: 'add-user-to-any-p-room' })) {
+			} else if (room.t === 'p' && await RocketChat.Services.call('authorization.hasPermission', { uid, permission: 'add-user-to-any-p-room' })) {
 				canAddUser = true;
 			}
 

@@ -10,7 +10,7 @@ export default {
 		},
 		async handler(ctx) {
 			const { uid, roleName, permission } = ctx.params;
-			if (!uid || !RocketChat.authz.hasPermission(uid, 'access-permissions')) {
+			if (!uid || !(await ctx.call('authorization.hasPermission', { uid, permission: 'access-permissions' }))) {
 				throw new Meteor.Error('error-action-not-allowed', 'Accessing permissions is not allowed', {
 					method: 'authorization:removeRoleFromPermission',
 					action: 'Accessing_permissions',

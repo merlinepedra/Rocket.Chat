@@ -5,7 +5,7 @@ export default {
 	async addOAuthService(ctx) {
 		const { uid, name } = ctx.params;
 
-		if (await ctx.call('autorization.hasPermission', { uid, permission: 'add-oauth-service' }) !== true) {
+		if (await ctx.call('authorization.hasPermission', { uid, permission: 'add-oauth-service' }) !== true) {
 			throw new Meteor.Error('error-action-not-allowed', 'Adding OAuth Services is not allowed', { method: 'addOAuthService', action: 'Adding_OAuth_Services' });
 		}
 

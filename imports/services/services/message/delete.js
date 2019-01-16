@@ -19,8 +19,8 @@ export default {
 				action: 'Delete_message',
 			});
 		}
-		const forceDelete = await RocketChat.Services.call('authorization.hasPermission', { uid, permossion: 'force-delete-message', scope: message.rid });
-		const hasPermission = await RocketChat.Services.call('authorization.hasPermission', { uid, permossion: 'delete-message', scope: message.rid });
+		const forceDelete = await ctx.call('authorization.hasPermission', { uid, permission: 'force-delete-message', scope: message.rid });
+		const hasPermission = await ctx.call('authorization.hasPermission', { uid, permission: 'delete-message', scope: message.rid });
 		const deleteAllowed = RocketChat.settings.get('Message_AllowDeleting');
 		const deleteOwn = message && message.u && message.u._id === uid;
 		if (!(hasPermission || (deleteAllowed && deleteOwn)) && !(forceDelete)) {
@@ -45,6 +45,6 @@ export default {
 				});
 			}
 		}
-		return RocketChat.Services.call('messages.remove', { message, uid });
+		return ctx.call('message.remove', { message, uid });
 	},
 };
