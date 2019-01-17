@@ -66,7 +66,7 @@ export default {
 			if (!user) {
 				return;
 			}
-			const room = await RocketChat.Services.call('authorization.canAccessRoom', { rid: message.rid, uid });
+			const room = await ctx.call('authorization.canAccessRoom', { rid: message.rid, uid });
 			if (!room) {
 				return false;
 			}

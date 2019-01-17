@@ -6,13 +6,13 @@ export default {
 	addUserToRole: {
 		params: {
 			uid: 'string',
-			roleNames: ['string'],
+			roleName: ['string'],
 			username: 'string',
-			scope: 'string',
+			// scope: 'string',
 		},
-		handler(ctx) {
+		async handler(ctx) {
 			const { uid, roleName, username, scope } = ctx.params;
-			if (!uid || !RocketChat.authz.hasPermission(uid, 'access-permissions')) {
+			if (!uid || !(await ctx.call('authorization.hasPermission', { uid, permission: 'access-permissions' }))) {
 				throw new Meteor.Error('error-action-not-allowed', 'Accessing permissions is not allowed', {
 					method: 'authorization:addUserToRole',
 					action: 'Accessing_permissions',
@@ -25,7 +25,7 @@ export default {
 				});
 			}
 
-			if (roleName === 'admin' && !RocketChat.authz.hasPermission(uid, 'assign-admin-role')) {
+			if (roleName === 'admin' && !(await ctx.call('authorization.hasPermission', { uid, permission: 'assign-admin-role' }))) {
 				throw new Meteor.Error('error-action-not-allowed', 'Assigning admin is not allowed', {
 					method: 'authorization:addUserToRole',
 					action: 'Assign_admin',

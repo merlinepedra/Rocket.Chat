@@ -9,6 +9,6 @@ Meteor.methods({
 			throw new Meteor.Error('error-invalid-user', 'Invalid user', { method: 'archiveRoom' });
 		}
 
-		return RocketChat.Services.call('core.archiveRoom', { uid, rid });
+		return RocketChat.Services.call('core.archiveRoom', { uid, rid });
 	},
 });

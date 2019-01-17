@@ -9,7 +9,7 @@ export default {
 		},
 		async handler(ctx) {
 			const { uid, roleName } = ctx.params;
-			if (!uid || !(await ctx.call('hasPermission', { uid, permission: 'access-permissions' }))) {
+			if (!uid || !(await ctx.call('authorization.hasPermission', { uid, permission: 'access-permissions' }))) {
 				throw new Meteor.Error('error-action-not-allowed', 'Accessing permissions is not allowed', {
 					method: 'authorization:deleteRole',
 					action: 'Accessing_permissions',

@@ -8,6 +8,6 @@ Meteor.methods({
 			throw new Meteor.Error('not-authorized', 'Not Authorized', { method: 'personalAccessTokens:removeToken' });
 		}
 
-		RocketChat.Services.call('personalAccessTokens.removeToken', { tokenName, uid });
+		return RocketChat.Services.call('personalAccessTokens.removeToken', { tokenName, uid });
 	},
 });

@@ -93,7 +93,7 @@ Meteor.methods({
 			RocketChat.callbacks.run('setReaction', messageId, reaction);
 		}
 
-		msgStream.emit(message.rid, message);
+		RocketChat.Notifications.msgStream.emit(message.rid, message);
 
 		return;
 	},

@@ -1,10 +1,12 @@
+const cache = process.env.TEST_MODE === 'true' ? {} : {
+	type: 'memory',
+	keys: ['permission', 'uid', 'scope'],
+	ttl: 5,
+};
+
 export default {
 	hasPermission: {
-		cache: {
-			type: 'memory',
-			keys: ['permission', 'uid', 'scope'],
-			ttl: 5,
-		},
+		...cache,
 		params: {
 			permission: 'string',
 			uid: 'string',
@@ -16,11 +18,7 @@ export default {
 		},
 	},
 	hasPermissions: {
-		cache: {
-			type: 'memory',
-			keys: ['permissions', 'uid', 'scope'],
-			ttl: 5,
-		},
+		...cache,
 		params: {
 			permissions: ['string'],
 			uid: 'string',

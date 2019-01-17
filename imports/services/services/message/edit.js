@@ -13,7 +13,7 @@ export default {
 		const editAllowed = RocketChat.settings.get('Message_AllowEditing');
 		const editOwn = originalMessage.u && originalMessage.u._id === uid;
 
-		if ((!editAllowed || !editOwn) && ! await RocketChat.Services.call('autorization.hasPermission', { uid, permission: 'edit-message', scope: message.rid })) {
+		if ((!editAllowed || !editOwn) && ! await RocketChat.Services.call('authorization.hasPermission', { uid, permission: 'edit-message', scope: message.rid })) {
 			throw new Meteor.Error('error-action-not-allowed', 'Message editing not allowed', { method: 'updateMessage', action: 'Message_editing' });
 		}
 

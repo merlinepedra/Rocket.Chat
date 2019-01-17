@@ -6,14 +6,14 @@ export default {
 		params: {
 			uid: 'string',
 			name: 'string',
-			scope: 'string',
-			description: 'string',
+			// scope: 'string',
+			// description: 'string',
 		},
 		async handler(ctx) {
 			const { uid, name, description } = ctx.params;
 			let { scope } = ctx.params;
 
-			if (!uid || !(await ctx.call('hasPermission', { uid, permission: 'access-permissions' }))) {
+			if (!uid || !(await ctx.call('authorization.hasPermission', { uid, permission: 'access-permissions' }))) {
 				throw new Meteor.Error('error-action-not-allowed', 'Accessing permissions is not allowed', {
 					method: 'authorization:saveRole',
 					action: 'Accessing_permissions',
