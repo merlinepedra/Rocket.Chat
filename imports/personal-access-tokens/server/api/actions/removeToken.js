@@ -1,9 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-// import { Errors } from 'moleculer';
-
-// const { MoleculerError } = Errors;
-
-// console.log('MoleculerError ->', MoleculerError);
 
 export default {
 	async removeToken(ctx) {

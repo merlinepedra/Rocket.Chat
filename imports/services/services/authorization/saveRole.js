@@ -6,7 +6,7 @@ export default {
 		params: {
 			uid: 'string',
 			name: 'string',
-			scope: 'string',
+			// scope: 'string',
 			// description: 'string',
 		},
 		async handler(ctx) {
