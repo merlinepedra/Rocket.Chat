@@ -163,5 +163,5 @@ function createRedisQueue() {
 	};
 }
 
-const USE_REDIS = process.env.EXPERIMENTAL_REDIS_QUEUES;
-export const queues = () => (USE_REDIS ? createRedisQueue() : createMemoryQueue());
+const { QUEUE_TYPE = 'memory' } = process.env;
+export const queues = () => (QUEUE_TYPE.toLowerCase() === 'redis' ? createRedisQueue() : createMemoryQueue());

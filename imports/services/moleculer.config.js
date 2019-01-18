@@ -5,12 +5,12 @@ export default {
 	logLevel: 'info',
 	sampleCount: 1,
 	metrics: true,
-	transporter: process.env.TRANSPORTER || 'nats://localhost:4222',
+	transporter: process.env.TRANSPORTER,
 	cacher: process.env.CACHE || 'Memory',
 	serializer: 'MsgPack',
 
 	registry: {
-		strategy: process.env.BALANCE_STRATEGY || 'Random',
+		strategy: process.env.BALANCE_STRATEGY || 'CpuUsage',
 		preferLocal: process.env.BALANCE_PREFER_LOCAL || false,
 	},
 

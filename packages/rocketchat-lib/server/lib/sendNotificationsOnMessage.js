@@ -313,7 +313,6 @@ async function sendAllNotifications(message, room) {
 		).then((users) => {
 			users.forEach((userId) => {
 				const subscription = RocketChat.models.Subscriptions.findOneByRoomIdAndUserId(room._id, userId);
-
 				sendNotification({
 					subscription,
 					sender,
@@ -333,12 +332,6 @@ async function sendAllNotifications(message, room) {
 	return message;
 }
 
-if (process.env.EXPERIMENTAL || process.env.EXPERIMENTAL_QUEUES) {
-	RocketChat.callbacks.add('afterSaveMessage', (message, room) => {
-		RocketChat.Services.emit('message.sent', { message, room });
-	}, RocketChat.callbacks.priority.LOW, 'sendNotificationsOnMessage_test');
-} else {
-	RocketChat.callbacks.add('afterSaveMessage', sendAllNotifications, RocketChat.callbacks.priority.LOW, 'sendNotificationsOnMessage');
-}
+RocketChat.callbacks.add('afterSaveMessage', (message, room) => RocketChat.Services.emit('message.sent', { message, room }), RocketChat.callbacks.priority.LOW, 'sendNotificationsOnMessage');
 
 export { sendNotification, sendAllNotifications };

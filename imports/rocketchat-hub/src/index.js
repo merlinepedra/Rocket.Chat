@@ -6,12 +6,14 @@ const normalize = {
 	remove: 'removed',
 };
 
-export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => ({
+export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash, local = false }) => ({
 	name: 'hub',
 	created() {
 		const RocketChat = {
 			Services: this.broker,
 		};
+
+		const method = local ? 'broadcastLocal' : 'broadcast';
 
 		Users.watch([], { fullDocument: 'updateLookup' }).on('change', async function({ operationType, /* documentKey,*/ fullDocument/* , oplog*/, updateDescription }) {
 			switch (operationType) {
@@ -23,15 +25,15 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 					// Streamer.emitWithoutBroadcast('__my_messages__', message, {});
 					if (updatedFields.status) {
 						const { status, username, _id } = user;
-						return RocketChat.Services.broadcast('userpresence', { action: normalize[operationType], user: { status, username, _id } });
+						return RocketChat.Services[method]('userpresence', { action: normalize[operationType], user: { status, username, _id } });
 					}
 
 					if (updatedFields.username || updatedFields.name) {
 						const { name, username, _id } = user;
-						return RocketChat.Services.broadcast('user.name', { action: normalize[operationType], user: { name, username, _id } });
+						return RocketChat.Services[method]('user.name', { action: normalize[operationType], user: { name, username, _id } });
 					}
-					RocketChat.Services.broadcast('user', { action: normalize[operationType], user });
-				// return Streamer.broadcast({ stream: STREA	M_NAMES['room-messages'], eventName: message.rid, args: message });
+					RocketChat.Services[method]('user', { action: normalize[operationType], user });
+				// return Streamer[method]({ stream: STREA	M_NAMES['room-messages'], eventName: message.rid, args: message });
 				// publishMessage(operationType, message);
 			}
 		});
@@ -53,8 +55,8 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 					// const message = await Messages.findOne(documentKey);
 					const message = fullDocument;
 					// Streamer.emitWithoutBroadcast('__my_messages__', message, {});
-					RocketChat.Services.broadcast('message', { action: normalize[operationType], message });
-						// return Streamer.broadcast({ stream: STREA	M_NAMES['room-messages'], eventName: message.rid, args: message });
+					RocketChat.Services[method]('message', { action: normalize[operationType], message });
+						// return Streamer[method]({ stream: STREA	M_NAMES['room-messages'], eventName: message.rid, args: message });
 						// publishMessage(operationType, message);
 			}
 		});
@@ -75,7 +77,7 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 					return;
 			}
 
-			RocketChat.Services.broadcast('subscription', { action: normalize[operationType], subscription });
+			RocketChat.Services[method]('subscription', { action: normalize[operationType], subscription });
 		});
 		Rooms.watch([], { fullDocument: 'updateLookup' }).on('change', async({ operationType, documentKey, fullDocument }) => {
 			let room;
@@ -93,7 +95,7 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 					return;
 			}
 			// console.log(room, documentKey);
-			RocketChat.Services.broadcast('room', { action: normalize[operationType], room });
+			RocketChat.Services[method]('room', { action: normalize[operationType], room });
 			// RocketChat.Notifications.streamUser.__emit(data._id, operationType, data);
 		});
 		Settings.watch([{
@@ -126,7 +128,7 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash }) => (
 					return;
 			}
 
-			RocketChat.Services.broadcast('setting', { action: normalize[operationType], setting });
+			RocketChat.Services[method]('setting', { action: normalize[operationType], setting });
 			// RocketChat.Notifications.streamUser.__emit(data._id, operationType, data);
 		});
 	},

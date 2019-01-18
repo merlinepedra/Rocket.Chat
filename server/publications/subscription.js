@@ -67,24 +67,3 @@ Meteor.methods({
 		return records;
 	},
 });
-
-
-const { EXPERIMENTAL_HUB, EXPERIMENTAL } = process.env;
-if (!EXPERIMENTAL_HUB && !EXPERIMENTAL) {
-	RocketChat.models.Subscriptions.on('change', ({ clientAction, id, data }) => {
-		switch (clientAction) {
-			case 'inserted':
-			case 'updated':
-			// Override data cuz we do not publish all fields
-				data = RocketChat.models.Subscriptions.findOneById(id, { fields });
-				break;
-
-			case 'removed':
-				data = RocketChat.models.Subscriptions.trashFindOneById(id, { fields: { u: 1, rid: 1 } });
-				break;
-		}
-
-		RocketChat.Notifications.streamUser.internals.emit(data.u._id, clientAction, data);
-		RocketChat.Notifications.notifyUserInThisInstance(data.u._id, 'subscriptions-changed', clientAction, data);
-	});
-}
