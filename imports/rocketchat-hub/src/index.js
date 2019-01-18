@@ -23,14 +23,16 @@ export default ({ Users, Messages, Subscriptions, Rooms, Settings, Trash, local 
 					// const message = await Messages.findOne(documentKey);
 					const user = fullDocument;
 					// Streamer.emitWithoutBroadcast('__my_messages__', message, {});
-					if (updatedFields.status) {
-						const { status, username, _id } = user;
-						return RocketChat.Services[method]('userpresence', { action: normalize[operationType], user: { status, username, _id } });
-					}
+					if (updatedFields) {
+						if (updatedFields.status) {
+							const { status, username, _id } = user;
+							return RocketChat.Services[method]('userpresence', { action: normalize[operationType], user: { status, username, _id } });
+						}
 
-					if (updatedFields.username || updatedFields.name) {
-						const { name, username, _id } = user;
-						return RocketChat.Services[method]('user.name', { action: normalize[operationType], user: { name, username, _id } });
+						if (updatedFields.username || updatedFields.name) {
+							const { name, username, _id } = user;
+							return RocketChat.Services[method]('user.name', { action: normalize[operationType], user: { name, username, _id } });
+						}
 					}
 					RocketChat.Services[method]('user', { action: normalize[operationType], user });
 				// return Streamer[method]({ stream: STREA	M_NAMES['room-messages'], eventName: message.rid, args: message });
