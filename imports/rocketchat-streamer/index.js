@@ -7,17 +7,6 @@ const notifyUser = Streamer[STREAM_NAMES['notify-user']];
 const notifyLogged = Streamer[STREAM_NAMES['notify-logged']];
 
 const events = {
-
-	'userpresence'({ user }) {
-		const STATUS = {
-			offline: 0,
-			online: 1,
-			away: 2,
-			busy: 3,
-		};
-
-		RocketChat.Notifications.presence.emit(user._id, STATUS[user.status]);
-	},
 	'message'({ message }) {
 		// roomMessages.emitWithoutBroadcast('__my_messages__', record, {});
 		roomMessages.emit(message.rid, message);
