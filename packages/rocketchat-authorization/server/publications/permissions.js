@@ -6,21 +6,22 @@ Meteor.methods({
 		this.unblock();
 		// TODO: should we return this for non logged users?
 		// TODO: we could cache this collection
-
-		const records = RocketChat.models.Permissions.find({
-			_updatedAt: {
-				$gt: updatedAt,
+		const update = RocketChat.models.Permissions.find({
+			...updatedAt && {
+				_updatedAt: {
+					$gt: updatedAt,
+				},
 			},
 		}).fetch();
 
 		if (updatedAt instanceof Date) {
 			return {
-				update: records.filter((record) => record._updatedAt > updatedAt),
+				update,
 				remove: RocketChat.models.Permissions.trashFindDeletedAfter(updatedAt, {}, { fields: { _id: 1, _deletedAt: 1 } }).fetch(),
 			};
 		}
 
-		return records;
+		return update;
 	},
 });
 
