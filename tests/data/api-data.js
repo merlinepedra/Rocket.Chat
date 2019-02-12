@@ -55,3 +55,29 @@ export function getCredentials(done = function() {}) {
 		.end(done);
 }
 
+const methods = ['get', 'post', 'delete', 'put'];
+let lastRequest;
+
+methods.forEach((method) => {
+	const original = request[method];
+	request[method] = function(...args) {
+		const result = original(...args);
+		result.expect((res) => {
+			lastRequest = res;
+			return true;
+		});
+		return result;
+	};
+});
+
+const oit = it;
+it = function(description, fn) {
+	lastRequest = undefined;
+	return oit(description, fn);
+};
+
+afterEach(function() {
+	if (this.currentTest.state === 'failed' && lastRequest) {
+		console.log(lastRequest.body);
+	}
+});
