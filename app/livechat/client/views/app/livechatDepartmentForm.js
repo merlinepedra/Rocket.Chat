@@ -54,7 +54,7 @@ Template.livechatDepartmentForm.events({
 			return toastr.error(t('Please_fill_a_name'));
 		}
 
-		if (name.trim() === '' && showOnOfflineForm === '1') {
+		if (email.trim() === '' && showOnOfflineForm === '1') {
 			return toastr.error(t('Please_fill_an_email'));
 		}
 
