@@ -762,6 +762,8 @@ export const Livechat = {
 			name: String,
 			description: Match.Optional(String),
 			showOnRegistration: Boolean,
+			email: String,
+			showOnOfflineForm: Boolean,
 		});
 
 		check(departmentAgents, [
