@@ -12,16 +12,27 @@ class AutoTranslate {
 	constructor() {
 		this.languages = [];
 		this.enabled = settings.get('AutoTranslate_Enabled');
-		this.apiKey = settings.get('AutoTranslate_GoogleAPIKey');
+		this.engine = settings.get('AutoTranslate_Engine') || 'Google';
 		this.supportedLanguages = {};
 		callbacks.add('afterSaveMessage', this.translateMessage.bind(this), callbacks.priority.MEDIUM, 'AutoTranslate');
-
 		settings.get('AutoTranslate_Enabled', (key, value) => {
 			this.enabled = value;
 		});
-		settings.get('AutoTranslate_GoogleAPIKey', (key, value) => {
-			this.apiKey = value;
-		});
+		switch (this.engine) {
+			case 'DeepL':
+				this.apiKey = settings.get('AutoTranslate_DeepLAPIKey');
+				settings.get('AutoTranslate_DeepLAPIKey', (key, value) => {
+					this.apiKey = value;
+				});
+				break;
+			case 'Google':
+			default:
+				this.apiKey = settings.get('AutoTranslate_GoogleAPIKey');
+				settings.get('AutoTranslate_GoogleAPIKey', (key, value) => {
+					this.apiKey = value;
+				});
+				break;
+		}
 	}
 
 	tokenize(message) {
@@ -35,10 +46,14 @@ class AutoTranslate {
 		return message;
 	}
 
+	getNoTranslateToken(count) {
+		return `<x class=notranslate>${ count }</x>`;
+	}
+
 	tokenizeEmojis(message) {
 		let count = message.tokens.length;
 		message.msg = message.msg.replace(/:[+\w\d]+:/g, function(match) {
-			const token = `<i class=notranslate>{${ count++ }}</i>`;
+			const token = this.getNoTranslateToken(count++);
 			message.tokens.push({
 				token,
 				text: match,
@@ -56,13 +71,13 @@ class AutoTranslate {
 
 		// Support ![alt text](http://image url) and [text](http://link)
 		message.msg = message.msg.replace(new RegExp(`(!?\\[)([^\\]]+)(\\]\\((?:${ schemes }):\\/\\/[^\\)]+\\))`, 'gm'), function(match, pre, text, post) {
-			const pretoken = `<i class=notranslate>{${ count++ }}</i>`;
+			const pretoken = this.getNoTranslateToken(count++);
 			message.tokens.push({
 				token: pretoken,
 				text: pre,
 			});
 
-			const posttoken = `<i class=notranslate>{${ count++ }}</i>`;
+			const posttoken = this.getNoTranslateToken(count++);
 			message.tokens.push({
 				token: posttoken,
 				text: post,
@@ -73,13 +88,13 @@ class AutoTranslate {
 
 		// Support <http://link|Text>
 		message.msg = message.msg.replace(new RegExp(`((?:<|&lt;)(?:${ schemes }):\\/\\/[^\\|]+\\|)(.+?)(?=>|&gt;)((?:>|&gt;))`, 'gm'), function(match, pre, text, post) {
-			const pretoken = `<i class=notranslate>{${ count++ }}</i>`;
+			const pretoken = this.getNoTranslateToken(count++);
 			message.tokens.push({
 				token: pretoken,
 				text: pre,
 			});
 
-			const posttoken = `<i class=notranslate>{${ count++ }}</i>`;
+			const posttoken = this.getNoTranslateToken(count++);
 			message.tokens.push({
 				token: posttoken,
 				text: post,
@@ -102,7 +117,7 @@ class AutoTranslate {
 			if (message.tokens.hasOwnProperty(tokenIndex)) {
 				const { token } = message.tokens[tokenIndex];
 				if (token.indexOf('notranslate') === -1) {
-					const newToken = `<i class=notranslate>{${ count++ }}</i>`;
+					const newToken = this.getNoTranslateToken(count++);
 					message.msg = message.msg.replace(token, newToken);
 					message.tokens[tokenIndex].token = newToken;
 				}
@@ -118,7 +133,7 @@ class AutoTranslate {
 		if (message.mentions && message.mentions.length > 0) {
 			message.mentions.forEach((mention) => {
 				message.msg = message.msg.replace(new RegExp(`(@${ mention.username })`, 'gm'), (match) => {
-					const token = `<i class=notranslate>{${ count++ }}</i>`;
+					const token = this.getNoTranslateToken(count++);
 					message.tokens.push({
 						token,
 						text: match,
@@ -131,7 +146,7 @@ class AutoTranslate {
 		if (message.channels && message.channels.length > 0) {
 			message.channels.forEach((channel) => {
 				message.msg = message.msg.replace(new RegExp(`(#${ channel.name })`, 'gm'), (match) => {
-					const token = `<i class=notranslate>{${ count++ }}</i>`;
+					const token = this.getNoTranslateToken(count++);
 					message.tokens.push({
 						token,
 						text: match,
@@ -171,25 +186,47 @@ class AutoTranslate {
 
 					let msgs = targetMessage.msg.split('\n');
 					msgs = msgs.map((msg) => encodeURIComponent(msg));
-					const query = `q=${ msgs.join('&q=') }`;
-
 					const supportedLanguages = this.getSupportedLanguages('en');
-					targetLanguages.forEach((language) => {
-						if (language.indexOf('-') !== -1 && !_.findWhere(supportedLanguages, { language })) {
-							language = language.substr(0, 2);
-						}
-						let result;
-						try {
-							result = HTTP.get('https://translation.googleapis.com/language/translate/v2', { params: { key: this.apiKey, target: language }, query });
-						} catch (e) {
-							console.log('Error translating message', e);
-							return message;
-						}
-						if (result.statusCode === 200 && result.data && result.data.data && result.data.data.translations && Array.isArray(result.data.data.translations) && result.data.data.translations.length > 0) {
-							const txt = result.data.data.translations.map((translation) => translation.translatedText).join('\n');
-							translations[language] = this.deTokenize(Object.assign({}, targetMessage, { msg: txt }));
-						}
-					});
+
+					switch (this.engine) {
+						case 'DeepL':
+							const content = `text=${ msgs.join('&text=') }`;
+							targetLanguages.forEach((language) => {
+								const params = { auth_key: this.apiKey, tag_handling: 'xml', ignore_tags: 'x', split_sentences: '0', target_lang: language };
+								let result;
+								try {
+									result = HTTP.post('https://api.deepl.com/v2/translate', { params, content });
+								} catch (e) {
+									console.log('Error translating message', e);
+									return message;
+								}
+								if (result.statusCode === 200) {
+									const txt = result.data.data.translations.map((translation) => translation.translatedText).join('\n');
+									translations[language] = this.deTokenize(Object.assign({}, targetMessage, { msg: txt }));
+								}
+							});
+							break;
+						case 'Google':
+						default:
+							const query = `q=${ msgs.join('&q=') }`;
+							targetLanguages.forEach((language) => {
+								if (language.indexOf('-') !== -1 && !_.findWhere(supportedLanguages, { language })) {
+									language = language.substr(0, 2);
+								}
+								let result;
+								try {
+									result = HTTP.get('https://translation.googleapis.com/language/translate/v2', { params: { key: this.apiKey, target: language }, query });
+								} catch (e) {
+									console.log('Error translating message', e);
+									return message;
+								}
+								if (result.statusCode === 200 && result.data && result.data.data && result.data.data.translations && Array.isArray(result.data.data.translations) && result.data.data.translations.length > 0) {
+									const txt = result.data.data.translations.map((translation) => translation.translatedText).join('\n');
+									translations[language] = this.deTokenize(Object.assign({}, targetMessage, { msg: txt }));
+								}
+							});
+							break;
+					}
 					if (!_.isEmpty(translations)) {
 						Messages.addTranslations(message._id, translations);
 					}
@@ -203,18 +240,37 @@ class AutoTranslate {
 							const attachment = message.attachments[index];
 							const translations = {};
 							if (attachment.description || attachment.text) {
-								const query = `q=${ encodeURIComponent(attachment.description || attachment.text) }`;
 								const supportedLanguages = this.getSupportedLanguages('en');
-								targetLanguages.forEach((language) => {
-									if (language.indexOf('-') !== -1 && !_.findWhere(supportedLanguages, { language })) {
-										language = language.substr(0, 2);
-									}
-									const result = HTTP.get('https://translation.googleapis.com/language/translate/v2', { params: { key: this.apiKey, target: language }, query });
-									if (result.statusCode === 200 && result.data && result.data.data && result.data.data.translations && Array.isArray(result.data.data.translations) && result.data.data.translations.length > 0) {
-										const txt = result.data.data.translations.map((translation) => translation.translatedText).join('\n');
-										translations[language] = txt;
-									}
-								});
+								switch (this.engine) {
+									case 'DeepL':
+										const content = `text=${ encodeURIComponent(attachment.description || attachment.text) }`;
+										targetLanguages.forEach((language) => {
+											const params = { auth_key: this.apiKey, tag_handling: 'xml', ignore_tags: 'x', split_sentences: '0', target_lang: language };
+											if (language.indexOf('-') !== -1 && !_.findWhere(supportedLanguages, { language })) {
+												language = language.substr(0, 2);
+											}
+											const result = HTTP.post('https://api.deepl.com/v2/translate', { params, content });
+											if (result.statusCode === 200) {
+												const txt = result.data.data.translations.map((translation) => translation.translatedText).join('\n');
+												translations[language] = txt;
+											}
+										});
+										break;
+									case 'Google':
+									default:
+										const query = `q=${ encodeURIComponent(attachment.description || attachment.text) }`;
+										targetLanguages.forEach((language) => {
+											if (language.indexOf('-') !== -1 && !_.findWhere(supportedLanguages, { language })) {
+												language = language.substr(0, 2);
+											}
+											const result = HTTP.get('https://translation.googleapis.com/language/translate/v2', { params: { key: this.apiKey, target: language }, query });
+											if (result.statusCode === 200 && result.data && result.data.data && result.data.data.translations && Array.isArray(result.data.data.translations) && result.data.data.translations.length > 0) {
+												const txt = result.data.data.translations.map((translation) => translation.translatedText).join('\n');
+												translations[language] = txt;
+											}
+										});
+										break;
+								}
 								if (!_.isEmpty(translations)) {
 									Messages.addAttachmentTranslations(message._id, index, translations);
 								}
@@ -228,33 +284,53 @@ class AutoTranslate {
 	}
 
 	getSupportedLanguages(target) {
-		if (this.enabled && this.apiKey) {
-			if (this.supportedLanguages[target]) {
-				return this.supportedLanguages[target];
-			}
+		if (this.enabled) {
+			switch (this.engine) {
+				case 'DeepL':
+					this.supportedLanguages.en = [
+						{ language: 'EN', name: 'English' },
+						{ language: 'DE', name: 'German' },
+						{ language: 'FR', name: 'French' },
+						{ language: 'ES', name: 'Spanish' },
+						{ language: 'PT', name: 'Portuguese' },
+						{ language: 'IT', name: 'Italian' },
+						{ language: 'NL', name: 'Dutch' },
+						{ language: 'PL', name: 'Polish' },
+						{ language: 'RU', name: 'Russian' },
+					];
+					break;
+				case 'Google':
+				default:
+					if (this.apiKey) {
+						if (this.supportedLanguages[target]) {
+							return this.supportedLanguages[target];
+						}
 
-			let result;
-			const params = { key: this.apiKey };
-			if (target) {
-				params.target = target;
-			}
+						let result;
+						const params = { key: this.apiKey };
+						if (target) {
+							params.target = target;
+						}
 
-			if (this.supportedLanguages[target]) {
-				return this.supportedLanguages[target];
-			}
+						if (this.supportedLanguages[target]) {
+							return this.supportedLanguages[target];
+						}
 
-			try {
-				result = HTTP.get('https://translation.googleapis.com/language/translate/v2/languages', { params });
-			} catch (e) {
-				if (e.response && e.response.statusCode === 400 && e.response.data && e.response.data.error && e.response.data.error.status === 'INVALID_ARGUMENT') {
-					params.target = 'en';
-					target = 'en';
-					if (!this.supportedLanguages[target]) {
-						result = HTTP.get('https://translation.googleapis.com/language/translate/v2/languages', { params });
+						try {
+							result = HTTP.get('https://translation.googleapis.com/language/translate/v2/languages', { params });
+						} catch (e) {
+							if (e.response && e.response.statusCode === 400 && e.response.data && e.response.data.error && e.response.data.error.status === 'INVALID_ARGUMENT') {
+								params.target = 'en';
+								target = 'en';
+								if (!this.supportedLanguages[target]) {
+									result = HTTP.get('https://translation.googleapis.com/language/translate/v2/languages', { params });
+								}
+							}
+						}
+						this.supportedLanguages[target || 'en'] = result && result.data && result.data.data && result.data.data.languages;
 					}
-				}
+					break;
 			}
-			this.supportedLanguages[target || 'en'] = result && result.data && result.data.data && result.data.data.languages;
 			return this.supportedLanguages[target || 'en'];
 		}
 	}
