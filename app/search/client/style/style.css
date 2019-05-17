@@ -6,10 +6,6 @@
 	padding: 0 !important;
 }
 
-.defaultProvider {
-	padding: 24px;
-}
-
 .rocket-search-tab {
 	display: flex;
 	flex-direction: column;
@@ -21,8 +17,16 @@
 	overflow-x: hidden;
 }
 
+.rocket-search-form,
+.rocket-search-no-results {
+	margin: 24px;
+}
+
 .rocket-search-result {
+
 	display: flex;
+	overflow: auto;
+	overflow-x: hidden;
 	flex-direction: column;
 	flex: 1;
 }

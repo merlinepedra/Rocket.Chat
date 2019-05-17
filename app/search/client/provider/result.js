@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Tracker } from 'meteor/tracker';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Session } from 'meteor/session';
@@ -39,6 +40,21 @@ Meteor.startup(function() {
 	});
 });
 
+Template.DefaultSearchResultTemplate.onRendered(function() {
+	const e = this.find('.rocket-default-search-results');
+	this.autorun(() => {
+		this.data.result.get();
+		const hasMore = this.hasMore.get();
+		Tracker.afterFlush(() => {
+			if ((e.scrollHeight <= e.offsetHeight) && hasMore) {
+				this.data.payload.limit = (this.data.payload.limit || this.pageSize) + this.pageSize;
+				this.data.search();
+			}
+		});
+	});
+});
+
+
 Template.DefaultSearchResultTemplate.onCreated(function() {
 	const self = this;
 
@@ -53,7 +69,8 @@ Template.DefaultSearchResultTemplate.onCreated(function() {
 
 	this.autorun(() => {
 		const result = this.data.result.get();
-		self.hasMore.set(!(result && result.message.docs.length < (self.data.payload.limit || self.pageSize)));
+		const hasMore = !(result && result.message.docs.length < (self.data.payload.limit || self.pageSize));
+		self.hasMore.set(hasMore);
 	});
 });
 
