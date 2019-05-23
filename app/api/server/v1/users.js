@@ -602,3 +602,20 @@ API.v1.addRoute('users.presence', { authRequired: true }, {
 		});
 	},
 });
+
+API.v1.addRoute('users.setPresence', { authRequired: true }, {
+	post() {
+		const { status } = this.bodyParams;
+		const validStatus = ['online', 'away', 'busy', 'offline'];
+
+		if (!status) {
+			throw new Meteor.Error('error-invalid-params', 'The "status" parameter must be provided.');
+		}
+		if (!validStatus.includes(status)) {
+			throw new Meteor.Error('error-invalid-params', 'The "status" parameter provided is invalid.');
+		}
+		Meteor.runAsUser(this.userId, () => Meteor.call('UserPresence:setDefaultStatus', status));
+
+		return API.v1.success();
+	},
+});

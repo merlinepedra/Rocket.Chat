@@ -23,3 +23,12 @@ export const login = (username, password) => new Promise((resolve) => {
 			resolve(userCredentials);
 		});
 });
+
+export const getUserInfo = (userId) => new Promise((resolve) => {
+	request.get(api('users.info'))
+		.set(credentials)
+		.query({
+			userId,
+		})
+		.end((err, res) => resolve(res.body.user));
+});

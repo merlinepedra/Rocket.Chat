@@ -14,6 +14,7 @@ import { adminEmail, preferences, password, adminUsername } from '../../data/use
 import { imgURL } from '../../data/interactions.js';
 import { customFieldText, clearCustomFields, setCustomFields } from '../../data/custom-fields.js';
 import { updatePermission, updateSetting } from '../../data/permissions.helper';
+import { getUserInfo } from '../../data/users.helper.js';
 
 describe('[Users]', function() {
 	this.retries(0);
@@ -1648,6 +1649,54 @@ describe('[Users]', function() {
 					.expect(403)
 					.expect((res) => {
 						expect(res.body).to.have.property('success', false);
+					})
+					.end(done);
+			});
+		});
+	});
+	describe('[/users.setPresence]', () => {
+		it('should return an error when trying update the status of an user without the "status" body param', (done) => {
+			request.post(api('users.setPresence'))
+				.set(credentials)
+				.send({
+				})
+				.expect('Content-Type', 'application/json')
+				.expect(400)
+				.expect((res) => {
+					expect(res.body).to.have.property('success', false);
+					expect(res.body).to.have.property('errorType', 'error-invalid-params');
+					expect(res.body).to.have.property('error', 'The "status" parameter must be provided. [error-invalid-params]');
+				})
+				.end(done);
+		});
+		it('should return an error when trying update the status of an user with a invalid type of status', (done) => {
+			request.post(api('users.setPresence'))
+				.set(credentials)
+				.send({
+					status: 'invalid-type',
+				})
+				.expect('Content-Type', 'application/json')
+				.expect(400)
+				.expect((res) => {
+					expect(res.body).to.have.property('success', false);
+					expect(res.body).to.have.property('errorType', 'error-invalid-params');
+					expect(res.body).to.have.property('error', 'The "status" parameter provided is invalid. [error-invalid-params]');
+				})
+				.end(done);
+		});
+		it('should update the user status with the status provided', (done) => {
+			getUserInfo(credentials['X-User-Id']).then((user) => {
+				expect(user.status).to.be.equal('offline');
+				request.post(api('users.setPresence'))
+					.set(credentials)
+					.send({
+						status: 'busy',
+					})
+					.expect('Content-Type', 'application/json')
+					.expect(200)
+					.expect((res) => {
+						expect(res.body).to.have.property('success', true);
+						getUserInfo(credentials['X-User-Id']).then((user) => expect(user.status).to.be.equal('busy'));
 					})
 					.end(done);
 			});
