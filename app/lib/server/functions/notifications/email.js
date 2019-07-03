@@ -137,6 +137,7 @@ export function shouldNotifyEmail({
 	hasMentionToAll,
 	hasReplyToThread,
 	roomType,
+	serverDefaultPref,
 }) {
 	// use connected (don't need to send him an email)
 	if (statusConnection === 'online') {
@@ -155,7 +156,7 @@ export function shouldNotifyEmail({
 		}
 
 		// default server preference is disabled
-		if (settings.get('Accounts_Default_User_Preferences_emailNotificationMode') === 'nothing') {
+		if (serverDefaultPref === 'nothing') {
 			return false;
 		}
 	}

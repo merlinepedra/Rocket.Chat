@@ -1,5 +1,4 @@
 import { metrics } from '../../../../metrics';
-import { settings } from '../../../../settings';
 import { Notifications } from '../../../../notifications';
 
 export function shouldNotifyAudio({
@@ -13,6 +12,7 @@ export function shouldNotifyAudio({
 	hasMentionToUser,
 	hasReplyToThread,
 	roomType,
+	serverDefaultPref,
 }) {
 	if (disableAllMessageNotifications && audioNotifications == null && !hasReplyToThread) {
 		return false;
@@ -22,7 +22,7 @@ export function shouldNotifyAudio({
 		return false;
 	}
 
-	if (!audioNotifications && settings.get('Accounts_Default_User_Preferences_audioNotifications') === 'all') {
+	if (!audioNotifications && serverDefaultPref === 'all') {
 		return true;
 	}
 

@@ -1,5 +1,4 @@
 import { metrics } from '../../../../metrics';
-import { settings } from '../../../../settings';
 import { Notifications } from '../../../../notifications';
 import { roomTypes } from '../../../../utils';
 /**
@@ -52,6 +51,7 @@ export function shouldNotifyDesktop({
 	hasMentionToUser,
 	hasReplyToThread,
 	roomType,
+	serverDefaultPref,
 }) {
 	if (disableAllMessageNotifications && desktopNotifications == null && !isHighlighted && !hasMentionToUser && !hasReplyToThread) {
 		return false;
@@ -62,10 +62,10 @@ export function shouldNotifyDesktop({
 	}
 
 	if (!desktopNotifications) {
-		if (settings.get('Accounts_Default_User_Preferences_desktopNotifications') === 'all') {
+		if (serverDefaultPref === 'all') {
 			return true;
 		}
-		if (settings.get('Accounts_Default_User_Preferences_desktopNotifications') === 'nothing') {
+		if (serverDefaultPref === 'nothing') {
 			return false;
 		}
 	}

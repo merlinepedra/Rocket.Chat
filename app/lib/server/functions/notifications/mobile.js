@@ -83,6 +83,7 @@ export function shouldNotifyMobile({
 	hasReplyToThread,
 	statusConnection,
 	roomType,
+	serverDefaultPref,
 }) {
 	if (disableAllMessageNotifications && mobilePushNotifications == null && !isHighlighted && !hasMentionToUser && !hasReplyToThread) {
 		return false;
@@ -97,10 +98,10 @@ export function shouldNotifyMobile({
 	}
 
 	if (!mobilePushNotifications) {
-		if (settings.get('Accounts_Default_User_Preferences_mobileNotifications') === 'all') {
+		if (serverDefaultPref === 'all') {
 			return true;
 		}
-		if (settings.get('Accounts_Default_User_Preferences_mobileNotifications') === 'nothing') {
+		if (serverDefaultPref === 'nothing') {
 			return false;
 		}
 	}
