@@ -82,7 +82,8 @@ API.v1.addRoute('roles.getUsersInRole', { authRequired: true }, {
 			sort: { username: 1 },
 			skip: offset,
 			fields,
-		}).fetch();
+		});
+
 		return API.v1.success({ users });
 	},
 });
