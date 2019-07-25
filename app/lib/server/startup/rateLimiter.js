@@ -162,11 +162,58 @@ const configUser = _.debounce(() => {
 	});
 }, 1000);
 
+let websocketRequestsAllowed;
+let websocketIntervalTime;
+const websocketCallback = (socket) => {
+	let clearIntervalId;
+
+	const clear = () => {
+		socket._calls = 0;
+	};
+
+	clear();
+
+	socket.on('connection', () => {
+		clearIntervalId = setInterval(clear, websocketIntervalTime);
+	});
+
+	socket.on('close', () => clearInterval(clearIntervalId));
+
+	socket.on('data', (data) => {
+		if (socket._meteorSession && socket._meteorSession.connectionHandle && socket._meteorSession.connectionHandle.broadcastAuth === true) {
+			return data;
+		}
+
+		socket._calls++;
+
+		if (socket._calls > websocketRequestsAllowed) {
+			// TODO: improve error message
+			console.log('closing connection due to websocket limit');
+			return socket.close();
+		}
+
+		return data;
+	});
+};
+
 const configConnection = _.debounce(() => {
 	reconfigureLimit('Connection', {
 		broadcastAuth: false,
 		connectionId: () => true,
 	});
+
+	// Limit raw websocket calls
+	const index = Meteor.default_server.stream_server.registration_callbacks.indexOf(websocketCallback);
+	if (index > -1) {
+		Meteor.default_server.stream_server.registration_callbacks.splice(index, 1);
+	}
+
+	if (settings.get('DDP_Rate_Limit_Connection_Enabled')) {
+		websocketRequestsAllowed = settings.get('DDP_Rate_Limit_Connection_Requests_Allowed');
+		websocketIntervalTime = settings.get('DDP_Rate_Limit_Connection_Interval_Time');
+
+		Meteor.default_server.stream_server.registration_callbacks.unshift(websocketCallback);
+	}
 }, 1000);
 
 const configUserByMethod = _.debounce(() => {
