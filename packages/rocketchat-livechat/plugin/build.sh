@@ -3,7 +3,7 @@ export LIVECHAT_DIR="../../../public/livechat"
 export BUILD_DIR="../build"
 export BUNDLE_DIR="../build/bundle/programs/web.browser.legacy"
 export LIVECHAT_ASSETS_DIR="../../../private/livechat"
-export LATEST_LIVECHAT_VERSION="1.1.0"
+export LATEST_LIVECHAT_VERSION="1.1.0-1"
 export LIVECHAT_VERSION_DIR="1.0.0"
 
 cd packages/rocketchat-livechat/.app
