@@ -16,7 +16,7 @@ export class Messages extends Base {
 		this.tryEnsureIndex({ editedAt: 1 }, { sparse: true });
 		this.tryEnsureIndex({ 'editedBy._id': 1 }, { sparse: true });
 		this.tryEnsureIndex({ rid: 1, t: 1, 'u._id': 1 });
-		this.tryEnsureIndex({ expireAt: 1 }, { expireAfterSeconds: 0 });
+		this.tryEnsureIndex({ expireAt: 1 }, { sparse: true, expireAfterSeconds: 0 });
 		this.tryEnsureIndex({ msg: 'text' });
 		this.tryEnsureIndex({ 'file._id': 1 }, { sparse: true });
 		this.tryEnsureIndex({ 'mentions.username': 1 }, { sparse: true });
