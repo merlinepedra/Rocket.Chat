@@ -10,7 +10,7 @@ import moment from 'moment';
 import UAParser from 'ua-parser-js';
 
 import { modal } from '../../../../../ui-utils';
-import { Rooms, Subscriptions } from '../../../../../models';
+import { ChatRoom, Subscriptions } from '../../../../../models';
 import { settings } from '../../../../../settings';
 import { t, handleError, roomTypes } from '../../../../../utils';
 import { hasRole, hasAllPermission, hasAtLeastOnePermission } from '../../../../../authorization';
@@ -72,7 +72,7 @@ Template.visitorInfo.helpers({
 
 		const data = Template.currentData();
 		if (data && data.rid) {
-			const room = Rooms.findOne(data.rid);
+			const room = ChatRoom.findOne(data.rid);
 			if (room) {
 				livechatData = _.extend(livechatData, room.livechatData);
 			}
@@ -300,7 +300,7 @@ Template.visitorInfo.onCreated(function() {
 
 	if (rid) {
 		this.autorun(() => {
-			const room = Rooms.findOne({ _id: rid });
+			const room = ChatRoom.findOne({ _id: rid });
 			this.room.set(room);
 			this.visitorId.set(room && room.v && room.v._id);
 			this.departmentId.set(room && room.departmentId);
