@@ -38,7 +38,7 @@ Meteor.startup(() => {
 		let departmentIds;
 		if (!hasRole(user._id, 'livechat-manager')) {
 			const departmentAgents = LivechatDepartmentAgents.findByAgentId(user._id).fetch().map((d) => d.departmentId);
-			departmentIds = LivechatDepartment.find({_id: { $in: departmentAgents }, enabled: true }).fetch().map((d) => d._id);
+			departmentIds = LivechatDepartment.find({ _id: { $in: departmentAgents }, enabled: true }).fetch().map((d) => d._id);
 		}
 
 		const filter = {
