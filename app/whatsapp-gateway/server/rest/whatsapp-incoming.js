@@ -107,7 +107,7 @@ API.v1.addRoute('livechat/whatsapp-incoming/:service', {
 				guest,
 			};
 
-			const roomOpeningMessage = settings.get('Livechat_Routing_Method') !== 'Guest_Pool' ? welcomeMessage : queueMessage;
+			const roomOpeningMessage = settings.get('Livechat_Routing_Method') !== 'Manual_Selection' ? welcomeMessage : queueMessage;
 			const triggerRoomOpeningMessage = !room && roomOpeningMessage !== '';
 			const message = Livechat.sendMessage(sendMessage);
 

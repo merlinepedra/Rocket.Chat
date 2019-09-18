@@ -3177,7 +3177,8 @@ rc-old select,
 	z-index: 2;
 
 	display: flex;
-	flex: 0 0 40px;
+
+	flex: 0 0 auto;
 
 	transform: box-shadow 0.3s;
 
@@ -4949,6 +4950,12 @@ rc-old select,
 	& span {
 		display: block;
 	}
+}
+
+.rc-old .load-more {
+	position: relative;
+
+	height: 2rem;
 }
 
 .rc-old .flex-tab {
