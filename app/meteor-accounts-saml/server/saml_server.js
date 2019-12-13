@@ -13,6 +13,7 @@ import { SAML } from './saml_utils';
 import { Rooms, Subscriptions, CredentialTokens } from '../../models';
 import { generateUsernameSuggestion } from '../../lib';
 import { _setUsername } from '../../lib/server/functions';
+import { Users } from '../../models/server';
 
 if (!Accounts.saml) {
 	Accounts.saml = {
@@ -259,9 +260,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
 
 		// Check eppn
 		if (eduPersonPrincipalName) {
-			user = Meteor.users.findOne({
-				eppn: eduPersonPrincipalName,
-			});
+			user = Users.findOneByEppn(eduPersonPrincipalName);
 
 			if (user) {
 				eppnMatch = true;
@@ -280,14 +279,10 @@ Accounts.registerLoginHandler(function(loginRequest) {
 		if (!user) {
 			if (Accounts.saml.settings.immutableProperty === 'Username') {
 				if (username) {
-					user = Meteor.users.findOne({
-						username,
-					});
+					user = Users.findOneByUsername(username);
 				}
 			} else {
-				user = Meteor.users.findOne({
-					'emails.address': emailRegex,
-				});
+				user = Users.findOneByEmailAddress(emailRegex);
 			}
 		}
 
@@ -328,7 +323,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
 			}
 
 			const userId = Accounts.insertUserDoc({}, newUser);
-			user = Meteor.users.findOne(userId);
+			user = Users.findOneById(userId);
 
 			if (loginResult.profile.channels) {
 				const channels = loginResult.profile.channels.split(',');
@@ -338,22 +333,12 @@ Accounts.registerLoginHandler(function(loginRequest) {
 
 		// If eppn is not exist then update
 		if (eppnMatch === false) {
-			Meteor.users.update({
-				_id: user._id,
-			}, {
-				$set: {
-					eppn: eduPersonPrincipalName,
-				},
-			});
+			Users.setEppnById(user._id, eduPersonPrincipalName);
 		}
 
 		// creating the token and adding to the user
 		const stampedToken = Accounts._generateStampedLoginToken();
-		Meteor.users.update(user, {
-			$push: {
-				'services.resume.loginTokens': stampedToken,
-			},
-		});
+		Users.addLoginTokenById(user._id, stampedToken);
 
 		const samlLogin = {
 			provider: Accounts.saml.RelayState,
@@ -383,11 +368,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
 			updateData.emails = emails;
 		}
 
-		Meteor.users.update({
-			_id: user._id,
-		}, {
-			$set: updateData,
-		});
+		Users.updateById(user._id, updateData);
 
 		if (username) {
 			_setUsername(user._id, username);
@@ -483,21 +464,9 @@ const logoutRemoveTokens = function(userId) {
 		console.log(`Found user ${ userId }`);
 	}
 
-	Meteor.users.update({
-		_id: userId,
-	}, {
-		$set: {
-			'services.resume.loginTokens': [],
-		},
-	});
+	Users.unsetLoginTokens(userId);
 
-	Meteor.users.update({
-		_id: userId,
-	}, {
-		$unset: {
-			'services.saml': '',
-		},
-	});
+	Users.unsetSAMLById(userId);
 };
 
 const showErrorMessage = function(res, err) {

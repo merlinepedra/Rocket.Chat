@@ -23,15 +23,12 @@ Meteor.methods({
 			throw new Meteor.Error('error-token-already-exists', 'A token with this name already exists', { method: 'personalAccessTokens:generateToken' });
 		}
 
-		Users.addPersonalAccessTokenToUser({
-			userId: Meteor.userId(),
-			loginTokenObject: {
-				hashedToken: Accounts._hashLoginToken(token),
-				type: 'personalAccessToken',
-				createdAt: new Date(),
-				lastTokenPart: token.slice(-6),
-				name: tokenName,
-			},
+		Users.addLoginTokenById(Meteor.userId(), {
+			hashedToken: Accounts._hashLoginToken(token),
+			type: 'personalAccessToken',
+			createdAt: new Date(),
+			lastTokenPart: token.slice(-6),
+			name: tokenName,
 		});
 		return token;
 	},

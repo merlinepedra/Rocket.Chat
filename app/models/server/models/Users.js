@@ -53,10 +53,10 @@ export class Users extends Base {
 		return this.find(query, { fields: { 'services.resume.loginTokens': 1 } });
 	}
 
-	addPersonalAccessTokenToUser({ userId, loginTokenObject }) {
-		return this.update(userId, {
+	addLoginTokenById(_id, loginToken) {
+		return this.update({ _id }, {
 			$push: {
-				'services.resume.loginTokens': loginTokenObject,
+				'services.resume.loginTokens': loginToken,
 			},
 		});
 	}
@@ -938,6 +938,16 @@ export class Users extends Base {
 		return this.update(_id, update);
 	}
 
+	unsetSAMLById(_id) {
+		return this.update({
+			_id,
+		}, {
+			$unset: {
+				'services.saml': 1,
+			},
+		});
+	}
+
 	unsetRequirePasswordChange(_id) {
 		const update = {
 			$unset: {
@@ -1072,6 +1082,10 @@ export class Users extends Base {
 		return this.update({ _id }, update);
 	}
 
+	updateById(_id, data) {
+		return this.update({ _id }, { $set: data });
+	}
+
 	setReason(_id, reason) {
 		const update = {
 			$set: {
@@ -1128,6 +1142,16 @@ export class Users extends Base {
 		};
 
 		return this.update({ _id }, update);
+	}
+
+	setEppnById(_id, eppn) {
+		return this.update({
+			_id,
+		}, {
+			$set: {
+				eppn,
+			},
+		});
 	}
 
 	removeBannerById(_id, banner) {
