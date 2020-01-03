@@ -22,8 +22,8 @@ const URL = global.URL || require('url').URL || require('url').Url;
 
 const validateUrl = (url) => {
 	try {
-		new URL(url);
-		return true;
+		const { origin, href, search } = new URL(url);
+		return [origin, href, origin + search].includes(url.trim());
 	} catch (e) {
 		return false;
 	}
