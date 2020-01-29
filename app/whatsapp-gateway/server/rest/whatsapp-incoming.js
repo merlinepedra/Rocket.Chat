@@ -26,6 +26,10 @@ API.v1.addRoute('livechat/whatsapp-incoming/:service', {
 		const WhatsAppService = WhatsAppGateway.getService(this.urlParams.service);
 		const config = WhatsAppService.getConfig() || {};
 		const { defaultDepartmentName, offlineServiceMessage, welcomeMessage, queueMessage } = config;
+
+        const { queryParams, bodyParams } = this;
+        const payloadData = Object.assign(queryParams, bodyParams);
+
 		const {
 			id_sessao: sessionId,
 			id_cliente,
@@ -34,7 +38,7 @@ API.v1.addRoute('livechat/whatsapp-incoming/:service', {
 			midia,
 			id_departamento: departmentId,
 			token: conversationId,
-		} = this.bodyParams;
+		} = payloadData;
 
 		try {
 			const deptAssigned = defineDepartment(departmentId, defaultDepartmentName);
