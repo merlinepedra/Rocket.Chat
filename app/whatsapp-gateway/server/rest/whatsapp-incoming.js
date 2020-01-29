@@ -27,8 +27,8 @@ API.v1.addRoute('livechat/whatsapp-incoming/:service', {
 		const config = WhatsAppService.getConfig() || {};
 		const { defaultDepartmentName, offlineServiceMessage, welcomeMessage, queueMessage } = config;
 
-        const { queryParams, bodyParams } = this;
-        const payloadData = Object.assign(queryParams, bodyParams);
+		const { queryParams, bodyParams } = this;
+		const payloadData = Object.assign(queryParams, bodyParams);
 
 		const {
 			id_sessao: sessionId,
