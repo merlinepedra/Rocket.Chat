@@ -26,6 +26,7 @@ import {
 	RocketChatTabBar,
 } from '../../../../ui-utils';
 import { messageContext } from '../../../../ui-utils/client/lib/messageContext';
+import { renderMessageBody } from '../../../../ui-utils/client/lib/renderMessageBody';
 import { messageArgs } from '../../../../ui-utils/client/lib/messageArgs';
 import { getConfig } from '../../../../ui-utils/client/config';
 import { call } from '../../../../ui-utils/client/lib/callMethod';
@@ -33,7 +34,6 @@ import { settings } from '../../../../settings';
 import { callbacks } from '../../../../callbacks';
 import { promises } from '../../../../promises/client';
 import { hasAllPermission, hasRole } from '../../../../authorization';
-import { lazyloadtick } from '../../../../lazy-load';
 import { ChatMessages } from '../../lib/chatMessages';
 import { fileUpload } from '../../lib/fileUpload';
 import { isURL } from '../../../../utils/lib/isURL';
@@ -223,15 +223,57 @@ function roomMaxAge(room) {
 	}
 }
 
+async function createFileFromUrl(url) {
+	let response;
+	try {
+		response = await fetch(url);
+	} catch (error) {
+		throw error;
+	}
+
+	const data = await response.blob();
+	const metadata = {
+		type: data.type,
+	};
+	const file = new File([data], `File - ${ moment().format(settings.get('Message_TimeAndDateFormat')) }.${ mime.extension(data.type) }`, metadata);
+	return file;
+}
+
+function addToInput(text) {
+	const { input } = chatMessages[RoomManager.openedRoom];
+	const initText = input.value.slice(0, input.selectionStart);
+	const finalText = input.value.slice(input.selectionEnd, input.value.length);
+
+	input.value = initText + text + finalText;
+	$(input).change().trigger('input');
+}
+
 callbacks.add('enter-room', wipeFailedUploads);
 
 const ignoreReplies = getConfig('ignoreReplies') === 'true';
 
-Template.room.helpers({
-	useNrr() {
-		const useNrr = getConfig('useNrr');
-		return useNrr === 'true' || useNrr !== 'false';
+export const dropzoneHelpers = {
+	dragAndDrop() {
+		return settings.get('FileUpload_Enabled') && 'dropzone--disabled';
 	},
+
+	isDropzoneDisabled() {
+		return settings.get('FileUpload_Enabled') ? 'dropzone-overlay--enabled' : 'dropzone-overlay--disabled';
+	},
+
+	dragAndDropLabel() {
+		if (!userCanDrop(this._id)) {
+			return 'error-not-allowed';
+		}
+		if (!settings.get('FileUpload_Enabled')) {
+			return 'FileUpload_Disabled';
+		}
+		return 'Drop_to_upload_file';
+	},
+};
+
+Template.room.helpers({
+	...dropzoneHelpers,
 	isTranslated() {
 		const { state } = Template.instance();
 		return settings.get('AutoTranslate_Enabled')
@@ -241,6 +283,10 @@ Template.room.helpers({
 
 	embeddedVersion() {
 		return Layout.isEmbedded();
+	},
+
+	showTopNavbar() {
+		return !Layout.isEmbedded() || settings.get('UI_Show_top_navbar_embedded_layout');
 	},
 
 	subscribed() {
@@ -331,10 +377,8 @@ Template.room.helpers({
 		return roomTypes.getRouteLink('d', { name: this.username });
 	},
 
-	showAnnouncement() {
-		const { room } = Template.instance();
-		if (!room) { return false; }
-		return room.announcement != null && room.announcement !== '';
+	announcement() {
+		return Template.instance().state.get('announcement');
 	},
 
 	messageboxData() {
@@ -360,12 +404,6 @@ Template.room.helpers({
 			onKeyDown: (...args) => chatMessages[rid] && chatMessages[rid].keydown.apply(chatMessages[rid], args),
 			onSend: (...args) => chatMessages[rid] && chatMessages[rid].send.apply(chatMessages[rid], args),
 		};
-	},
-
-	roomAnnouncement() {
-		const { room } = Template.instance();
-		if (!room) { return ''; }
-		return room.announcement;
 	},
 
 	getAnnouncementStyle() {
@@ -461,10 +499,6 @@ Template.room.helpers({
 		return getUserPreference(Meteor.userId(), 'hideAvatars') ? 'hide-avatars' : undefined;
 	},
 
-	userCanDrop() {
-		return userCanDrop(this._id);
-	},
-
 	toolbarButtons() {
 		const toolbar = Session.get('toolbarButtons') || { buttons: {} };
 		const buttons = Object.keys(toolbar.buttons).map((key) => ({
@@ -534,7 +568,8 @@ let lastScrollTop;
 export const dropzoneEvents = {
 	'dragenter .dropzone'(e) {
 		const types = e.originalEvent && e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.types;
-		if (types != null && types.length > 0 && _.every(types, (type) => type.indexOf('text/') === -1 || type.indexOf('text/uri-list') !== -1) && userCanDrop(this._id)) {
+
+		if (types != null && types.length > 0 && _.some(types, (type) => type.indexOf('text/') === -1 || type.indexOf('text/uri-list') !== -1 || type.indexOf('text/plain') !== -1) && userCanDrop(this._id)) {
 			e.currentTarget.classList.add('over');
 		}
 		e.stopPropagation();
@@ -546,6 +581,11 @@ export const dropzoneEvents = {
 	},
 
 	'dragover .dropzone-overlay'(e) {
+		document.querySelectorAll('.over.dropzone').forEach((dropzone) => {
+			if (dropzone !== e.currentTarget.parentNode) {
+				dropzone.classList.remove('over');
+			}
+		});
 		e = e.originalEvent || e;
 		if (['move', 'linkMove'].includes(e.dataTransfer.effectAllowed)) {
 			e.dataTransfer.dropEffect = 'move';
@@ -555,14 +595,44 @@ export const dropzoneEvents = {
 		e.stopPropagation();
 	},
 
-	'dropped .dropzone-overlay'(event, instance) {
+	async 'dropped .dropzone-overlay'(event, instance) {
 		event.currentTarget.parentNode.classList.remove('over');
 
 		const e = event.originalEvent || event;
 
 		e.stopPropagation();
+		e.preventDefault();
 
-		const files = (e.dataTransfer != null ? e.dataTransfer.files : undefined) || [];
+		if (!userCanDrop(this._id) || !settings.get('FileUpload_Enabled')) {
+			return false;
+		}
+
+		let files = (e.dataTransfer && e.dataTransfer.files) || [];
+
+		if (files.length < 1) {
+			const transferData = e.dataTransfer.getData('text') || e.dataTransfer.getData('url');
+
+			if (e.dataTransfer.types.includes('text/uri-list')) {
+				const dropContext = document.createDocumentFragment();
+				const dropContextContent = document.createElement('div');
+				dropContextContent.innerHTML = e.dataTransfer.getData('text/html');
+				dropContext.appendChild(dropContextContent);
+				const imgURL = dropContext.querySelector('img').src;
+
+				if (!imgURL) {
+					return addToInput(dropContext.querySelector('a').href);
+				}
+
+				const file = await createFileFromUrl(imgURL);
+				if (typeof file === 'string') {
+					return addToInput(file);
+				}
+				files = [file];
+			}
+			if (e.dataTransfer.types.includes('text/plain')) {
+				return addToInput(transferData.trim());
+			}
+		}
 
 		const filesToUpload = Array.from(files).map((file) => {
 			Object.defineProperty(file, 'type', { value: mime.lookup(file.name) });
@@ -578,6 +648,12 @@ export const dropzoneEvents = {
 
 Template.room.events({
 	...dropzoneEvents,
+	'click [data-message-action]'(event, template) {
+		const button = MessageAction.getButtonById(event.currentTarget.dataset.messageAction);
+		if ((button != null ? button.action : undefined) != null) {
+			button.action.call(this, event, template);
+		}
+	},
 	'click .js-follow-thread'() {
 		const { msg } = messageArgs(this);
 		call('followMessage', { mid: msg._id });
@@ -748,8 +824,6 @@ Template.room.events({
 	},
 
 	'scroll .wrapper': _.throttle(function(e, t) {
-		lazyloadtick();
-
 		const $roomLeader = $('.room-leader');
 		if ($roomLeader.length) {
 			if (e.target.scrollTop < lastScrollTop) {
@@ -771,7 +845,7 @@ Template.room.events({
 				RoomHistoryManager.getMoreNext(this._id);
 			}
 		}
-	}, 500),
+	}, 100),
 
 	'click .new-message'(event, instance) {
 		instance.atBottom = true;
@@ -855,21 +929,25 @@ Template.room.events({
 	},
 
 	'click .collapse-switch'(e) {
-		const { msg } = messageArgs(this);
+		const { msg: { _id } } = messageArgs(this);
 		const index = $(e.currentTarget).data('index');
 		const collapsed = $(e.currentTarget).data('collapsed');
-		const id = msg._id;
 
-		if ((msg != null ? msg.attachments : undefined) != null) {
-			ChatMessage.update({ _id: id }, { $set: { [`attachments.${ index }.collapsed`]: !collapsed } });
+		const msg = ChatMessage.findOne(_id);
+		if (!msg) {
+			return;
 		}
 
-		if ((msg != null ? msg.urls : undefined) != null) {
-			ChatMessage.update({ _id: id }, { $set: { [`urls.${ index }.collapsed`]: !collapsed } });
+		if (msg.attachments) {
+			ChatMessage.update({ _id }, { $set: { [`attachments.${ index }.collapsed`]: !collapsed } });
+		}
+
+		if (msg.urls) {
+			ChatMessage.update({ _id }, { $set: { [`urls.${ index }.collapsed`]: !collapsed } });
 		}
 	},
-	'load img'(e, template) {
-		return typeof template.sendToBottomIfNecessary === 'function' ? template.sendToBottomIfNecessary() : undefined;
+	'load .gallery-item'(e, template) {
+		return template.sendToBottomIfNecessaryDebounced();
 	},
 
 	'click .jump-recent button'(e, template) {
@@ -909,9 +987,10 @@ Template.room.events({
 		if (roomData.announcementDetails != null && roomData.announcementDetails.callback != null) {
 			return callbacks.run(roomData.announcementDetails.callback, this._id);
 		}
+
 		modal.open({
 			title: t('Announcement'),
-			text: callbacks.run('renderMessage', { html: roomData.announcement }).html,
+			text: renderMessageBody({ msg: roomData.announcement }),
 			html: true,
 			showConfirmButton: false,
 			showCancelButton: true,
@@ -961,7 +1040,6 @@ Template.room.events({
 Template.room.onCreated(function() {
 	// this.scrollOnBottom = true
 	// this.typing = new msgTyping this.data._id
-	lazyloadtick();
 	const rid = this.data._id;
 
 	this.onFile = (filesToUpload) => {
@@ -972,6 +1050,12 @@ Template.room.onCreated(function() {
 
 	this.subscription = new ReactiveVar();
 	this.state = new ReactiveDict();
+
+	this.autorun(() => {
+		const rid = Template.currentData()._id;
+		this.state.set('announcement', Rooms.findOne({ _id: rid }, { fields: { announcement: 1 } }).announcement);
+	});
+
 	this.autorun(() => {
 		const subscription = Subscriptions.findOne({ rid });
 		this.subscription.set(subscription);
@@ -1083,13 +1167,14 @@ Template.room.onCreated(function() {
 		},
 	});
 
-	this.sendToBottomIfNecessary = () => {};
+	this.sendToBottomIfNecessary = () => {
+		if (this.atBottom === true) {
+			this.sendToBottom();
+		}
+	};
 }); // Update message to re-render DOM
 
 Template.room.onDestroyed(function() {
-	if (this.messageObserver) {
-		this.messageObserver.stop();
-	}
 	if (this.rolesObserve) {
 		this.rolesObserve.stop();
 	}
@@ -1098,8 +1183,10 @@ Template.room.onDestroyed(function() {
 
 	window.removeEventListener('resize', this.onWindowResize);
 
+	this.observer && this.observer.disconnect();
+
 	const chatMessage = chatMessages[this.data._id];
-	return chatMessage.onDestroyed && chatMessage.onDestroyed(this.data._id);
+	chatMessage.onDestroyed && chatMessage.onDestroyed(this.data._id);
 });
 
 Template.room.onRendered(function() {
@@ -1136,40 +1223,23 @@ Template.room.onRendered(function() {
 		template.atBottom = template.isAtBottom(100);
 	};
 
-	template.sendToBottomIfNecessary = function() {
-		if (template.atBottom === true && template.isAtBottom() !== true) {
-			template.sendToBottom();
-		}
-
-		lazyloadtick();
-	};
-
-	template.sendToBottomIfNecessaryDebounced = _.debounce(template.sendToBottomIfNecessary, 10);
-
-	template.sendToBottomIfNecessary();
+	template.sendToBottomIfNecessaryDebounced = _.debounce(template.sendToBottomIfNecessary, 150);
 
 	if (window.MutationObserver) {
-		const observer = new MutationObserver(() => template.sendToBottomIfNecessaryDebounced());
+		template.observer = new MutationObserver(() => template.sendToBottomIfNecessaryDebounced());
 
-		observer.observe(wrapperUl, { childList: true });
+		template.observer.observe(wrapperUl, { childList: true });
 	} else {
 		wrapperUl.addEventListener('DOMSubtreeModified', () => template.sendToBottomIfNecessaryDebounced());
 	}
-	// observer.disconnect()
 
-	template.onWindowResize = () =>
-		Meteor.defer(() => template.sendToBottomIfNecessaryDebounced());
+	template.onWindowResize = () => template.sendToBottomIfNecessaryDebounced();
+
 	window.addEventListener('resize', template.onWindowResize);
 
-	const wheelHandler = (() => {
-		const fn = _.throttle(function() {
-			template.checkIfScrollIsAtBottom();
-		}, 50);
-		return () => {
-			template.atBottom = false;
-			fn();
-		};
-	})();
+	const wheelHandler = _.throttle(function() {
+		template.checkIfScrollIsAtBottom();
+	}, 100);
 	wrapper.addEventListener('mousewheel', wheelHandler);
 
 	wrapper.addEventListener('wheel', wheelHandler);
@@ -1182,7 +1252,10 @@ Template.room.onRendered(function() {
 		setTimeout(() => template.checkIfScrollIsAtBottom(), 2000);
 	});
 
-	wrapper.addEventListener('scroll', wheelHandler);
+	Tracker.afterFlush(() => {
+		template.sendToBottomIfNecessary();
+		wrapper.addEventListener('scroll', wheelHandler);
+	});
 
 	lastScrollTop = $('.messages-box .wrapper').scrollTop();
 
@@ -1223,13 +1296,18 @@ Template.room.onRendered(function() {
 	this.autorun(() => {
 		const subscription = Subscriptions.findOne({ rid }, { fields: { alert: 1, unread: 1 } });
 		readMessage.read();
-		return (subscription.alert || subscription.unread) && readMessage.refreshUnreadMark(rid);
+		return subscription && (subscription.alert || subscription.unread) && readMessage.refreshUnreadMark(rid);
 	});
 
 	this.autorun(() => {
 		const lastMessage = this.state.get('lastMessage');
 
 		const subscription = Subscriptions.findOne({ rid }, { fields: { ls: 1 } });
+		if (!subscription) {
+			this.unreadCount.set(0);
+			return;
+		}
+
 		const count = ChatMessage.find({ rid, ts: { $lte: lastMessage, $gt: subscription && subscription.ls } }).count();
 
 		this.unreadCount.set(count);
@@ -1272,10 +1350,15 @@ Template.room.onRendered(function() {
 			}
 		});
 	}
-	callbacks.add('streamMessage', (msg) => {
+	callbacks.add('streamNewMessage', (msg) => {
 		if (rid !== msg.rid || msg.editedAt) {
 			return;
 		}
+
+		if (msg.u._id === Meteor.userId()) {
+			return template.sendToBottom();
+		}
+
 		if (!template.isAtBottom()) {
 			newMessage.classList.remove('not');
 		}
@@ -1294,6 +1377,9 @@ Template.room.onRendered(function() {
 });
 
 callbacks.add('enter-room', (sub) => {
+	if (!sub) {
+		return;
+	}
 	const isAReplyInDMFromChannel = FlowRouter.getQueryParam('reply') && sub.t === 'd';
 	if (isAReplyInDMFromChannel && chatMessages[sub.rid]) {
 		chatMessages[sub.rid].restoreReplies();

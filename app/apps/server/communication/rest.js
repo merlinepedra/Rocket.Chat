@@ -9,8 +9,9 @@ import { Info } from '../../../utils';
 import { Settings, Users } from '../../../models/server';
 import { Apps } from '../orchestrator';
 
+const appsEngineVersionForMarketplace = Info.marketplaceApiVersion.replace(/-.*/g, '');
 const getDefaultHeaders = () => ({
-	'X-Apps-Engine-Version': Info.marketplaceApiVersion,
+	'X-Apps-Engine-Version': appsEngineVersionForMarketplace,
 });
 
 const purchaseTypes = new Set(['buy', 'subscription']);
@@ -238,6 +239,14 @@ export class AppsRestApi {
 					return API.v1.failure({ status: 'compiler_error', messages: aff.getCompilerErrors() });
 				}
 
+				if (aff.hasAppUserError()) {
+					return API.v1.failure({
+						status: 'app_user_error',
+						messages: [aff.getAppUserError().message],
+						payload: { username: aff.getAppUserError().username },
+					});
+				}
+
 				info.status = aff.getApp().getStatus();
 
 				return API.v1.success({
@@ -341,7 +350,7 @@ export class AppsRestApi {
 
 					let result;
 					try {
-						result = HTTP.get(`${ baseUrl }/v1/apps/${ this.urlParams.id }/latest?frameworkVersion=${ Info.marketplaceApiVersion }`, {
+						result = HTTP.get(`${ baseUrl }/v1/apps/${ this.urlParams.id }/latest?frameworkVersion=${ appsEngineVersionForMarketplace }`, {
 							headers,
 						});
 					} catch (e) {
@@ -448,15 +457,18 @@ export class AppsRestApi {
 			delete() {
 				const prl = manager.getOneById(this.urlParams.id);
 
-				if (prl) {
-					Promise.await(manager.remove(prl.getID()));
-
-					const info = prl.getInfo();
-					info.status = prl.getStatus();
-
-					return API.v1.success({ app: info });
+				if (!prl) {
+					return API.v1.notFound(`No App found by the id of: ${ this.urlParams.id }`);
 				}
-				return API.v1.notFound(`No App found by the id of: ${ this.urlParams.id }`);
+
+				manager.remove(prl.getID())
+					.then(() => {
+						const info = prl.getInfo();
+						info.status = prl.getStatus();
+
+						API.v1.success({ app: info });
+					})
+					.catch((err) => API.v1.failure(err));
 			},
 		});
 
