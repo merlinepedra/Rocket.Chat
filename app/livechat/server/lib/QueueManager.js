@@ -10,10 +10,6 @@ import { Livechat } from './Livechat';
 
 export const QueueManager = {
 	async requestRoom({ guest, message, roomInfo, agent }) {
-		if (!Livechat.online()) {
-			throw new Meteor.Error('no-agent-online', 'Sorry, no online agents');
-		}
-
 		check(message, Match.ObjectIncluding({
 			rid: String,
 		}));
@@ -23,6 +19,10 @@ export const QueueManager = {
 			status: Match.Maybe(String),
 			department: Match.Maybe(String),
 		}));
+
+		if (!Livechat.online(guest.department)) {
+			throw new Meteor.Error('no-agent-online', 'Sorry, no online agents');
+		}
 
 		const { rid } = message;
 		const name = (roomInfo && roomInfo.fname) || guest.name || guest.username;
