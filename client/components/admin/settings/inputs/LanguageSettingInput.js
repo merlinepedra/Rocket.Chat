@@ -39,7 +39,9 @@ export function LanguageSettingInput({
 				readOnly={readonly}
 				autoComplete={autocomplete === false ? 'off' : undefined}
 				onChange={handleChange}
-				options={languages.map(({ key, name }) => [key, name])}
+				options={languages
+					.sort(({ key: a }, { key: b }) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1))
+					.map(({ key, name }) => [key, name])}
 			/>
 		</Field.Row>
 	</>;

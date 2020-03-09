@@ -85,6 +85,7 @@ export function SettingsBasedStep({ step, title, active }) {
 			setCommiting(false);
 		}
 	};
+	console.log(languages);
 
 	if (fields.length === 0) {
 		return <Step active={active} working={commiting} onSubmit={handleSubmit}>
@@ -144,8 +145,8 @@ export function SettingsBasedStep({ step, title, active }) {
 								value={value}
 								onChange={(value) => setFieldValue(_id, value)}
 								options = {languages
-									.map(({ key, name }) => [key, name])
-									.sort(([a], [b]) => a - b)}
+									.sort(({ key: a }, { key: b }) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1))
+									.map(({ key, name }) => [key, name])}
 							/>}
 						</Field.Row>
 					</Field>,
