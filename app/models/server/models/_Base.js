@@ -8,7 +8,7 @@ import { oplogEvents } from '../oplogEvents';
 
 export class Base {
 	constructor(nameOrModel, options) {
-		this._db = new BaseDb(nameOrModel, this, options);
+		this._db = new BaseDb(nameOrModel, options);
 		this.model = this._db.model;
 		this.collectionName = this._db.collectionName;
 		this.name = this._db.name;
