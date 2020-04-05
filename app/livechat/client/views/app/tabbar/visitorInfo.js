@@ -252,8 +252,22 @@ Template.visitorInfo.events({
 		// Setting for Ask_for_conversation_finished_message is set to true
 		modal.open({
 			title: t('Closing_chat'),
+			modifier: 'modal',
+			content: 'closeRoom',
+			data: { rid: this.rid,
+				// message,
+				onCreate() {
+					modal.close();
+				} },
+			confirmOnEnter: false,
+			showConfirmButton: false,
+			showCancelButton: false,
+		});
+		/*
+		modal.open({
+			title: t('Closing_chat'),
 			type: 'input',
-			inputPlaceholder: t('Please_add_a_comment'),
+		inputPlaceholder: t('Please_add_a_comment'),
 			showCancelButton: true,
 			closeOnConfirm: false,
 		}, (inputValue) => {
@@ -268,7 +282,7 @@ Template.visitorInfo.events({
 			}
 
 			return closeRoom(inputValue);
-		});
+		});*/
 	},
 
 	'click .return-inquiry'(event) {

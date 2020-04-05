@@ -1,0 +1,32 @@
+<template name="closeRoom">
+
+	<section class="create-channel">
+		<div class="create-channel__wrapper">
+			<p class="create-channel__description">{{_ "Close_room_description"}}</p>
+			<form id="close-room" class="create-channel__content">
+				<div class="create-channel__inputs">
+					<div class="rc-input {{#if invalidComment}}rc-input--error{{/if}}">
+						<label class="rc-input__label">
+							<div class="rc-input__title">{{_ "Please_add_a_comment"}}</div>
+							<div class="rc-input__wrapper">
+								<input name="name" type="text" class="rc-input__element"
+									   placeholder="{{_ "Please_add_a_comment"}}" autofocus>
+							</div>
+						</label>
+						{{#if inUse}}
+							<div class="rc-input__error">
+								<div class="rc-input__error-icon">
+									{{> icon block="rc-input__error-icon" icon="warning" classes="rc-input__error-icon-svg"}}
+								</div>
+								<div class="rc-input__error-message">{{_ "Channel_already_exist_static"}}</div>
+							</div>
+						{{/if}}
+					</div>
+				</div>
+			</form>
+			<div class="rc-input">
+				<button form="close-room" class="rc-button rc-button--primary js-close-room">{{_ " Confirm "}}</button>
+			</div>
+		</div>
+	</section>
+</template>
