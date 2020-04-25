@@ -48,6 +48,9 @@
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook"
 	},
+	"engines": {
+		"node": "12.16.1"
+	},
 	"license": "MIT",
 	"repository": {
 		"type": "git",
