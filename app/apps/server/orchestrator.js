@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { AppManager } from '@rocket.chat/apps-engine/server/AppManager';
+// import { AppManager } from '@rocket.chat/apps-engine/server/AppManager';
 
 import { Logger } from '../../logger';
 import { AppsLogsModel, AppsModel, AppsPersistenceModel, Permissions } from '../../models';
@@ -45,7 +45,7 @@ class AppServerOrchestrator {
 
 		this._bridges = new RealAppBridges(this);
 
-		this._manager = new AppManager(this._storage, this._logStorage, this._bridges);
+		// this._manager = new AppManager(this._storage, this._logStorage, this._bridges);
 
 		this._communicators = new Map();
 		this._communicators.set('methods', new AppMethods(this));

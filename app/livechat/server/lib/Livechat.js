@@ -1,6 +1,6 @@
 import dns from 'dns';
 
-import { AppInterface } from '@rocket.chat/apps-engine/server/compiler';
+// import { AppInterface } from '@rocket.chat/apps-engine/server/compiler/AppImplements';
 import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
 import { Random } from 'meteor/random';
@@ -368,7 +368,7 @@ export const Livechat = {
 		Messages.createCommandWithRoomIdAndUser('promptTranscript', rid, closeData.closedBy);
 
 		Meteor.defer(() => {
-			Apps.getBridges().getListenerBridge().livechatEvent(AppInterface.ILivechatRoomClosedHandler, room);
+			// Apps.getBridges().getListenerBridge().livechatEvent(AppInterface.ILivechatRoomClosedHandler, room);
 			callbacks.run('livechat.closeRoom', room);
 		});
 

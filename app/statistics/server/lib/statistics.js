@@ -152,8 +152,8 @@ export const statistics = {
 		statistics.apps = {
 			engineVersion: Info.marketplaceApiVersion,
 			enabled: Apps.isEnabled(),
-			totalInstalled: Apps.isInitialized() && Apps.getManager().get().length,
-			totalActive: Apps.isInitialized() && Apps.getManager().get({ enabled: true }).length,
+			// totalInstalled: Apps.isInitialized() && Apps.getManager().get().length,
+			// totalActive: Apps.isInitialized() && Apps.getManager().get({ enabled: true }).length,
 		};
 
 		const integrations = Integrations.find().fetch();
