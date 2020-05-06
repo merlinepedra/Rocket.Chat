@@ -29,11 +29,11 @@ callbacks.add('afterSaveMessage', function(message, room) {
 		return message;
 	}
 
-	let extraData;
+	let extraData = { mid: message._id };
 	if (message.file) {
 		message = normalizeMessageFileUpload(message);
 		const { fileUpload, rid, u: { _id: userId } = {} } = message;
-		extraData = Object.assign({}, { rid, userId, fileUpload });
+		extraData = Object.assign({}, extraData, { rid, userId, fileUpload });
 	}
 
 	if (message.location) {
@@ -57,3 +57,33 @@ callbacks.add('afterSaveMessage', function(message, room) {
 
 	return message;
 }, callbacks.priority.LOW, 'sendMessageBySms');
+
+callbacks.add('afterDeleteMessage', (message) => {
+	if (!SMS.enabled) {
+		return message;
+	}
+
+	const SMSService = SMS.getService(settings.get('SMS_Service'));
+
+	if (!SMSService) {
+		return message;
+	}
+
+	if (!message.sms) {
+		return message;
+	}
+
+	if (message.t) {
+		return message;
+	}
+
+	const { sms: { messageSID } } = message;
+	if (!messageSID) {
+		console.log('no messageSID');
+		return message;
+	}
+
+	SMSService.delete(messageSID);
+
+	return message;
+}, callbacks.priority.LOW, 'deleteMessageBySms');

@@ -8,6 +8,7 @@ import { settings } from '../../../settings';
 import { SMS } from '../SMS';
 import { Notifications } from '../../../notifications';
 import { fileUploadIsValidContentType } from '../../../utils/lib/fileUploadRestrictions';
+import { setSmsMessageUniqueID } from '../helper';
 
 const MAX_FILE_SIZE = 5242880;
 
@@ -77,13 +78,13 @@ class Twilio {
 		return returnData;
 	}
 
-	send(fromNumber, toNumber, message, extraData) {
+	async send(fromNumber, toNumber, message, extraData) {
 		const client = twilio(this.accountSid, this.authToken);
 		let body = message;
 
 		let mediaUrl;
 		const defaultLanguage = settings.get('Language') || 'en';
-		if (extraData && extraData.fileUpload) {
+		if (extraData?.fileUpload) {
 			const { rid, userId, fileUpload: { size, type, publicFilePath } } = extraData;
 			const user = userId ? Meteor.users.findOne(userId) : null;
 			const lng = (user && user.language) || defaultLanguage;
@@ -109,19 +110,31 @@ class Twilio {
 		}
 
 		let persistentAction;
-		if (extraData && extraData.location) {
+		if (extraData?.location) {
 			const [longitude, latitude] = extraData.location.coordinates;
 			persistentAction = `geo:${ latitude },${ longitude }`;
 			body = TAPi18n.__('Location', { lng: defaultLanguage });
 		}
 
-		client.messages.create({
+		const twilioMessage = await client.messages.create({
 			to: toNumber,
 			from: fromNumber,
 			body,
 			...mediaUrl && { mediaUrl },
 			...persistentAction && { persistentAction },
 		});
+
+		if (extraData?.mid) {
+			const { sid } = twilioMessage;
+			setSmsMessageUniqueID(extraData.mid, sid);
+		}
+	}
+
+	delete(messageSID) {
+		const client = twilio(this.accountSid, this.authToken);
+		client.messages.get(messageSID).remove()
+			.then((result) => console.log(result))
+			.catch((err) => console.error(err));
 	}
 
 	response(/* message */) {

@@ -605,6 +605,20 @@ export class Messages extends Base {
 		return this.update(query, update);
 	}
 
+	setUniqueSmsIdByMessageId(_id, messageSID) {
+		const query = { _id };
+
+		const update = {
+			$set: {
+				sms: {
+					messageSID,
+				},
+			},
+		};
+
+		return this.update(query, update);
+	}
+
 	setUrlsById(_id, urls) {
 		const query = { _id };
 
