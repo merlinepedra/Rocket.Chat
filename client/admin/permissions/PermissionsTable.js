@@ -15,21 +15,23 @@ const FilterByText = React.memo(({ setFilter, ...props }) => {
 
 	const handleChange = useCallback((event) => setText(event.currentTarget.value), []);
 
-	useEffect(() => {
-		setFilter({ text });
-	}, [text]);
+	const debouncedText = useDebouncedValue(text, 500);
 
-	return <Box mb='x16' is='form' display='flex' flexDirection='column' {...props}>
+	useEffect(() => {
+		setFilter({ debouncedText });
+	}, [debouncedText]);
+
+	return <Box m='none' is='form' display='flex' flexDirection='column' w='full' {...props}>
 		<TextInput placeholder={t('Search_Integrations')} addon={<Icon name='magnifier' size='x20'/>} onChange={handleChange} value={text} />
 	</Box>;
 });
 
-const useQuery = (params, sort) => useMemo(() => ({
-	query: JSON.stringify({ name: { $regex: params.text || '', $options: 'i' }, type: params.type }),
-	sort: JSON.stringify({ [sort[0]]: sort[1] === 'asc' ? 1 : -1 }),
-	...params.itemsPerPage && { count: params.itemsPerPage },
-	...params.current && { offset: params.current },
-}), [JSON.stringify(params), JSON.stringify(sort)]);
+// const useQuery = (params, sort) => useMemo(() => ({
+// 	query: JSON.stringify({ name: { $regex: params.text || '', $options: 'i' }, type: params.type }),
+// 	sort: JSON.stringify({ [sort[0]]: sort[1] === 'asc' ? 1 : -1 }),
+// 	...params.itemsPerPage && { count: params.itemsPerPage },
+// 	...params.current && { offset: params.current },
+// }), [JSON.stringify(params), JSON.stringify(sort)]);
 
 // const useResizeInlineBreakpoint = (sizes = [], debounceDelay = 0) => {
 // 	const { ref, borderBoxSize } = useResizeObserver({ debounceDelay });
@@ -39,26 +41,28 @@ const useQuery = (params, sort) => useMemo(() => ({
 // };
 
 export default function IntegrationsTableWithData() {
-	// const [params, setParams] = useState({ text: '', current: 0, itemsPerPage: 25 });
 	// const [sort, setSort] = useState(['name', 'asc']);
 
-	// const debouncedText = useDebouncedValue(params.text, 500);
 	// const debouncedSort = useDebouncedValue(sort, 500);
 	// const query = useQuery({ ...params, text: debouncedText, type }, debouncedSort);
 
 	const { data } = useEndpointDataExperimental('permissions.listAll', '');
-	const { data: roleData } = useEndpointDataExperimental('roles.list', '') || {};
+	const { data: roleData } = useEndpointDataExperimental('roles.list', '');
 
 	console.log({
 		data,
 		roleData,
 	});
+
 	if (!roleData || !roleData.roles || !data) {
 		return <div></div>;
 	}
 
 	return <IntegrationsTable data={data} roles={roleData.roles} />;
 }
+
+const headerStickyStyle = { position: 'sticky', zIndex: 9999, left: 0 };
+const nameStickyStyle = { ...headerStickyStyle, zInde: 998 };
 
 function IntegrationsTable({
 	data,
@@ -68,22 +72,37 @@ function IntegrationsTable({
 
 	const router = useRoute('admin-permissions');
 
+	const [params, setParams] = useState({ text: '', current: 0, itemsPerPage: 25 });
+
 	const handleEditRole = useCallback((_id) => () => router.push({ context: 'edit', id: _id }), []);
 
+	const filteredData = useMemo(() => (data && params.text ? data.update.filter((current) => current._id.indexOf(params.text) > -1) : data.update), [params.text]);
+
 	const header = useMemo(() => [
-		<Th key={'name'} w={'x240'}>{t('Name')}</Th>,
-		...roles.map((current) => <Th key={current._id} w='x120'>{current.description || current._id}<Icon name='edit' onClick={handleEditRole(current._id)}/></Th>),
+		<Th key={'name'} style={headerStickyStyle}><FilterByText setFilter={(text) => setParams({ ...params, text })}/></Th>,
+		...roles.map((current) => <Th key={current._id} >
+			{current.description || current._id}
+			<Icon pi='x4' name='edit' onClick={handleEditRole(current._id)}/>
+		</Th>),
 	].filter(Boolean), []);
 
-	const renderRow = useCallback(({ _id, roles: grantedRoles }) => {
-		return <Table.Row key={_id} tabIndex={0} role='link' action>
-			<Table.Cell withTruncatedText color='default' fontScale='p2'>{t(_id)}</Table.Cell>
-			{roles.map((current) => <Table.Cell key={current._id}>
-				<CheckBox checked={grantedRoles.includes(current._id)}/>
+	const renderRow = useCallback(({ _id, roles: grantedRoles }) => <Table.Row key={_id} tabIndex={0} role='link' action>
+		<Table.Cell withTruncatedText color='default' fontScale='p2' style={nameStickyStyle}>{t(_id)}</Table.Cell>
+		{roles.map((current) => <Table.Cell key={current._id}>
+			<Box withTruncatedText>
+				<CheckBox checked={grantedRoles.includes(current._id)} mie='x4'/>
 				{current.description || current._id}
-			</Table.Cell>)}
-		</Table.Row>;
-	}, []);
+			</Box>
+		</Table.Cell>)}
+	</Table.Row>, []);
 
-	return <GenericTable FilterComponent={FilterByText} header={header} renderRow={renderRow} results={data && data.update.slice(0, 30)} total={data && data.total} />;
+	return <GenericTable
+		header={header}
+		renderRow={renderRow}
+		results={filteredData && filteredData.slice(params.current > params.itemsPerPage ? 0 : params.current, params.current + params.itemsPerPage)}
+		total={filteredData && filteredData.length}
+		params={params}
+		setParams={setParams}
+		fixed={false}
+	/>;
 }

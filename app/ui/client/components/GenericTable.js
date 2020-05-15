@@ -43,6 +43,7 @@ export const GenericTable = forwardRef(function GenericTable({
 	setParams = () => { },
 	params: paramsDefault = '',
 	FilterComponent = () => null,
+	fixed = true,
 }, ref) {
 	const t = useTranslation();
 
@@ -73,7 +74,7 @@ export const GenericTable = forwardRef(function GenericTable({
 			: <>
 				<Scrollable>
 					<Box mi='neg-x24' pi='x24' flexGrow={1} ref={ref}>
-						<Table fixed sticky>
+						<Table fixed={fixed} sticky>
 							{ header && <Table.Head>
 								<Table.Row>
 									{header}
