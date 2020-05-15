@@ -92,6 +92,11 @@ registerAdminRoute('/rooms/:context?/:id?', {
 	lazyRouteComponent: () => import('./rooms/RoomsRoute'),
 });
 
+registerAdminRoute('/permissions/:context?/:id?', {
+	name: 'admin-permissions',
+	lazyRouteComponent: () => import('./permissions/AdminPermissionsRoute'),
+});
+
 registerAdminRoute('/invites', {
 	name: 'invites',
 	lazyRouteComponent: () => import('./invites/InvitesRoute'),
