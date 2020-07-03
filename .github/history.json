@@ -45059,6 +45059,7 @@
           "pr": "17947",
           "title": "[NEW][ENTERPRISE] Omnichannel multiple business hours",
           "userLogin": "MarcosSpessatto",
+          "description": "This implementation adds the ability to set up multiple `Business Hours` configurations. A new setting will define the behavior of the `Business Hours` system. There are two options available:\r\n- Single: This setting manages all Omnichannel agents. This option is suitable when there is only one team of agents.\r\n- Multiple: This setting allows managers to set up multiple `Business Hours` configurations. This option is suitable when then Teams of agents are grouped per department. Each department is allowed to have just one `Business Hour` configuration.\r\n\r\nAnother long-awaited feature launched by this implementation is the ability to define different timezones by `Business hours`.",
           "milestone": "3.4.0",
           "contributors": [
             "MarcosSpessatto",
@@ -45123,7 +45124,7 @@
         },
         {
           "pr": "17416",
-          "title": "[IMPROVE] Threads",
+          "title": "[NEW] Threads V2 with improved UI and new options",
           "userLogin": "ggazzo",
           "milestone": "3.4.0",
           "contributors": [
@@ -45133,8 +45134,9 @@
         },
         {
           "pr": "17824",
-          "title": "[IMPROVE] Refactor Omnichannel Office Hours feature",
+          "title": "[IMPROVE][Omnichannel] Refactor Office Hours feature",
           "userLogin": "MarcosSpessatto",
+          "description": "- Improved the process of opening/closing Office Hours. Now the new Business Hours are scheduled as Crontab jobs\r\n- Replaced the old `rocketchat_livechat_office_hour` collection to a new data structure called `rocketchat_livechat_business_hours`\r\n- Renamed the old feature from `Office Hours` to `Business Hours`\r\n- Migrated the old Office Hours configuration to the new data structure",
           "milestone": "3.4.0",
           "contributors": [
             "MarcosSpessatto",
@@ -45204,7 +45206,7 @@
         },
         {
           "pr": "17906",
-          "title": "[NEW] Rewrite Apps",
+          "title": "Rewrite \"Apps\" admin page in React",
           "userLogin": "gabriellsh",
           "milestone": "3.4.0",
           "contributors": [
@@ -45269,8 +45271,9 @@
         },
         {
           "pr": "17742",
-          "title": "[IMPROVE] SAML implementation",
+          "title": "[NEW] SAML quality improvements and new config options",
           "userLogin": "pierre-lehnen-rc",
+          "description": "- Code quality improvements adding tests and converting to TypeScript\r\n- Add new settings to manually configure the Request, Response and Metadata XMLs\r\n- New setting to configure the identifier format\r\n- Expands the user fieldset setting with new functionality\r\n- Adds the possibility of choosing a custom identifier other than name and email",
           "contributors": [
             "pierre-lehnen-rc"
           ]
@@ -45300,7 +45303,7 @@
         },
         {
           "pr": "17637",
-          "title": "[IMPROVE] Slack import: Parse channel and user mentions",
+          "title": "[IMPROVE][Slack import] Parse channel and user mentions",
           "userLogin": "lpilz",
           "milestone": "3.4.0",
           "contributors": [
@@ -45394,7 +45397,7 @@
         },
         {
           "pr": "13618",
-          "title": "[NEW][API] Add `interation.update` endpoint",
+          "title": "[NEW][API] Endpoint `integration.update`",
           "userLogin": "tonobo",
           "milestone": "3.4.0",
           "contributors": [
@@ -45437,7 +45440,7 @@
         },
         {
           "pr": "17346",
-          "title": "[IMPROVE] Refactor Omnichannel Past Chats List",
+          "title": "[IMPROVE][Omnichannel] More info and better design of Past Chats List",
           "userLogin": "nitinkumartiwari",
           "milestone": "3.4.0",
           "contributors": [
@@ -45577,7 +45580,7 @@
         },
         {
           "pr": "17920",
-          "title": "[NEW][ENTERPRISE] Download engagement data",
+          "title": "[NEW][ENTERPRISE] Option to download engagement data",
           "userLogin": "ggazzo",
           "contributors": [
             "ggazzo",
@@ -45597,7 +45600,7 @@
         },
         {
           "pr": "17916",
-          "title": "[IMPROVE] Performance editing Admin settings",
+          "title": "[IMPROVE][Performance] Solves problems regarding settings editing performance on Administration",
           "userLogin": "tassoevan",
           "milestone": "3.4.0",
           "contributors": [
@@ -45607,7 +45610,7 @@
         },
         {
           "pr": "17941",
-          "title": "[IMPROVE] React hooks lint rules",
+          "title": "Improve: React hooks lint rules",
           "userLogin": "gabriellsh",
           "milestone": "3.4.0",
           "contributors": [
@@ -45660,7 +45663,7 @@
         },
         {
           "pr": "16550",
-          "title": "[NEW][API] New endpoints to manage User Custom Status `custom-user-status.create`, custom-user-status.delete` and `custom-user-status.update`",
+          "title": "[NEW][API] Endpoints `custom-user-status.create`, `custom-user-status.delete` and `custom-user-status.update` to manage User Custom Status",
           "userLogin": "ashwaniYDV",
           "milestone": "3.4.0",
           "contributors": [
@@ -45821,9 +45824,9 @@
         },
         {
           "pr": "17669",
-          "title": "[IMPROVE] Split NOTIFICATIONS_SCHEDULE_DELAY into three separate variables",
+          "title": "[IMPROVE] Split `NOTIFICATIONS_SCHEDULE_DELAY` into three separate variables",
           "userLogin": "jazztickets",
-          "description": "Email notification delay can now be customized with the following environment variables:\r\nNOTIFICATIONS_SCHEDULE_DELAY_ONLINE\r\nNOTIFICATIONS_SCHEDULE_DELAY_AWAY\r\nNOTIFICATIONS_SCHEDULE_DELAY_OFFLINE\r\nSetting the value to -1 disable notifications for that type.",
+          "description": "Now the email notification delay can now be customized with the following environment variables:\r\n- `NOTIFICATIONS_SCHEDULE_DELAY_ONLINE`\r\n- `NOTIFICATIONS_SCHEDULE_DELAY_AWAY`\r\n- `NOTIFICATIONS_SCHEDULE_DELAY_OFFLINE`\r\n> Setting the value to -1 disable notifications for that type.",
           "milestone": "3.4.0",
           "contributors": [
             "jazztickets",
@@ -45832,7 +45835,7 @@
         },
         {
           "pr": "17900",
-          "title": "[IMPROVE] Rewrite Federation Dashboard",
+          "title": "Improve: Rewrite Federation Dashboard",
           "userLogin": "tassoevan",
           "milestone": "3.4.0",
           "contributors": [
@@ -45877,7 +45880,7 @@
         },
         {
           "pr": "17801",
-          "title": "[IMPROVE] Rewrite admin sidebar in React",
+          "title": "Improve: Rewrite admin sidebar in React",
           "userLogin": "gabriellsh",
           "milestone": "3.4.0",
           "contributors": [
@@ -45897,7 +45900,7 @@
         },
         {
           "pr": "17617",
-          "title": "[NEW] Blocked Media Types setting",
+          "title": "[NEW] Setting to list Blocked Media Types for uploads",
           "userLogin": "pierre-lehnen-rc",
           "milestone": "3.4.0",
           "contributors": [
@@ -46163,7 +46166,7 @@
         },
         {
           "pr": "15106",
-          "title": "[IMPROVE] Make the implementation of custom code easier by having placeholders for a custom folder",
+          "title": "Improve: Make the implementation of custom code easier by having placeholders for a custom folder",
           "userLogin": "justinr1234",
           "milestone": "3.4.0",
           "contributors": [
@@ -46533,7 +46536,12 @@
     "3.4.0-rc.3": {
       "node_version": "12.16.1",
       "npm_version": "6.14.0",
-      "mongo_versions": [],
+      "apps_engine_version": "1.15.0",
+      "mongo_versions": [
+        "3.4",
+        "3.6",
+        "4.0"
+      ],
       "pull_requests": [
         {
           "pr": "18048",
