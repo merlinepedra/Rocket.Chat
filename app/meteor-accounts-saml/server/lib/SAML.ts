@@ -244,7 +244,7 @@ export class SAML {
 				throw new Meteor.Error('Unable to process Logout Request: missing request data.');
 			}
 
-			let timeoutHandler: NodeJS.Timer | null = null;
+			let timeoutHandler: ReturnType<typeof setTimeout> | null = null;
 			const redirect = (url?: string | undefined): void => {
 				if (!timeoutHandler) {
 					// If the handler is null, then we already ended the response;
