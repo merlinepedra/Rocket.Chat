@@ -39,6 +39,8 @@ module.exports = async ({ config }) => {
 				options: {
 					compilerOptions: {
 						noEmit: false,
+						noUnusedLocals: false,
+						noUnusedParameters: false,
 					},
 				},
 			},
