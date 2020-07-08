@@ -107,6 +107,10 @@ describe('[Setup Wizard]', () => {
 			setupWizard.siteName.should('be.visible');
 		});
 
+		it('it should show phone', () => {
+			setupWizard.phone.should('be.visible');
+		});
+
 		it('it should show language', () => {
 			setupWizard.language.should('be.visible');
 		});

@@ -28,7 +28,7 @@ export function buildWorkspaceRegistrationData() {
 
 	const agreePrivacyTerms = settings.get('Cloud_Service_Agree_PrivacyTerms');
 
-	const { organizationType, industry, size: orgSize, country, language, serverType: workspaceType } = stats.wizard;
+	const { organizationType, industry, size: orgSize, country, language, serverType: workspaceType, phone } = stats.wizard;
 
 	return {
 		uniqueId: stats.uniqueId,
@@ -46,6 +46,7 @@ export function buildWorkspaceRegistrationData() {
 		agreePrivacyTerms,
 		website,
 		siteName,
+		phone,
 		workspaceType,
 		deploymentMethod: stats.deploy.method,
 		deploymentPlatform: stats.deploy.platform,

@@ -29,6 +29,7 @@ const wizardFields = [
 	'Size',
 	'Country',
 	'Language',
+	'Phone',
 	'Server_Type',
 	'Register_Server',
 ];

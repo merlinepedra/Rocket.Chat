@@ -1614,7 +1614,7 @@ settings.addGroup('Setup_Wizard', function() {
 			],
 			wizard: {
 				step: 2,
-				order: 2,
+				order: 3,
 			},
 		});
 		this.add('Size', '', {
@@ -1655,7 +1655,7 @@ settings.addGroup('Setup_Wizard', function() {
 			],
 			wizard: {
 				step: 2,
-				order: 3,
+				order: 4,
 			},
 		});
 		this.add('Country', '', {
@@ -2624,14 +2624,21 @@ settings.addGroup('Setup_Wizard', function() {
 			],
 			wizard: {
 				step: 2,
-				order: 4,
+				order: 5,
 			},
 		});
 		this.add('Website', '', {
 			type: 'string',
 			wizard: {
 				step: 2,
-				order: 5,
+				order: 6,
+			},
+		});
+		this.add('Phone', '', {
+			type: 'string',
+			wizard: {
+				step: 2,
+				order: 2,
 			},
 		});
 		this.add('Server_Type', '', {

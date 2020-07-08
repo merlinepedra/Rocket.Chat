@@ -10,6 +10,8 @@ class SetupWizard extends Page {
 
 	get organizationName() { return browser.element('[data-qa="setup-wizard"] [data-qa="Organization_Name"]'); }
 
+	get phone() { return browser.element('[data-qa="setup-wizard"] [data-qa="Phone"]'); }
+
 	get industry() { return browser.element('[data-qa="setup-wizard"] [data-qa="Industry"]'); }
 
 	get size() { return browser.element('[data-qa="setup-wizard"] [data-qa="Size"]'); }
