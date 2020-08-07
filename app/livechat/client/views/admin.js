@@ -6,6 +6,8 @@ import './app/livechatAgents';
 import './app/livechatAppearance';
 import './app/livechatDashboard.html';
 import './app/livechatCurrentChats';
+import './app/livechatCustomFields';
+import './app/livechatCustomFieldForm';
 import './app/livechatDepartmentForm';
 import './app/livechatDepartments';
 import './app/livechatTriggers';
