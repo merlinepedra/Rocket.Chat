@@ -43,7 +43,7 @@ const renderBody = (msg, settings) => {
 	}
 
 	if (searchedText) {
-		msg = msg.replace(new RegExp(searchedText, 'gi'), (str) => `<mark>${ str }</mark>`);
+		msg && msg.includes('href') ? '' : msg = msg.replace(new RegExp(searchedText, 'gi'), (str) => `<mark>${ str }</mark>`);
 	}
 
 	return msg;
