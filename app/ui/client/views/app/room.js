@@ -304,6 +304,23 @@ Template.roomOld.helpers({
 		return settings.get('Message_MaxAllowedSize');
 	},
 
+	markRead() {
+		const { _id } = Template.instance().data;
+		return () => readMessage.readNow(_id);
+	},
+
+	jumpToFirstUnread() {
+		const { _id } = Template.instance().data;
+		const room = RoomHistoryManager.getRoom(_id);
+		let message = room && room.firstUnread.get();
+		if (!message) {
+			const subscription = Subscriptions.findOne({ rid: _id });
+			message = ChatMessage.find({ rid: _id, ts: { $gt: subscription != null ? subscription.ls : undefined } }, { sort: { ts: 1 }, limit: 1 }).fetch()[0];
+		}
+
+		return () => RoomHistoryManager.getSurroundingMessages(message, 50);
+	},
+
 	unreadData() {
 		const data = { count: Template.instance().state.get('count') };
 
@@ -566,20 +583,6 @@ Meteor.startup(() => {
 		'click .upload-progress-close'(e) {
 			e.preventDefault();
 			Session.set(`uploading-cancel-${ this.id }`, true);
-		},
-		'click .unread-bar > button.mark-read'(e, t) {
-			readMessage.readNow(t.data._id);
-		},
-
-		'click .unread-bar > button.jump-to'(e, t) {
-			const { _id } = t.data;
-			const room = RoomHistoryManager.getRoom(_id);
-			let message = room && room.firstUnread.get();
-			if (!message) {
-				const subscription = Subscriptions.findOne({ rid: _id });
-				message = ChatMessage.find({ rid: _id, ts: { $gt: subscription != null ? subscription.ls : undefined } }, { sort: { ts: 1 }, limit: 1 }).fetch()[0];
-			}
-			RoomHistoryManager.getSurroundingMessages(message, 50);
 		},
 		'scroll .wrapper': _.throttle(function(e, t) {
 			const $roomLeader = $('.room-leader');

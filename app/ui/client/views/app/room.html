@@ -11,21 +11,7 @@
 						{{#with unreadData}}
 							{{#if since}}
 								{{#if count}}
-									<div class="unread-bar color-primary-action-color background-component-color">
-										<button class="jump-to">
-											<span class="jump-to-large">{{_ "Jump_to_first_unread"}}</span>
-											<span class="jump-to-small">{{_ "Jump"}}</span>
-										</button>
-										<span class="unread-count-since">
-											{{_ "S_new_messages_since_s" count formatUnreadSince}}
-										</span>
-										<span class="unread-count">
-											{{_ "N_new_messages" count}}
-										</span>
-										<button class="mark-read">
-											{{_ "Mark_as_read"}}
-										</button>
-									</div>
+									{{> UnreadMessages unreadSince=formatUnreadSince count=count onMarkRead=markRead onJump=jumpToFirstUnread}}
 								{{/if}}
 							{{/if}}
 						{{/with}}
@@ -50,6 +36,7 @@
 							</div>
 						{{/each}}
 					</div>
+					
 					<div class="messages-box {{#if selectable}}selectable{{/if}} {{messageViewMode}} {{hasLeader}}">
 						<div class="ticks-bar"></div>
 						<button class="new-message background-primary-action-color color-content-background-color not">
