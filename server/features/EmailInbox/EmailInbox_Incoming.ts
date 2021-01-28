@@ -3,6 +3,7 @@ import stripHtml from 'string-strip-html';
 import { Random } from 'meteor/random';
 import { ParsedMail, Attachment } from 'mailparser';
 import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
+import Agenda from 'agenda';
 
 import { Livechat } from '../../../app/livechat/server/lib/Livechat';
 import { LivechatRooms, LivechatVisitors, Messages } from '../../../app/models/server';
@@ -100,7 +101,9 @@ async function uploadAttachment(attachment: Attachment, rid: string, visitorToke
 	});
 }
 
-export async function onEmailReceived(email: ParsedMail, inbox: string, department?: string): Promise<void> {
+export async function onEmailReceived(email: ParsedMail, inbox: string, department?: string, job?: Agenda.Job): Promise<void> {
+	console.log('onEmailReceived', job);
+
 	if (!email.from?.value?.[0]?.address) {
 		return;
 	}
