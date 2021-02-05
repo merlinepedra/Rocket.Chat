@@ -6,10 +6,14 @@ import { popover, modal } from '../../../../app/ui-utils';
 import { useAtLeastOnePermission, usePermission } from '../../../contexts/AuthorizationContext';
 import { useSetting } from '../../../contexts/SettingsContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
+import { useSetModal } from '../../../contexts/ModalContext';
+import CreateTeam from '../CreateTeam';
 
 const CREATE_ROOM_PERMISSIONS = ['create-c', 'create-p', 'create-d', 'start-discussion', 'start-discussion-other-user'];
 
 const CREATE_CHANNEL_PERMISSIONS = ['create-c', 'create-p'];
+
+// const CREATE_TEAM_PERMISSIONS = [];
 
 const CREATE_DISCUSSION_PERMISSIONS = ['start-discussion', 'start-discussion-other-user'];
 
@@ -44,15 +48,31 @@ const useAction = (title, content) => useMutableCallback((e) => {
 	});
 });
 
+const useReactModal = (setModal, Component) => useMutableCallback((e) => {
+	e.preventDefault();
+
+	const handleClose = () => {
+		setModal(null);
+	};
+
+	setModal(() => <Component
+		onClose={handleClose}
+	/>);
+});
+
 const CreateRoom = (props) => {
 	const t = useTranslation();
+	const setModal = useSetModal();
+
 	const showCreate = useAtLeastOnePermission(CREATE_ROOM_PERMISSIONS);
 
+	// const canCreateTeam = useAtLeastOnePermission(CREATE_TEAM_PERMISSIONS);
 	const canCreateChannel = useAtLeastOnePermission(CREATE_CHANNEL_PERMISSIONS);
 	const canCreateDirectMessages = usePermission('create-d');
 	const canCreateDiscussion = useAtLeastOnePermission(CREATE_DISCUSSION_PERMISSIONS);
 
 	const createChannel = useAction(t('Create_A_New_Channel'), 'createChannel');
+	const createTeam = useReactModal(setModal, CreateTeam);
 	const createDirectMessage = useAction(t('Direct_Messages'), 'CreateDirectMessage');
 	const createDiscussion = useAction(t('Discussion_title'), 'CreateDiscussion');
 
@@ -65,8 +85,14 @@ const CreateRoom = (props) => {
 			qa: 'sidebar-create-channel',
 			action: createChannel,
 		},
-		canCreateDirectMessages && {
+		/* canCreateTeam &&*/ {
 			icon: 'team',
+			name: t('Team'),
+			qa: 'sidebar-create-team',
+			action: createTeam,
+		},
+		canCreateDirectMessages && {
+			icon: 'message',
 			name: t('Direct_Messages'),
 			qa: 'sidebar-create-dm',
 			action: createDirectMessage,
@@ -77,7 +103,7 @@ const CreateRoom = (props) => {
 			qa: 'sidebar-create-discussion',
 			action: createDiscussion,
 		},
-	].filter(Boolean), [canCreateChannel, canCreateDirectMessages, canCreateDiscussion, createChannel, createDirectMessage, createDiscussion, discussionEnabled, t]);
+	].filter(Boolean), [canCreateChannel, canCreateDirectMessages, canCreateDiscussion, /* canCreateTeam,*/ createChannel, createDirectMessage, createDiscussion, createTeam, discussionEnabled, t]);
 
 	const onClick = useMutableCallback((e) => {
 		if (items.length === 1) {
