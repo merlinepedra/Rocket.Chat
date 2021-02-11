@@ -249,7 +249,7 @@ export class AppsRestApi {
 					permissionsGranted = (() => {
 						try {
 							const permissions = JSON.parse(formData?.permissions || '');
-							return permissions.length ? permissions : undefined;
+							return Array.isArray(permissions) ? permissions : undefined;
 						} catch {
 							return undefined;
 						}
