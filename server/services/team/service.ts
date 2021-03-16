@@ -101,10 +101,11 @@ export class TeamService extends ServiceClass implements ITeamService {
 				},
 			};
 
-			await Room.create(owner || uid, newRoom);
+			const infoNewRoom = await Room.create(owner || uid, newRoom);
 
 			return {
 				_id: teamId,
+				rid: infoNewRoom._id,
 				...teamData,
 			};
 		} catch (e) {
