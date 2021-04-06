@@ -1,11 +1,11 @@
 import React, { useCallback, FC } from 'react';
+import { Message } from '@rocket.chat/fuselage';
 
 import { useEndpoint } from '../../../contexts/ServerContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useTimeAgo } from '../../../hooks/useTimeAgo';
 import * as NotificationStatus from '../NotificationStatus';
 import { followStyle, anchor } from '../helpers/followSyle';
-import Metrics, { Reply, Content } from '..';
 import { useBlockRendered } from '../hooks/useBlockRendered';
 
 
@@ -33,32 +33,32 @@ const ThreadMetric: FC<ThreadReplyOptions> = ({ unread, mention, all, rid, mid, 
 
 	const handleFollow = useCallback(() => (following ? unfollowMessage({ mid }) : followMessage({ mid })), [followMessage, following, mid, unfollowMessage]);
 
-	return <Content className={followStyle}>
+	return <Message.Block className={followStyle}>
 		<div className={className} ref={ref as any} />
-		<Reply data-rid={rid} data-mid={mid} onClick={openThread}>{t('Reply')}</Reply>
-		<Metrics>
-			<Metrics.Item title={t('Replies')}>
-				<Metrics.Item.Icon name='thread'/>
-				<Metrics.Item.Label>{counter}</Metrics.Item.Label>
-			</Metrics.Item>
-			{ participants && <Metrics.Item title={t('Participants')}>
-				<Metrics.Item.Icon name='user'/>
-				<Metrics.Item.Label>{participants}</Metrics.Item.Label>
-			</Metrics.Item> }
-			<Metrics.Item title={lm?.toLocaleString()}>
-				<Metrics.Item.Icon name='clock'/>
-				<Metrics.Item.Label>{format(lm)}</Metrics.Item.Label>
-			</Metrics.Item>
-			<Metrics.Item className={!following ? anchor : undefined} title={t(following ? 'Following' : 'Not_following')} data-rid={rid} onClick={handleFollow}>
-				<Metrics.Following name={following ? 'bell' : 'bell-off'}/>
-				<Metrics.Item.Label>{
+		<Message.Metrics>
+			<Message.Metrics.Reply data-rid={rid} data-mid={mid} onClick={openThread}>{t('Reply')}</Message.Metrics.Reply>
+			<Message.Metrics.Item title={t('Replies')}>
+				<Message.Metrics.Item.Icon name='thread'/>
+				<Message.Metrics.Item.Label>{counter}</Message.Metrics.Item.Label>
+			</Message.Metrics.Item>
+			{ participants && <Message.Metrics.Item title={t('Participants')}>
+				<Message.Metrics.Item.Icon name='user'/>
+				<Message.Metrics.Item.Label>{participants}</Message.Metrics.Item.Label>
+			</Message.Metrics.Item> }
+			<Message.Metrics.Item title={lm?.toLocaleString()}>
+				<Message.Metrics.Item.Icon name='clock'/>
+				<Message.Metrics.Item.Label>{format(lm)}</Message.Metrics.Item.Label>
+			</Message.Metrics.Item>
+			<Message.Metrics.Item className={!following ? anchor : undefined} title={t(following ? 'Following' : 'Not_following')} data-rid={rid} onClick={handleFollow}>
+				<Message.Metrics.Following name={following ? 'bell' : 'bell-off'}/>
+				<Message.Metrics.Item.Label>{
 					(mention && <NotificationStatus.Me t={t} />)
 					|| (all && <NotificationStatus.All t={t} />)
 					|| (unread && <NotificationStatus.Unread t={t} />)}
-				</Metrics.Item.Label>
-			</Metrics.Item>
-		</Metrics>
-	</Content>;
+				</Message.Metrics.Item.Label>
+			</Message.Metrics.Item>
+		</Message.Metrics>
+	</Message.Block>;
 };
 
 export default ThreadMetric;

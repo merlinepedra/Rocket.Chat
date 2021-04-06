@@ -140,7 +140,7 @@
 		"@rocket.chat/apps-engine": "1.24.0",
 		"@rocket.chat/css-in-js": "^0.23.0",
 		"@rocket.chat/emitter": "^0.23.0",
-		"@rocket.chat/fuselage": "^0.23.0",
+		"@rocket.chat/fuselage": "file:../Rocket.Chat.Fuselage/packages/fuselage",
 		"@rocket.chat/fuselage-hooks": "^0.23.0",
 		"@rocket.chat/fuselage-polyfills": "^0.23.0",
 		"@rocket.chat/fuselage-tokens": "^0.23.0",
