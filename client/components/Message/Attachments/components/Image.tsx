@@ -88,7 +88,7 @@ const Image: FC<ImageProps> = ({ previewUrl, loadImage = true, setLoadImage, src
 		return <Retry retry={setHasNoError}/>;
 	}
 
-	return <ImageBox className='gallery-item' onError={setHasError} {...previewUrl && { style: { background } } as any } { ...dimensions } src={src} is='img'/>;
+	return <img className='gallery-item' onError={setHasError} {...previewUrl && { style: { background } } as any } { ...dimensions } src={src}/>;
 };
 
 

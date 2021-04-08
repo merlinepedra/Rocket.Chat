@@ -11,11 +11,11 @@ export const RoomTemplate = ({ children, ...props }) => {
 	const aside = c.filter((child) => child.type === RoomTemplate.Aside);
 
 
-	return <Box is='main' h='full' display='flex' flexDirection='column' {...props}>
+	return <Box is='main' h='full' width='full' display='flex' flexShrink={1} overflow='hidden' flexDirection='column' {...props}>
 		{ header.length > 0 && header }
-		<Box display='flex' flexGrow='1' overflow='hidden' height='full' position='relative'>
-			<Box display='flex' flexDirection='column' flexGrow='1'>
-				<Box is='div' display='flex' flexDirection='column' flexGrow='1'>{body}</Box>
+		<Box display='flex' flexGrow='1' overflow='hidden' height='full' position='relative' width='full'>
+			<Box display='flex' flexDirection='column' width='full' flexGrow='1'>
+				<Box is='div' display='flex' flexDirection='column' overflow='hidden' flexShrink={1} width='full' flexGrow={1}>{body}</Box>
 				{ footer.length > 0 && <Box is='footer'>{footer}</Box> }
 			</Box>
 			{ aside.length > 0 && <VerticalBar is='aside' >{aside}</VerticalBar>}
