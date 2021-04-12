@@ -7,9 +7,9 @@ import { useTimeAgo } from '../../../hooks/useTimeAgo';
 type DicussionOptions = {
 	drid: string;
 	rid: string;
-	count: number;
-	lm: Date;
 	openDiscussion: () => void;
+	count: number;
+	lm?: Date;
 };
 
 const DiscussionMetric: FC<DicussionOptions> = ({ lm, count, rid, drid, openDiscussion }) => {

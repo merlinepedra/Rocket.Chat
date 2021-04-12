@@ -22,7 +22,7 @@ const store = new Map<string, UserPresence>();
 
 export type UserPresence = Pick<
 	IUser,
-	'_id' | 'username' | 'name' | 'status' | 'utcOffset' | 'statusText' | 'avatarETag'
+	'_id' | 'username' | 'name' | 'status' | 'utcOffset' | 'statusText' | 'avatarETag' | 'roles'
 >;
 
 type UsersPresencePayload = {
@@ -62,7 +62,7 @@ const getPresence = ((): ((uid: UserPresence['_id']) => void) => {
 				});
 
 				currentUids.forEach((uid) => {
-					emitter.emit(uid, { _id: uid, status: UserStatus.OFFLINE });
+					emitter.emit(uid, { _id: uid, status: UserStatus.OFFLINE, roles: [] });
 				});
 
 				currentUids.clear();

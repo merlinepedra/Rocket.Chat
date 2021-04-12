@@ -4,7 +4,7 @@ import { roomTypes } from '../../../../app/utils/client';
 import { IRoom } from '../../../../definition/IRoom';
 import { useUserId, useUserSubscription } from '../../../contexts/UserContext';
 import { RoomSkeleton } from '../Room/RoomSkeleton';
-import { RoomContext } from '../contexts/RoomContext';
+import { RoomContext, RoomContextValue } from '../contexts/RoomContext';
 import { useUserRoom } from '../hooks/useUserRoom';
 import ToolboxProvider from './ToolboxProvider';
 
@@ -13,6 +13,25 @@ const fields = {};
 export type Props = {
 	children: ReactNode;
 	rid: IRoom['_id'];
+};
+
+const openUserCard = () => {
+	console.log('openUserCard');
+};
+const followMessage = () => {
+	console.log('followMessage');
+};
+const unfollowMessage = () => {
+	console.log('unfollowMessage');
+};
+const openDiscussion = () => {
+	console.log('openDiscussion');
+};
+const openThread = () => {
+	console.log('openThread');
+};
+const replyBroadcast = () => {
+	console.log('replyBroadcast');
 };
 
 const RoomProvider = ({ rid, children }: Props): JSX.Element => {
@@ -29,6 +48,14 @@ const RoomProvider = ({ rid, children }: Props): JSX.Element => {
 		return {
 			rid,
 			room: { ...room, name: roomTypes.getRoomName(room.t, room) },
+			actions: {
+				openUserCard,
+				followMessage,
+				unfollowMessage,
+				openDiscussion,
+				openThread,
+				replyBroadcast,
+			},
 		};
 	}, [room, rid]);
 
@@ -49,6 +76,14 @@ export const useRoom = (): IRoom => {
 		throw Error('useRoom should be used only inside rooms context');
 	}
 	return context.room;
+};
+
+export const useRoomActions = (): RoomContextValue['actions'] => {
+	const context = useContext(RoomContext);
+	if (!context) {
+		throw Error('useRoom should be used only inside rooms context');
+	}
+	return context.actions;
 };
 
 export default RoomProvider;
