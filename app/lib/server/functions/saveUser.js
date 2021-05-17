@@ -35,7 +35,7 @@ function _sendUserEmail(subject, html, userData) {
 		html,
 		data: {
 			email: escapeHTML(userData.email),
-			password: escapeHTML(userData.password),
+			password: userData.password,
 		},
 	};
 
