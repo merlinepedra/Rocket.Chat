@@ -1308,5 +1308,63 @@ describe('[Teams]', () => {
 
 			expect(res.body).to.have.property('success', false);
 		});
+
+		describe.only('default channels', async () => {
+		// let testTeam;
+			let testChannel;
+			// let testUser1;
+			// let testUser2;
+			before(async () => {
+				const teamCreateRes = await request.post(api('teams.create'))
+					.set(credentials)
+					.send({ name: `team-${ Date.now() }` });
+
+				const { team } = teamCreateRes.body;
+				const user1 = await createUser();
+				const user2 = await createUser();
+
+				const channelCreateRes = await request.post(api('channels.create'))
+					.set(credentials)
+					.send({
+						name: `team-channel-${ Date.now() }`,
+					});
+
+				const { channel } = channelCreateRes.body;
+
+				await request.post(api('teams.addRooms'))
+					.set(credentials)
+					.send({
+						rooms: [channel._id],
+						teamId: team._id,
+					});
+
+				// testTeam = team;
+				testChannel = channel;
+				// testUser1 = user1;
+				// testUser2 = user2;
+
+				await request.post(api('teams.addMembers'))
+					.set(credentials)
+					.send({
+						name: team.name,
+						members: [{ userId: user1._id }, { userId: user2._id }],
+					});
+			});
+
+			it('should add existing team members to a channel that has been set as autojoin', async () => {
+				const resAutojoin = await request.post(api('teams.updateRoom'))
+					.set(credentials)
+					.send({ roomId: testChannel._id, isDefault: true })
+					.expect(200);
+				expect(resAutojoin.body).to.have.a.property('success', true);
+
+				const channelInfoResponse = await request.get(api('channels.info'))
+					.set(credentials)
+					.query({ roomId: testChannel._id });
+				const { channel } = channelInfoResponse.body;
+
+				return expect(channel.usersCount).to.be.equals(3);
+			});
+		});
 	});
 });
