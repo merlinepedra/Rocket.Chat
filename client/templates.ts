@@ -225,7 +225,7 @@ createTemplateForComponent('ModalBlock', () => import('./views/blocks/ConnectedM
 	renderContainerView: () => HTML.DIV({ style: 'display: flex; width: 100%; height: 100%;' }),
 });
 
-createTemplateForComponent('Blocks', () => import('./views/blocks/MessageBlock'));
+createTemplateForComponent('Blocks', () => import('./views/blocks/MessageBlocks'));
 
 createTemplateForComponent('adminFlex', () => import('./views/admin/sidebar/AdminSidebar'), {
 	renderContainerView: () => HTML.DIV({ style: 'height: 100%; position: relative;' }),

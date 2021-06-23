@@ -10,10 +10,12 @@ import ipRangeCheck from 'ip-range-check';
 import he from 'he';
 import jschardet from 'jschardet';
 
-import { OEmbedCache, Messages } from '../../models';
+import { OEmbedCache, Messages } from '../../models/server';
 import { callbacks } from '../../callbacks';
 import { settings } from '../../settings';
 import { isURL } from '../../utils/lib/isURL';
+import { convertOembedToUiKit } from './convertOembedToUiKit';
+
 
 const request = HTTPInternals.NpmModules.request.module;
 const OEmbed = {};
@@ -166,6 +168,7 @@ OEmbed.getUrlMeta = function(url, withFragment) {
 		return content;
 	}
 	let metas = undefined;
+	console.log('content.body', content.body)
 	if (content && content.body) {
 		metas = {};
 		const escapeMeta = (name, value) => {
@@ -204,6 +207,7 @@ OEmbed.getUrlMeta = function(url, withFragment) {
 	if (content && content.statusCode !== 200) {
 		return;
 	}
+	console.log(metas);
 	return callbacks.run('oembed:afterParseContent', {
 		url,
 		meta: metas,
@@ -249,7 +253,7 @@ const getRelevantMetaTags = function(metaObj) {
 	const tags = {};
 	Object.keys(metaObj).forEach((key) => {
 		const value = metaObj[key];
-		if (/^(og|fb|twitter|oembed|msapplication).+|description|title|pageTitle$/.test(key.toLowerCase()) && (value && value.trim() !== '')) {
+		if (/^(og|fb|twitter|oembed|msapplication).+|description|title|pageTitle|type$/.test(key.toLowerCase()) && (value && value.trim() !== '')) {
 			tags[key] = value;
 		}
 	});
@@ -263,7 +267,7 @@ const insertMaxWidthInOembedHtml = (oembedHtml) => oembedHtml?.replace('iframe',
 
 OEmbed.rocketUrlParser = function(message) {
 	if (Array.isArray(message.urls)) {
-		let attachments = [];
+		const attachments = [];
 		let changed = false;
 		message.urls.forEach(function(item) {
 			if (item.ignoreParse === true) {
@@ -273,26 +277,32 @@ OEmbed.rocketUrlParser = function(message) {
 				return;
 			}
 			const data = OEmbed.getUrlMetaWithCache(item.url);
-			if (data != null) {
-				if (data.attachments) {
-					attachments = _.union(attachments, data.attachments);
-					return;
-				}
-				if (data.meta != null) {
-					item.meta = getRelevantMetaTags(data.meta);
-					if (item.meta && item.meta.oembedHtml) {
-						item.meta.oembedHtml = insertMaxWidthInOembedHtml(item.meta.oembedHtml);
-					}
-				}
-				if (data.headers != null) {
-					item.headers = getRelevantHeaders(data.headers);
-				}
-				item.parsedUrl = data.parsedUrl;
-				changed = true;
+			if (!data) {
+				return;
 			}
+			if (data.attachments) {
+				attachments.concat(data.attachments);
+				return;
+			}
+			if (data.meta != null) {
+				item.meta = getRelevantMetaTags(data.meta);
+				if (item.meta && item.meta.oembedHtml) {
+					item.meta.oembedHtml = insertMaxWidthInOembedHtml(item.meta.oembedHtml);
+				}
+			}
+			if (data.headers != null) {
+				item.headers = getRelevantHeaders(data.headers);
+			}
+			item.parsedUrl = data.parsedUrl;
+			changed = true;
 		});
+		message.blocks = message.blocks || [];
+		message.blocks = message.blocks.concat(convertOembedToUiKit(message.urls));
 		if (attachments.length) {
 			Messages.setMessageAttachments(message._id, attachments);
+		}
+		if (message.blocks.length) {
+			Messages.update({ _id: message._id }, { $set: { blocks: message.blocks } });
 		}
 		if (changed === true) {
 			Messages.setUrlsById(message._id, message.urls);
