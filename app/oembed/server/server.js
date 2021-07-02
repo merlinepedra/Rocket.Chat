@@ -11,10 +11,11 @@ import he from 'he';
 import jschardet from 'jschardet';
 
 import { OEmbedCache, Messages } from '../../models/server';
-import { callbacks } from '../../callbacks';
-import { settings } from '../../settings';
+import { callbacks } from '../../callbacks/server';
+import { settings } from '../../settings/server';
 import { isURL } from '../../utils/lib/isURL';
 import { convertOembedToUiKit } from './convertOembedToUiKit';
+import { providers, Providers } from './providers';
 
 
 const request = HTTPInternals.NpmModules.request.module;
@@ -89,10 +90,24 @@ const getUrlContent = Meteor.wrapAsync(function(urlObj, redirectCount = 5, callb
 		return callback();
 	}
 
-	const data = callbacks.run('oembed:beforeGetUrlContent', {
+	const data = {
 		urlObj,
 		parsedUrl,
-	});
+	};
+
+	const url = URL.format(parsedUrl);
+	const provider = providers.getProviderForUrl(url);
+	if (provider != null) {
+		const consumerUrl = URL.parse(Providers.getConsumerUrl(provider, url), true);
+		_.extend(data.parsedUrl, consumerUrl);
+		data.urlObj.port = consumerUrl.port;
+		data.urlObj.hostname = consumerUrl.hostname;
+		data.urlObj.pathname = consumerUrl.pathname;
+		data.urlObj.query = consumerUrl.query;
+		delete data.urlObj.search;
+		delete data.urlObj.host;
+	}
+
 	if (data.attachments != null) {
 		return callback(null, data);
 	}
@@ -164,12 +179,15 @@ OEmbed.getUrlMeta = function(url, withFragment) {
 	if (!content) {
 		return;
 	}
+	if (content && content.statusCode !== 200) {
+		return;
+	}
 	if (content.attachments != null) {
 		return content;
 	}
 	let metas = undefined;
-	console.log('content.body', content.body)
-	if (content && content.body) {
+	// console.log('content.body', content.body)
+	if (content?.body) {
 		metas = {};
 		const escapeMeta = (name, value) => {
 			metas[name] = metas[name] || he.unescape(value);
@@ -204,10 +222,7 @@ OEmbed.getUrlMeta = function(url, withFragment) {
 			headers[camelCase(header)] = headerObj[header];
 		});
 	}
-	if (content && content.statusCode !== 200) {
-		return;
-	}
-	console.log(metas);
+	// console.log(metas);
 	return callbacks.run('oembed:afterParseContent', {
 		url,
 		meta: metas,
@@ -266,48 +281,52 @@ const getRelevantMetaTags = function(metaObj) {
 const insertMaxWidthInOembedHtml = (oembedHtml) => oembedHtml?.replace('iframe', 'iframe style=\"max-width: 100%;width:400px;height:225px\"');
 
 OEmbed.rocketUrlParser = function(message) {
-	if (Array.isArray(message.urls)) {
-		const attachments = [];
-		let changed = false;
-		message.urls.forEach(function(item) {
-			if (item.ignoreParse === true) {
-				return;
-			}
-			if (!isURL(item.url)) {
-				return;
-			}
-			const data = OEmbed.getUrlMetaWithCache(item.url);
-			if (!data) {
-				return;
-			}
-			if (data.attachments) {
-				attachments.concat(data.attachments);
-				return;
-			}
-			if (data.meta != null) {
-				item.meta = getRelevantMetaTags(data.meta);
-				if (item.meta && item.meta.oembedHtml) {
-					item.meta.oembedHtml = insertMaxWidthInOembedHtml(item.meta.oembedHtml);
-				}
-			}
-			if (data.headers != null) {
-				item.headers = getRelevantHeaders(data.headers);
-			}
-			item.parsedUrl = data.parsedUrl;
-			changed = true;
-		});
-		message.blocks = message.blocks || [];
-		message.blocks = message.blocks.concat(convertOembedToUiKit(message.urls));
-		if (attachments.length) {
-			Messages.setMessageAttachments(message._id, attachments);
-		}
-		if (message.blocks.length) {
-			Messages.update({ _id: message._id }, { $set: { blocks: message.blocks } });
-		}
-		if (changed === true) {
-			Messages.setUrlsById(message._id, message.urls);
-		}
+	if (!Array.isArray(message.urls)) {
+		return message;
 	}
+
+	const attachments = [];
+	let changed = false;
+
+	message.urls.forEach(function(item) {
+		if (item.ignoreParse === true) {
+			return;
+		}
+		if (!isURL(item.url)) {
+			return;
+		}
+		const data = OEmbed.getUrlMetaWithCache(item.url);
+		if (!data) {
+			return;
+		}
+		if (data.attachments) {
+			attachments.concat(data.attachments);
+			return;
+		}
+		if (data.meta != null) {
+			item.meta = getRelevantMetaTags(data.meta);
+			if (item.meta && item.meta.oembedHtml) {
+				item.meta.oembedHtml = insertMaxWidthInOembedHtml(item.meta.oembedHtml);
+			}
+		}
+		if (data.headers != null) {
+			item.headers = getRelevantHeaders(data.headers);
+		}
+		item.parsedUrl = data.parsedUrl;
+		changed = true;
+	});
+	message.blocks = message.blocks || [];
+	message.blocks = message.blocks.concat(convertOembedToUiKit(message.urls));
+	if (attachments.length) {
+		Messages.setMessageAttachments(message._id, attachments);
+	}
+	if (message.blocks.length) {
+		Messages.update({ _id: message._id }, { $set: { blocks: message.blocks } });
+	}
+	if (changed === true) {
+		Messages.setUrlsById(message._id, message.urls);
+	}
+
 	return message;
 };
 
