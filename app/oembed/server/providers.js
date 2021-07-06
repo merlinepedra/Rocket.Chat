@@ -6,7 +6,7 @@ import _ from 'underscore';
 
 import { callbacks } from '../../callbacks';
 
-class Providers {
+export class Providers {
 	constructor() {
 		this.providers = [];
 	}
@@ -36,7 +36,7 @@ class Providers {
 	}
 }
 
-const providers = new Providers();
+export const providers = new Providers();
 
 providers.registerProvider({
 	urls: [new RegExp('https?://soundcloud\\.com/\\S+')],
@@ -50,7 +50,7 @@ providers.registerProvider({
 
 providers.registerProvider({
 	urls: [new RegExp('https?://www\\.youtube\\.com/\\S+'), new RegExp('https?://youtu\\.be/\\S+')],
-	endPoint: 'https://www.youtube.com/oembed?maxheight=200',
+	endPoint: 'https://www.youtube.com/oembed?maxheight=200', // TODO test maxwidth=400
 });
 
 providers.registerProvider({
@@ -81,25 +81,6 @@ providers.registerProvider({
 export const oembed = {};
 
 oembed.providers = providers;
-
-callbacks.add('oembed:beforeGetUrlContent', function(data) {
-	if (data.parsedUrl != null) {
-		const url = URL.format(data.parsedUrl);
-		const provider = providers.getProviderForUrl(url);
-		if (provider != null) {
-			let consumerUrl = Providers.getConsumerUrl(provider, url);
-			consumerUrl = URL.parse(consumerUrl, true);
-			_.extend(data.parsedUrl, consumerUrl);
-			data.urlObj.port = consumerUrl.port;
-			data.urlObj.hostname = consumerUrl.hostname;
-			data.urlObj.pathname = consumerUrl.pathname;
-			data.urlObj.query = consumerUrl.query;
-			delete data.urlObj.search;
-			delete data.urlObj.host;
-		}
-	}
-	return data;
-}, callbacks.priority.MEDIUM, 'oembed-providers-before');
 
 const cleanupOembed = (data) => {
 	if (!data?.meta) {

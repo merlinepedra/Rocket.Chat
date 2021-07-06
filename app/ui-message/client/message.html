@@ -99,16 +99,10 @@
 					{{#if isSnippet}}
 						<div class="snippet-name">{{_ "Snippet_name"}}: {{snippetName}}</div>
 					{{/if}}
-					{{#if msg.blocks}}
-						<div class='rc-ui-kit'>
-							{{> Blocks blocks=msg.blocks rid=msg.rid mid=msg._id}}
-						</div>
+					{{# if enableMessageParserEarlyAdoption }}
+						{{> MessageBody tokens=msg.md mentions=msg.mentions }}
 					{{else}}
-						{{# if enableMessageParserEarlyAdoption }}
-							{{> MessageBody tokens=msg.md mentions=msg.mentions }}
-						{{else}}
-							{{{body}}}
-						{{/if}}
+						{{{body}}}
 					{{/if}}
 					{{#if msg.location}}
 						{{> messageLocation location=msg.location}}
@@ -116,18 +110,23 @@
 				</div>
 			</div>
 
-			{{#if hasOembed}}
-				{{#each msg.urls}}
-					{{injectMessage . ../msg}}
-					{{injectSettings . ../settings}}
-					{{injectIndex . @index}}
-					{{> oembedBaseWidget}}
-				{{/each}}
+			{{#if msg.blocks}}
+				<div class='rc-ui-kit'>
+					{{> Blocks blocks=msg.blocks rid=msg.rid mid=msg._id}}
+				</div>
+			{{else}}
+				{{#if hasOembed}}
+					{{#each msg.urls}}
+						{{injectMessage . ../msg}}
+						{{injectSettings . ../settings}}
+						{{injectIndex . @index}}
+						{{> oembedBaseWidget}}
+					{{/each}}
+				{{/if}}
+				{{#if hasAttachments}}
+					{{> reactAttachments attachments=msg.attachments file=msg.file }}
+				{{/if}}
 			{{/if}}
-			{{#if hasAttachments}}
-				{{> reactAttachments attachments=msg.attachments file=msg.file }}
-			{{/if}}
-
 
 			{{#with readReceipt}}
 				<div class="read-receipt {{readByEveryone}}">

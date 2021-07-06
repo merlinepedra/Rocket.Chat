@@ -5,53 +5,90 @@ type OembedUrlLegacy = {
 	meta: Record<string, string>;
 }
 
-type OembedMeta = Partial<{
-	siteName: string;
-	siteUrl: string;
-	title: string;
-	description: string;
+type PreviewType =
+	'external' | // preview com jump to
+	'embedded' | // play and preview com jump to
+	'video' | // attachment
+	'image' | // attachment
+	'audio'; // attachment
+
+type PreviewMetadata = Partial<{
+	siteName: string; // nome
+	siteUrl: string; // parsedUrl.host
+	siteColor: string; // ogColor
+	title: string; // ogTitle
+	description: string; // ogDescription
+	authorName: string;
+	authorUrl: string;
 	image: {
-		url: string;
+		preview?: string; // base64 low res preview
+		src: string;
 		dimensions: {
 			width?: number;
 			height?: number;
 		};
 	};
 	url: string;
-	type: string;
+	type: PreviewType;
+	html?: string; // for embedded OembedType
 }>
 
-export const normalizeMeta = ({ url, meta }: OembedUrlLegacy): OembedMeta => {
-	const image = meta.ogImage || meta.twitterImage || meta.msapplicationTileImage || meta.oembedThumbnailUrl;
+const normalizeType = (type: string): PreviewType => {
+	switch (type) {
+		case 'rich':
+		case 'video':
+			return 'embedded';
+
+		case 'photo':
+			return 'image';
+
+		default:
+			return 'external';
+	}
+};
+
+export const normalizeMeta = ({ url, meta }: OembedUrlLegacy): PreviewMetadata => {
+	const image = meta.ogImage || meta.twitterImage || meta.msapplicationTileImage || meta.oembedThumbnailUrl || meta.oembedThumbnailUrl;
+
+	const type = normalizeType(meta.ogType || meta.oembedType);
+
 	return Object.fromEntries(Object.entries({
-		siteName: meta.ogSiteName,
+		siteName: meta.ogSiteName || meta.oembedProviderName,
 		siteUrl: meta.ogUrl || meta.oembedProviderUrl,
-		title: meta.ogTitle || meta.twitterTitle || meta.title || meta.pageTitle,
+		title: meta.ogTitle || meta.twitterTitle || meta.title || meta.pageTitle || meta.oembedTitle,
 		description: meta.ogDescription || meta.twitterDescription || meta.description,
+		author: meta.oembedAuthorName,
 		...image && {
-			image: { url: image,
+			image: {
+				url: image,
 				dimensions: {
 					...meta.ogImageHeight && { height: meta.ogImageHeight },
 					...meta.ogImageHeight && { width: meta.ogImageWidth },
-				} },
+				},
+			},
 		},
-		url,
-		type: meta.ogType,
+		url: meta.oembedUrl || url,
+		type,
+		...type === 'embedded' && { html: meta.oembedHtml },
 	}).filter(([, value]) => value));
 };
 
-export const convertOembedToUiKit = (urls: OembedUrlLegacy[]): PreviewBlock<VisibilityTypesInternal>[] => urls.filter(({ meta }) => Boolean(meta)).map(normalizeMeta).map(({ title, description, url, image, type }) => ({
-	type: 'preview',
-	title: {
-		type: 'plain_text',
-		text: title,
-	},
-	description: {
-		type: 'plain_text',
-		text: description,
-	},
-	...url && { externalUrl: url },
-	...image && {
-		[image.dimensions.height && image.dimensions ? 'preview' : 'thumb']: image,
-	},
-}));
+export const convertOembedToUiKit = (urls: OembedUrlLegacy[]): PreviewBlock<VisibilityTypesInternal>[] =>
+	urls
+		.filter(({ meta }) => Boolean(meta))
+		.map(normalizeMeta)
+		.map(({ title, description, url, image, type }) => ({
+			type: 'preview',
+			title: {
+				type: 'plain_text',
+				text: title,
+			},
+			description: {
+				type: 'plain_text',
+				text: description,
+			},
+			...url && { externalUrl: url },
+			...image && {
+				[image.dimensions.height && image.dimensions ? 'preview' : 'thumb']: image,
+			},
+		}));
