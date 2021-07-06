@@ -108,12 +108,8 @@ const getUrlContent = Meteor.wrapAsync(function(urlObj, redirectCount = 5, callb
 		delete data.urlObj.host;
 	}
 
-	if (data.attachments != null) {
-		return callback(null, data);
-	}
-	const url = URL.format(data.urlObj);
 	const opts = {
-		url,
+		url: URL.format(data.urlObj),
 		strictSSL: !settings.get('Allow_Invalid_SelfSigned_Certs'),
 		gzip: true,
 		maxRedirects: redirectCount,
