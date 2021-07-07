@@ -264,7 +264,7 @@ const getRelevantMetaTags = function(metaObj) {
 	const tags = {};
 	Object.keys(metaObj).forEach((key) => {
 		const value = metaObj[key];
-		if (/^(og|fb|twitter|oembed|msapplication).+|description|title|pageTitle|type$/.test(key.toLowerCase()) && (value && value.trim() !== '')) {
+		if (/^(og|fb|twitter|oembed|msapplication).+|description|title|pageTitle|type$/.test(key.toLowerCase()) && (value && String(value).trim() !== '')) {
 			tags[key] = value;
 		}
 	});

@@ -40,32 +40,32 @@ export const providers = new Providers();
 
 providers.registerProvider({
 	urls: [new RegExp('https?://soundcloud\\.com/\\S+')],
-	endPoint: 'https://soundcloud.com/oembed?format=json&maxheight=150',
+	endPoint: 'https://soundcloud.com/oembed?format=json&maxwidth=400&maxheight=400',
 });
 
 providers.registerProvider({
 	urls: [new RegExp('https?://vimeo\\.com/[^/]+'), new RegExp('https?://vimeo\\.com/channels/[^/]+/[^/]+'), new RegExp('https://vimeo\\.com/groups/[^/]+/videos/[^/]+')],
-	endPoint: 'https://vimeo.com/api/oembed.json?maxheight=200',
+	endPoint: 'https://vimeo.com/api/oembed.json?maxwidth=400&maxheight=400',
 });
 
 providers.registerProvider({
 	urls: [new RegExp('https?://www\\.youtube\\.com/\\S+'), new RegExp('https?://youtu\\.be/\\S+')],
-	endPoint: 'https://www.youtube.com/oembed?maxheight=200', // TODO test maxwidth=400
+	endPoint: 'https://www.youtube.com/oembed?maxwidth=400&maxheight=400',
 });
 
 providers.registerProvider({
 	urls: [new RegExp('https?://www\\.rdio\\.com/\\S+'), new RegExp('https?://rd\\.io/\\S+')],
-	endPoint: 'https://www.rdio.com/api/oembed/?format=json&maxheight=150',
+	endPoint: 'https://www.rdio.com/api/oembed/?format=json&maxwidth=400&maxheight=400',
 });
 
 providers.registerProvider({
 	urls: [new RegExp('https?://www\\.slideshare\\.net/[^/]+/[^/]+')],
-	endPoint: 'https://www.slideshare.net/api/oembed/2?format=json&maxheight=200',
+	endPoint: 'https://www.slideshare.net/api/oembed/2?format=json&maxwidth=400&maxheight=400',
 });
 
 providers.registerProvider({
 	urls: [new RegExp('https?://www\\.dailymotion\\.com/video/\\S+')],
-	endPoint: 'https://www.dailymotion.com/services/oembed?maxheight=200',
+	endPoint: 'https://www.dailymotion.com/services/oembed?maxwidth=400&maxheight=400',
 });
 
 providers.registerProvider({
@@ -121,10 +121,9 @@ callbacks.add('oembed:afterParseContent', function(data) {
 
 	try {
 		const metas = JSON.parse(data.content.body);
+		// console.log('metas ->', metas);
 		_.each(metas, function(value, key) {
-			if (_.isString(value)) {
-				data.meta[camelCase(`oembed_${ key }`)] = value;
-			}
+			data.meta[camelCase(`oembed_${ key }`)] = value;
 		});
 	} catch (error) {
 		console.log(error);

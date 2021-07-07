@@ -19,7 +19,7 @@ type PreviewMetadata = Partial<{
 	title: string; // ogTitle
 	description: string; // ogDescription
 	authorName: string;
-	authorUrl: string;
+	authorUrl?: string;
 	image: {
 		preview?: string; // base64 low res preview
 		src: string;
@@ -50,6 +50,9 @@ const normalizeType = (type: string): PreviewType => {
 export const normalizeMeta = ({ url, meta }: OembedUrlLegacy): PreviewMetadata => {
 	const image = meta.ogImage || meta.twitterImage || meta.msapplicationTileImage || meta.oembedThumbnailUrl || meta.oembedThumbnailUrl;
 
+	const imageHeight = meta.ogImageHeight || meta.oembedHeight || meta.oembedThumbnailHeight;
+	const imageWidth = meta.ogImageWidth || meta.oembedWidth || meta.oembedThumbnailWidth;
+
 	const type = normalizeType(meta.ogType || meta.oembedType);
 
 	return Object.fromEntries(Object.entries({
@@ -57,13 +60,14 @@ export const normalizeMeta = ({ url, meta }: OembedUrlLegacy): PreviewMetadata =
 		siteUrl: meta.ogUrl || meta.oembedProviderUrl,
 		title: meta.ogTitle || meta.twitterTitle || meta.title || meta.pageTitle || meta.oembedTitle,
 		description: meta.ogDescription || meta.twitterDescription || meta.description,
-		author: meta.oembedAuthorName,
+		authorName: meta.oembedAuthorName,
+		authorUrl: meta.oembedAuthorUrl,
 		...image && {
 			image: {
 				url: image,
 				dimensions: {
-					...meta.ogImageHeight && { height: meta.ogImageHeight },
-					...meta.ogImageHeight && { width: meta.ogImageWidth },
+					...imageHeight && { height: imageHeight },
+					...imageWidth && { width: imageWidth },
 				},
 			},
 		},
@@ -77,7 +81,7 @@ export const convertOembedToUiKit = (urls: OembedUrlLegacy[]): PreviewBlock<Visi
 	urls
 		.filter(({ meta }) => Boolean(meta))
 		.map(normalizeMeta)
-		.map(({ title, description, url, image, type }) => ({
+		.map(({ title, description, url, image, authorName, authorUrl, siteName, siteUrl, type }) => ({
 			type: 'preview',
 			title: {
 				type: 'plain_text',
@@ -91,4 +95,11 @@ export const convertOembedToUiKit = (urls: OembedUrlLegacy[]): PreviewBlock<Visi
 			...image && {
 				[image.dimensions.height && image.dimensions ? 'preview' : 'thumb']: image,
 			},
+			context: [{
+				type: 'mrkdwn',
+				text: `[${ siteName }](${ siteUrl })`,
+			}, {
+				type: 'mrkdwn',
+				text: `[${ authorName }](${ authorUrl })`,
+			}],
 		}));
