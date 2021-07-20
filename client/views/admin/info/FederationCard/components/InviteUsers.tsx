@@ -1,10 +1,14 @@
 import { Box, ButtonGroup, Button, Banner } from '@rocket.chat/fuselage';
 import React, { FC, ReactElement } from 'react';
 
+import { useRoute } from '../../../../../contexts/RouterContext';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 
 const InviteUsers: FC = (): ReactElement => {
 	const t = useTranslation();
+
+	const directoryRoute = useRoute('directory');
+	const handleDirectory = (): void => directoryRoute.push({ tab: 'users' });
 
 	return (
 		<Box display='flex' flexDirection='column' alignItems='stretch' flexGrow={1}>
@@ -20,7 +24,7 @@ const InviteUsers: FC = (): ReactElement => {
 				{t('Federation_You_will_invite_users_without_login_access')}
 			</Box>
 			<ButtonGroup align='start' style={{ marginTop: 20 }}>
-				<Button primary small>
+				<Button primary small onClick={handleDirectory}>
 					{t('Federation_Invite_User')}
 				</Button>
 			</ButtonGroup>
