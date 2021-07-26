@@ -34,3 +34,11 @@ export async function findTagById({ userId, tagId }) {
 	}
 	return LivechatTag.findOneById(tagId);
 }
+
+export async function findTagsByIds({ userId, ids }) {
+	if (!await hasPermissionAsync(userId, 'manage-livechat-tags') && !await hasPermissionAsync(userId, 'view-l-room')) {
+		throw new Error('error-not-authorized');
+	}
+
+	return LivechatTag.find({ _id: { $in: ids } }).toArray();
+}

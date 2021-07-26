@@ -1,5 +1,5 @@
 import { API } from '../../../../../app/api/server';
-import { findTags, findTagById } from './lib/tags';
+import { findTags, findTagById, findTagsByIds } from './lib/tags';
 
 API.v1.addRoute('livechat/tags.list', { authRequired: true }, {
 	get() {
@@ -27,5 +27,17 @@ API.v1.addRoute('livechat/tags.getOne', { authRequired: true }, {
 			userId: this.userId,
 			tagId,
 		})));
+	},
+});
+
+API.v1.addRoute('livechat/tags', { authRequired: true }, {
+	get() {
+		const { ids } = this.queryParams;
+
+		if (!Array.isArray(ids)) {
+			throw new Error('error-invalid-ids');
+		}
+
+		return API.v1.success(Promise.await(findTagsByIds({ userId: this.userId, ids })));
 	},
 });
