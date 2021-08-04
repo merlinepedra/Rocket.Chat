@@ -43,9 +43,10 @@ const AutoCompleteDepartment = (props) => {
 		return 0;
 	});
 
-	const department = sortedByName.find(
-		(dep) => dep._id === (typeof value === 'string' ? value : value.value),
-	)?.value;
+	const department =
+		value &&
+		sortedByName.find((dep) => dep._id === (typeof value === 'string' ? value : value.value))
+			?.value;
 
 	return (
 		<PaginatedSelectFiltered
