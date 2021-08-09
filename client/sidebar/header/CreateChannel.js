@@ -69,7 +69,6 @@ const CreateChannel = ({
 	);
 
 	const canSave = useMemo(() => hasUnsavedChanges && !nameError, [hasUnsavedChanges, nameError]);
-
 	return (
 		<Modal>
 			<Modal.Header>

@@ -7,8 +7,8 @@ export interface ILoginToken {
 	twoFactorAuthorizedHash?: string;
 }
 
+when: Date;
 export interface IMeteorLoginToken extends ILoginToken {
-	when: Date;
 }
 
 export interface IPersonalAccessToken extends ILoginToken {
