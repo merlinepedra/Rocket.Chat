@@ -38,7 +38,7 @@ const CreateChannelWithData = ({ onClose, teamId = '', reload }) => {
 	const { users, name, description, type, readOnly, broadcast, encrypted } = values;
 	const { handleUsers, handleEncrypted, handleType, handleBroadcast, handleReadOnly } = handlers;
 
-	const onChangeUsers = useMutableCallback((value, action) => {		
+	const onChangeUsers = useMutableCallback((value, action) => {
 		if (!action) {
 			if (users.includes(value)) {
 				return;
