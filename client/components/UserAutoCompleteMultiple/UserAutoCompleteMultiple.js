@@ -27,13 +27,7 @@ const UserAutoCompleteMultiple = (props) => {
 		return user.username
 	};
 	const options = useMemo(
-		() =>
-			(data &&
-				data.items.map((user) => ({
-					value: user.username,
-					label: createLabel(user),
-				}))) ||
-			[],
+		() => (data && data.items.map((user) => ({ value: user.username, label: createLabel(user) }))) || [],
 		[data],
 	);
 	const onClickRemove = useMutableCallback((e) => {
