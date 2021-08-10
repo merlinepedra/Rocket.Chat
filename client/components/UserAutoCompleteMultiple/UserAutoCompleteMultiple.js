@@ -15,14 +15,23 @@ const UserAutoCompleteMultiple = (props) => {
 		'users.autocomplete',
 		useMemo(() => query(debouncedFilter), [debouncedFilter]),
 	);
+	const createLabel = (user) => {
+		if (user.name) {
+			return `${user.name} (${user.username})`;
+		}
+		
+		if(user.nickname) {
+			return `${user.username} (${user.nickname})`;
+		}
+
+		return user.username
+	};
 	const options = useMemo(
 		() =>
 			(data &&
 				data.items.map((user) => ({
 					value: user.username,
-					label: user.name
-						? `${user.name} (@${user.username})`
-						: `@${user.username} (${user.nickname})`,
+					label: createLabel(user),
 				}))) ||
 			[],
 		[data],
