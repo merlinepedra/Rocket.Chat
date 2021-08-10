@@ -16,7 +16,15 @@ const UserAutoCompleteMultiple = (props) => {
 		useMemo(() => query(debouncedFilter), [debouncedFilter]),
 	);
 	const options = useMemo(
-		() => (data && data.items.map((user) => ({ value: user.username, label: `${user.name} (@${user.username})` }))) || [],
+		() =>
+			(data &&
+				data.items.map((user) => ({
+					value: user.username,
+					label: user.name
+						? `${user.name} (@${user.username})`
+						: `@${user.username} (${user.nickname})`,
+				}))) ||
+			[],
 		[data],
 	);
 	const onClickRemove = useMutableCallback((e) => {
