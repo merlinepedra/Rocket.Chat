@@ -123,6 +123,7 @@ const map = {
 	[IntegrationHistory.col.collectionName]: IntegrationHistoryModel,
 	[Integrations.col.collectionName]: IntegrationsModel,
 	[EmailInbox.col.collectionName]: EmailInboxModel,
+	[LivechatCustomField.col.collectionName]: LivechatCustomFieldModel,
 };
 
 if (!process.env.DISABLE_DB_WATCH) {
@@ -142,8 +143,8 @@ if (!process.env.DISABLE_DB_WATCH) {
 		IntegrationHistory,
 		Integrations,
 		EmailInbox,
+		LivechatCustomField,
 	};
-
 	initWatchers(models, api.broadcastLocal.bind(api), (model, fn) => {
 		const meteorModel = map[model.col.collectionName];
 		if (!meteorModel) {

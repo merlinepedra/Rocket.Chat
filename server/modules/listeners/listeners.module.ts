@@ -259,5 +259,22 @@ export class ListenersModule {
 		service.onEvent('banner.new', (bannerId): void => {
 			notifications.notifyLoggedInThisInstance('new-banner', { bannerId });
 		});
+
+
+		service.onEvent('watch.omnichannelCustomFields', ({ clientAction, data }): void => {
+
+			// notifications.streamOmnichannel.emit('custom-field', clientAction, data);
+
+
+
+			// notifications.streamOmnichannel.emit('canned-responses', clientAction, data);
+
+
+
+			// notifications.streamOmnichannel.emit(`department/${ data._id }`, clientAction, data);
+			// notifications.streamOmnichannel.emit('department', clientAction, data);
+
+			notifications.streamOmnichannel.emit('*', clientAction, data);
+		});
 	}
 }

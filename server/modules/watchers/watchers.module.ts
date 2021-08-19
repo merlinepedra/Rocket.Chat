@@ -34,6 +34,8 @@ import { IntegrationsRaw } from '../../../app/models/server/raw/Integrations';
 import { EventSignatures } from '../../sdk/lib/Events';
 import { IEmailInbox } from '../../../definition/IEmailInbox';
 import { EmailInboxRaw } from '../../../app/models/server/raw/EmailInbox';
+import { ILivechatCustomField } from '../../../definition/ILivechatCustomField';
+import { LivechatCustomFieldRaw } from '../../../app/models/server/raw/LivechatCustomField';
 
 interface IModelsParam {
 	Subscriptions: SubscriptionsRaw;
@@ -51,6 +53,7 @@ interface IModelsParam {
 	IntegrationHistory: IntegrationHistoryRaw;
 	Integrations: IntegrationsRaw;
 	EmailInbox: EmailInboxRaw;
+	LivechatCustomField: LivechatCustomFieldRaw;
 }
 
 interface IChange<T> {
@@ -101,6 +104,7 @@ export function initWatchers(models: IModelsParam, broadcast: BroadcastCallback,
 		IntegrationHistory,
 		Integrations,
 		EmailInbox,
+		LivechatCustomField,
 	} = models;
 
 	const getSettingCached = mem(async (setting: string): Promise<SettingValue> => Settings.getValueById(setting), { maxAge: 10000 });
@@ -210,44 +214,6 @@ export function initWatchers(models: IModelsParam, broadcast: BroadcastCallback,
 			}
 		});
 	}
-
-	watch<IInquiry>(LivechatInquiry, async ({ clientAction, id, data, diff }) => {
-		switch (clientAction) {
-			case 'inserted':
-			case 'updated':
-				data = data ?? await LivechatInquiry.findOneById(id);
-				break;
-
-			case 'removed':
-				data = await LivechatInquiry.trashFindOneById(id);
-				break;
-		}
-
-		if (!data) {
-			return;
-		}
-
-		broadcast('watch.inquiries', { clientAction, inquiry: data, diff });
-	});
-
-	watch<ILivechatDepartmentAgents>(LivechatDepartmentAgents, async ({ clientAction, id, diff }) => {
-		if (clientAction === 'removed') {
-			const data = await LivechatDepartmentAgents.trashFindOneById<Pick<ILivechatDepartmentAgents, 'agentId' | 'departmentId'>>(id, { projection: { agentId: 1, departmentId: 1 } });
-			if (!data) {
-				return;
-			}
-			broadcast('watch.livechatDepartmentAgents', { clientAction, id, data, diff });
-			return;
-		}
-
-		const data = await LivechatDepartmentAgents.findOneById<Pick<ILivechatDepartmentAgents, 'agentId' |'departmentId'>>(id, { projection: { agentId: 1, departmentId: 1 } });
-		if (!data) {
-			return;
-		}
-		broadcast('watch.livechatDepartmentAgents', { clientAction, id, data, diff });
-	});
-
-
 	watch<IPermission>(Permissions, async ({ clientAction, id, data: eventData, diff }) => {
 		if (diff && Object.keys(diff).length === 1 && diff._updatedAt) {
 			// avoid useless changes
@@ -392,5 +358,61 @@ export function initWatchers(models: IModelsParam, broadcast: BroadcastCallback,
 		}
 
 		broadcast('watch.emailInbox', { clientAction, data, id });
+	});
+	watch<IInquiry>(LivechatInquiry, async ({ clientAction, id, data, diff }) => {
+		switch (clientAction) {
+			case 'inserted':
+			case 'updated':
+				data = data ?? await LivechatInquiry.findOneById(id);
+				break;
+
+			case 'removed':
+				data = await LivechatInquiry.trashFindOneById(id);
+				break;
+		}
+
+		if (!data) {
+			return;
+		}
+
+		broadcast('watch.inquiries', { clientAction, inquiry: data, diff });
+	});
+
+	watch<ILivechatDepartmentAgents>(LivechatDepartmentAgents, async ({ clientAction, id, diff }) => {
+		if (clientAction === 'removed') {
+			const data = await LivechatDepartmentAgents.trashFindOneById<Pick<ILivechatDepartmentAgents, 'agentId' | 'departmentId'>>(id, { projection: { agentId: 1, departmentId: 1 } });
+			if (!data) {
+				return;
+			}
+			broadcast('watch.livechatDepartmentAgents', { clientAction, id, data, diff });
+			return;
+		}
+
+		const data = await LivechatDepartmentAgents.findOneById<Pick<ILivechatDepartmentAgents, 'agentId' |'departmentId'>>(id, { projection: { agentId: 1, departmentId: 1 } });
+		if (!data) {
+			return;
+		}
+		broadcast('watch.livechatDepartmentAgents', { clientAction, id, data, diff });
+	});
+
+	watch<ILivechatCustomField>(LivechatCustomField, async ({ clientAction, id, data, diff }) => {
+		console.log('watch.livechatCustomField', { clientAction, id, data, diff });
+		switch (clientAction) {
+			case 'inserted':
+			case 'updated':
+				data = data ?? await LivechatCustomField.findOneById(id);
+				break;
+
+			case 'removed':
+				data = await LivechatCustomField.trashFindOneById(id);
+				break;
+		}
+
+		if (!data) {
+			return;
+		}
+
+
+		broadcast('watch.omnichannelCustomFields', { clientAction, id, data, diff });
 	});
 }

@@ -38,19 +38,23 @@ export class NotificationsModule {
 
 	public readonly streamAppsEngine: IStreamer;
 
-	public readonly streamCannedResponses: IStreamer;
-
 	public readonly streamIntegrationHistory: IStreamer;
-
-	public readonly streamLivechatRoom: IStreamer;
-
-	public readonly streamLivechatQueueData: IStreamer;
 
 	public readonly streamStdout: IStreamer;
 
 	public readonly streamRoomData: IStreamer;
 
 	public readonly streamLocal: IStreamer;
+
+	public readonly streamCannedResponses: IStreamer;
+
+	public readonly streamLivechatRoom: IStreamer;
+
+	public readonly streamLivechatQueueData: IStreamer;
+
+	public readonly streamOmnichannelCustomFields: IStreamer;
+
+	public readonly streamOmnichannel: IStreamer
 
 	constructor(
 		private Streamer: IStreamerConstructor,
@@ -63,14 +67,19 @@ export class NotificationsModule {
 		this.streamRoles = new this.Streamer('roles');
 		this.streamApps = new this.Streamer('apps', { retransmit: false });
 		this.streamAppsEngine = new this.Streamer('apps-engine', { retransmit: false });
-		this.streamCannedResponses = new this.Streamer('canned-responses');
 		this.streamIntegrationHistory = new this.Streamer('integrationHistory');
-		this.streamLivechatRoom = new this.Streamer('livechat-room');
-		this.streamLivechatQueueData = new this.Streamer('livechat-inquiry-queue-observer');
 		this.streamStdout = new this.Streamer('stdout');
 		this.streamRoomData = new this.Streamer('room-data');
-
 		this.streamRoomMessage = new this.Streamer('room-messages');
+
+		this.streamCannedResponses = new this.Streamer('canned-responses');
+
+
+		this.streamLivechatRoom = new this.Streamer('livechat-room');
+		this.streamLivechatQueueData = new this.Streamer('livechat-inquiry-queue-observer');
+		this.streamOmnichannelCustomFields = new this.Streamer('omnichannel-customFields');
+
+		this.streamOmnichannel = new this.Streamer('omnichannel');
 
 		this.streamRoomMessage.on('_afterPublish', async (streamer: IStreamer, publication: IPublication, eventName: string): Promise<void> => {
 			const { userId } = publication._session;
@@ -261,6 +270,14 @@ export class NotificationsModule {
 		this.streamCannedResponses.allowRead(async function() {
 			return !!this.userId && !!await Settings.getValueById('Canned_Responses_Enable') && Authorization.hasPermission(this.userId, 'view-canned-responses');
 		});
+
+		this.streamOmnichannelCustomFields.allowRead((e) => {
+			const [, id] = e.split('/');
+			if (id === '*') {
+				///
+			}
+			return true;
+		}); // TODO: apply permissions
 
 		this.streamIntegrationHistory.allowWrite('none');
 		this.streamIntegrationHistory.allowRead(async function() {

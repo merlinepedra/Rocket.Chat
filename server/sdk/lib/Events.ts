@@ -15,6 +15,7 @@ import { IIntegrationHistory } from '../../../definition/IIntegrationHistory';
 import { ILivechatDepartmentAgents } from '../../../definition/ILivechatDepartmentAgents';
 import { IIntegration } from '../../../definition/IIntegration';
 import { IEmailInbox } from '../../../definition/IEmailInbox';
+import { ILivechatCustomField } from '../../../definition/ILivechatCustomField';
 
 type ClientAction = 'inserted' | 'updated' | 'removed' | 'changed';
 
@@ -23,7 +24,6 @@ export type EventSignatures = {
 	'emoji.deleteCustom'(emoji: IEmoji): void;
 	'emoji.updateCustom'(emoji: IEmoji): void;
 	'license.module'(data: { module: string; valid: boolean }): void;
-	'livechat-inquiry-queue-observer'(data: { action: string; inquiry: IInquiry }): void;
 	'message'(data: { action: string; message: IMessage }): void;
 	'meteor.autoUpdateClientVersionChanged'(data: {record: AutoUpdateRecord }): void;
 	'notify.ephemeralMessage'(uid: string, rid: string, message: Partial<IMessage>): void;
@@ -45,7 +45,6 @@ export type EventSignatures = {
 	'watch.rooms'(data: { clientAction: ClientAction; room: Pick<IRoom, '_id'> & Partial<IRoom> }): void;
 	'watch.subscriptions'(data: { clientAction: ClientAction; subscription: Partial<ISubscription> }): void;
 	'watch.userSessions'(data: { clientAction: ClientAction; userSession: Partial<IUserSession> }): void;
-	'watch.inquiries'(data: { clientAction: ClientAction; inquiry: IInquiry; diff?: undefined | Record<string, any> }): void;
 	'watch.settings'(data: { clientAction: ClientAction; setting: ISetting }): void;
 	'watch.users'(data: { clientAction: ClientAction; data?: undefined | Partial<IUser>; diff?: undefined | Record<string, any>; unset?: undefined | Record<string, number>; id: string }): void;
 	'watch.loginServiceConfiguration'(data: { clientAction: ClientAction; data: Partial<ILoginServiceConfiguration>; id: string }): void;
@@ -53,5 +52,10 @@ export type EventSignatures = {
 	'watch.integrationHistory'(data: { clientAction: ClientAction; data: Partial<IIntegrationHistory>; diff?: undefined | Record<string, any>; id: string }): void;
 	'watch.integrations'(data: { clientAction: ClientAction; data: Partial<IIntegration>; id: string }): void;
 	'watch.emailInbox'(data: { clientAction: ClientAction; data: Partial<IEmailInbox>; id: string }): void;
+
+
+	'livechat-inquiry-queue-observer'(data: { action: string; inquiry: IInquiry }): void;
+	'watch.inquiries'(data: { clientAction: ClientAction; inquiry: IInquiry; diff?: undefined | Record<string, any> }): void;
 	'watch.livechatDepartmentAgents'(data: { clientAction: ClientAction; data: Partial<ILivechatDepartmentAgents>; diff?: undefined | Record<string, any>; id: string }): void;
+	'watch.omnichannelCustomFields'(data: { clientAction: ClientAction; data: Partial<ILivechatCustomField> & { _id: ILivechatCustomField['_id'] }; diff?: undefined | Record<string, any>; id: string }): void;
 }
