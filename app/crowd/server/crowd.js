@@ -312,7 +312,7 @@ const jobName = 'CROWD_Sync';
 
 const addCronJob = _.debounce(Meteor.bindEnvironment(function addCronJobDebounced() {
 	if (settings.get('CROWD_Sync_User_Data') !== true) {
-		logger.info('Disabling CROWD Background Sync');
+		logger.debug('Disabling CROWD Background Sync');
 		if (SyncedCron.nextScheduledAtDate(jobName)) {
 			SyncedCron.remove(jobName);
 		}
@@ -322,7 +322,7 @@ const addCronJob = _.debounce(Meteor.bindEnvironment(function addCronJobDebounce
 	const crowd = new CROWD();
 
 	if (settings.get('CROWD_Sync_Interval')) {
-		logger.info('Enabling CROWD Background Sync');
+		logger.debug('Enabling CROWD Background Sync');
 		SyncedCron.add({
 			name: jobName,
 			schedule: (parser) => parser.text(settings.get('CROWD_Sync_Interval')),

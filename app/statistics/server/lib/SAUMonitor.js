@@ -319,7 +319,7 @@ export class SAUMonitorClass {
 				callback(data, ids);
 				return batch(arr, limit);
 			}).catch((e) => {
-				logger.debug(`Error: ${ e.message }`);
+				logger.error(e);
 			});
 		};
 
@@ -328,7 +328,7 @@ export class SAUMonitorClass {
 	}
 
 	_startAggregation() {
-		logger.info('[aggregate] - Start Cron.');
+		logger.debug('[aggregate] - Start Cron.');
 
 		SyncedCron.add({
 			name: this._jobName,
@@ -344,7 +344,7 @@ export class SAUMonitorClass {
 			return;
 		}
 
-		logger.info('[aggregate] - Aggregating data.');
+		logger.debug('[aggregate] - Aggregating data.');
 
 		const date = new Date();
 		date.setDate(date.getDate() - 0); // yesterday

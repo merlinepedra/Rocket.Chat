@@ -64,7 +64,7 @@ export class PendingAvatarImporter extends Base {
 		} catch (error) {
 			// If the cursor expired, restart the method
 			if (error && error.codeName === 'CursorNotFound') {
-				this.logger.info('CursorNotFound');
+				this.logger.debug('CursorNotFound');
 				return this.startImport();
 			}
 

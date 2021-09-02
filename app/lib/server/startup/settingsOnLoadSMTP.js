@@ -5,7 +5,7 @@ import { settings } from '../../../settings/server';
 import { SystemLogger } from '../../../../server/lib/logger/system';
 
 const buildMailURL = _.debounce(function() {
-	SystemLogger.info('Updating process.env.MAIL_URL');
+	SystemLogger.debug('Updating process.env.MAIL_URL');
 
 	if (settings.get('SMTP_Host')) {
 		process.env.MAIL_URL = `${ settings.get('SMTP_Protocol') }://`;

@@ -137,7 +137,7 @@ const updatePrometheusConfig = async () => {
 
 	if (!is.enabled) {
 		if (was.enabled) {
-			SystemLogger.info('Disabling Prometheus');
+			SystemLogger.debug('Disabling Prometheus');
 			server.close();
 			Meteor.clearInterval(timer);
 		}

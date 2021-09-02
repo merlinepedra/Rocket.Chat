@@ -602,7 +602,7 @@ const jobName = 'LDAP_Sync';
 
 const addCronJob = _.debounce(Meteor.bindEnvironment(function addCronJobDebounced() {
 	if (settings.get('LDAP_Background_Sync') !== true) {
-		logger.info('Disabling LDAP Background Sync');
+		logger.debug('Disabling LDAP Background Sync');
 		if (SyncedCron.nextScheduledAtDate(jobName)) {
 			SyncedCron.remove(jobName);
 		}
@@ -610,7 +610,7 @@ const addCronJob = _.debounce(Meteor.bindEnvironment(function addCronJobDebounce
 	}
 
 	if (settings.get('LDAP_Background_Sync_Interval')) {
-		logger.info('Enabling LDAP Background Sync');
+		logger.debug('Enabling LDAP Background Sync');
 		SyncedCron.add({
 			name: jobName,
 			schedule: (parser) => parser.text(settings.get('LDAP_Background_Sync_Interval')),

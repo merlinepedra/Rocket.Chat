@@ -58,10 +58,10 @@ function updateServices(/* record*/) {
 
 		// Either register or deregister the CAS login service based upon its configuration
 		if (data.enabled) {
-			logger.info('Enabling CAS login service');
+			logger.debug('Enabling CAS login service');
 			ServiceConfiguration.configurations.upsert({ service: 'cas' }, { $set: data });
 		} else {
-			logger.info('Disabling CAS login service');
+			logger.debug('Disabling CAS login service');
 			ServiceConfiguration.configurations.remove({ service: 'cas' });
 		}
 	}, 2000);

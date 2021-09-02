@@ -19,23 +19,23 @@ export const setUserAvatar = function(user, dataURI, contentType, service) {
 		try {
 			result = HTTP.get(dataURI, { npmRequestOptions: { encoding: 'binary', rejectUnauthorized: false } });
 			if (!result) {
-				SystemLogger.info(`Not a valid response, from the avatar url: ${ encodeURI(dataURI) }`);
+				SystemLogger.debug(`Not a valid response, from the avatar url: ${ encodeURI(dataURI) }`);
 				throw new Meteor.Error('error-avatar-invalid-url', `Invalid avatar URL: ${ encodeURI(dataURI) }`, { function: 'setUserAvatar', url: dataURI });
 			}
 		} catch (error) {
 			if (!error.response || error.response.statusCode !== 404) {
-				SystemLogger.info(`Error while handling the setting of the avatar from a url (${ encodeURI(dataURI) }) for ${ user.username }:`, error);
+				SystemLogger.debug(`Error while handling the setting of the avatar from a url (${ encodeURI(dataURI) }) for ${ user.username }:`, error);
 				throw new Meteor.Error('error-avatar-url-handling', `Error while handling avatar setting from a URL (${ encodeURI(dataURI) }) for ${ user.username }`, { function: 'RocketChat.setUserAvatar', url: dataURI, username: user.username });
 			}
 		}
 
 		if (result.statusCode !== 200) {
-			SystemLogger.info(`Not a valid response, ${ result.statusCode }, from the avatar url: ${ dataURI }`);
+			SystemLogger.debug(`Not a valid response, ${ result.statusCode }, from the avatar url: ${ dataURI }`);
 			throw new Meteor.Error('error-avatar-invalid-url', `Invalid avatar URL: ${ dataURI }`, { function: 'setUserAvatar', url: dataURI });
 		}
 
 		if (!/image\/.+/.test(result.headers['content-type'])) {
-			SystemLogger.info(`Not a valid content-type from the provided url, ${ result.headers['content-type'] }, from the avatar url: ${ dataURI }`);
+			SystemLogger.debug(`Not a valid content-type from the provided url, ${ result.headers['content-type'] }, from the avatar url: ${ dataURI }`);
 			throw new Meteor.Error('error-avatar-invalid-url', `Invalid avatar URL: ${ dataURI }`, { function: 'setUserAvatar', url: dataURI });
 		}
 

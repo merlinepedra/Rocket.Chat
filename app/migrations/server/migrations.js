@@ -87,6 +87,7 @@ function makeABox(message, color = 'red') {
 	return `\n${ topLine }\n${ separator }\n${ text }\n${ separator }\n${ bottomLine }\n`;
 }
 
+// TODO logger: evaluate usage. before it was more verbose on startup, which was good
 const log = new Logger('Migrations');
 
 // if (process.env.MIGRATE)

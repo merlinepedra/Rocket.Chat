@@ -1185,6 +1185,7 @@ export default class SlackAdapter {
 	}
 
 	importMessages(rid, callback) {
+		// TODO logger: debug?
 		slackLogger.info('importMessages: ', rid);
 		const rocketchat_room = Rooms.findOneById(rid);
 		if (rocketchat_room) {

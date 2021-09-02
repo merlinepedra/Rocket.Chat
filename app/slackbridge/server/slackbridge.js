@@ -44,6 +44,7 @@ class SlackBridgeClass {
 			}
 
 			this.connected = true;
+			// TODO logger: debug?
 			connLogger.info('Enabled');
 		}
 	}
@@ -56,6 +57,7 @@ class SlackBridgeClass {
 			});
 			this.slackAdapters = [];
 			this.connected = false;
+			// TODO logger: debug?
 			connLogger.info('Disabled');
 		}
 	}

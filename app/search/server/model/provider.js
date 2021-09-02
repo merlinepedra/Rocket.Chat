@@ -82,7 +82,7 @@ export default class SearchProvider {
 	constructor(key) {
 		if (!key.match(/^[A-z0-9]+$/)) { throw new Error(`cannot instantiate provider: ${ key } does not match key-pattern`); }
 
-		SearchLogger.info(`create search provider ${ key }`);
+		SearchLogger.debug(`create search provider ${ key }`);
 
 		this._key = key;
 		this._settings = new Settings(key);

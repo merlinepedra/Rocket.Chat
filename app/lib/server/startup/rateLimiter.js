@@ -110,6 +110,7 @@ const ruleIds = {};
 
 const callback = (message, name) => (reply, input) => {
 	if (reply.allowed === false) {
+		// TODO logger: debug?
 		logger.info('DDP RATE LIMIT:', message);
 		logger.info({ ...reply, ...input });
 		metrics.ddpRateLimitExceeded.inc({

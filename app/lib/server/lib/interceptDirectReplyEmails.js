@@ -46,7 +46,7 @@ export class POP3Intercepter {
 				// run on start
 				this.pop3.list();
 			} else {
-				SystemLogger.info('Unable to Log-in ....');
+				SystemLogger.debug('Unable to Log-in ....');
 			}
 		}));
 
@@ -62,7 +62,7 @@ export class POP3Intercepter {
 					this.pop3.quit();
 				}
 			} else {
-				SystemLogger.info('Cannot Get Emails ....');
+				SystemLogger.debug('Cannot Get Emails ....');
 			}
 		}));
 
@@ -79,7 +79,7 @@ export class POP3Intercepter {
 				// delete email
 				this.pop3.dele(msgnumber);
 			} else {
-				SystemLogger.info('Cannot Retrieve Message ....');
+				SystemLogger.debug('Cannot Retrieve Message ....');
 			}
 		}));
 
@@ -94,18 +94,18 @@ export class POP3Intercepter {
 					this.pop3.quit();
 				}
 			} else {
-				SystemLogger.info('Cannot Delete Message....');
+				SystemLogger.debug('Cannot Delete Message....');
 			}
 		}));
 
 		// invalid server state
 		this.pop3.on('invalid-state', function(cmd) {
-			SystemLogger.info(`Invalid state. You tried calling ${ cmd }`);
+			SystemLogger.debug(`Invalid state. You tried calling ${ cmd }`);
 		});
 
 		// locked => command already running, not finished yet
 		this.pop3.on('locked', function(cmd) {
-			SystemLogger.info(`Current command has not finished yet. You tried calling ${ cmd }`);
+			SystemLogger.debug(`Current command has not finished yet. You tried calling ${ cmd }`);
 		});
 	}
 

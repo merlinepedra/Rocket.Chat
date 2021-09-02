@@ -63,7 +63,7 @@ export const theme = new class {
 		};
 		const start = Date.now();
 		return less.render(content, options, function(err, data) {
-			logger.info({ stop_rendering: Date.now() - start });
+			logger.debug({ stop_rendering: Date.now() - start });
 			if (err != null) {
 				return logger.error(err);
 			}

@@ -89,7 +89,7 @@ const updateSettings = debounce(Meteor.bindEnvironment(function() {
 }), 150);
 
 function enableOrDisable(key, value) {
-	setupLogger.info(`Federation is ${ value ? 'enabled' : 'disabled' }`);
+	setupLogger.debug(`Federation is ${ value ? 'enabled' : 'disabled' }`);
 
 	if (value) {
 		updateSettings();
