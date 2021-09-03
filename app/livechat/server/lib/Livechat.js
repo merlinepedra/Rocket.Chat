@@ -193,8 +193,8 @@ export const Livechat = {
 		return { room, newRoom };
 	},
 
-	async sendMessage({ guest, message, roomInfo, agent }) {
-		const { room, newRoom } = await this.getRoom(guest, message, roomInfo, agent);
+	async sendMessage({ guest, message, roomInfo, agent, source }) {
+		const { room, newRoom } = await this.getRoom(guest, message, roomInfo, agent, { source });
 		if (guest.name) {
 			message.alias = guest.name;
 		}

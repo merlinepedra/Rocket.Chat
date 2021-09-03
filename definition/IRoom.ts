@@ -93,6 +93,14 @@ export interface IOmnichannelRoom extends Omit<IRoom, 'default' | 'featured' | '
 	responseBy: any;
 	priorityId: any;
 	livechatData: any;
+
+	source: {
+		type: 'livechat' | 'sms' | 'email';
+	} | {
+		type: 'app';
+		id: string;
+	};
+
 }
 
 export const isOmnichannelRoom = (room: IRoom): room is IOmnichannelRoom & IRoom => room.t === 'l';
