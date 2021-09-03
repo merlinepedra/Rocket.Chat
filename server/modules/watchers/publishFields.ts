@@ -94,6 +94,7 @@ export const roomFields = {
 	priorityId: 1,
 	v: 1,
 	departmentId: 1,
+	source: 1,
 	servedBy: 1,
 	transcriptRequest: 1,
 	onHold: 1,

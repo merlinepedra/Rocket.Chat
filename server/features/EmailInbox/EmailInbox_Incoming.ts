@@ -173,6 +173,7 @@ export async function onEmailReceived(email: ParsedMail, inbox: string, departme
 			},
 		},
 		agent: undefined,
+		source: 'email',
 	}).then(async () => {
 		if (!email.attachments.length) {
 			return;
