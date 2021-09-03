@@ -3,7 +3,7 @@ import { settings } from '../../../../../app/settings';
 import { LivechatInquiry } from '../../../../../app/models/server';
 import { dispatchInquiryPosition } from '../lib/Helper';
 import { allowAgentSkipQueue } from '../../../../../app/livechat/server/lib/Helper';
-import { saveQueueInquiry } from '../../../../../app/livechat/server/lib/QueueManager';
+import { QueueManager } from '../../../../../app/livechat/server/lib/QueueManager';
 import { logger } from '../lib/logger';
 
 callbacks.add('livechat.beforeRouteChat', async (inquiry, agent) => {
@@ -29,7 +29,7 @@ callbacks.add('livechat.beforeRouteChat', async (inquiry, agent) => {
 		return inquiry;
 	}
 
-	saveQueueInquiry(inquiry);
+	QueueManager.saveQueueInquiry(inquiry);
 
 	const [inq] = await LivechatInquiry.getCurrentSortedQueueAsync({ _id, department });
 	if (inq) {

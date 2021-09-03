@@ -1,6 +1,6 @@
 import { callbacks } from '../../../../../app/callbacks/server';
 import { LivechatInquiry, Subscriptions, LivechatRooms } from '../../../../../app/models/server';
-import { queueInquiry } from '../../../../../app/livechat/server/lib/QueueManager';
+import { QueueManager } from '../../../../../app/livechat/server/lib/QueueManager';
 import { settings } from '../../../../../app/settings/server';
 import { logger } from '../lib/logger';
 
@@ -21,7 +21,7 @@ const handleOnAgentAssignmentFailed = async ({ inquiry, room, options }: { inqui
 		Subscriptions.removeByRoomId(roomId);
 		const newInquiry = LivechatInquiry.findOneById(inquiryId);
 
-		await queueInquiry(room, newInquiry);
+		await QueueManager.queueInquiry(room, newInquiry);
 
 		(logger as any).cb.debug('Room queued successfully');
 		return;

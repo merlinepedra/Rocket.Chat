@@ -9,25 +9,24 @@ import { RoutingManager } from './RoutingManager';
 
 const logger = new Logger('QueueMananger');
 
-export const saveQueueInquiry = (inquiry) => {
-	LivechatInquiry.queueInquiry(inquiry._id);
-	callbacks.run('livechat.afterInquiryQueued', inquiry);
-};
-
-export const queueInquiry = async (room, inquiry, defaultAgent) => {
-	const inquiryAgent = RoutingManager.delegateAgent(defaultAgent, inquiry);
-	logger.debug(`Delegating inquiry with id ${ inquiry._id } to agent ${ defaultAgent?._id }`);
-
-	await callbacks.run('livechat.beforeRouteChat', inquiry, inquiryAgent);
-	inquiry = LivechatInquiry.findOneById(inquiry._id);
-
-	if (inquiry.status === 'ready') {
-		logger.debug(`Inquiry with id ${ inquiry._id } is ready. Delegating to agent ${ inquiryAgent?._id }`);
-		return RoutingManager.delegateInquiry(inquiry, inquiryAgent);
-	}
-};
-
 export const QueueManager = {
+	saveQueueInquiry(inquiry) {
+		LivechatInquiry.queueInquiry(inquiry._id);
+		callbacks.run('livechat.afterInquiryQueued', inquiry);
+	},
+	async queueInquiry(room, inquiry, defaultAgent) {
+		const inquiryAgent = RoutingManager.delegateAgent(defaultAgent, inquiry);
+		logger.debug(`Delegating inquiry with id ${ inquiry._id } to agent ${ defaultAgent?._id }`);
+
+		await callbacks.run('livechat.beforeRouteChat', inquiry, inquiryAgent);
+		inquiry = LivechatInquiry.findOneById(inquiry._id);
+
+		if (inquiry.status === 'ready') {
+			logger.debug(`Inquiry with id ${ inquiry._id } is ready. Delegating to agent ${ inquiryAgent?._id }`);
+			return RoutingManager.delegateInquiry(inquiry, inquiryAgent);
+		}
+	},
+
 	async requestRoom({ guest, message, roomInfo, agent, extraData }) {
 		logger.debug(`Requesting a room for guest ${ guest._id }`);
 		check(message, Match.ObjectIncluding({
@@ -56,7 +55,7 @@ export const QueueManager = {
 
 		LivechatRooms.updateRoomCount();
 
-		await queueInquiry(room, inquiry, agent);
+		await QueueManager.queueInquiry(room, inquiry, agent);
 		logger.debug(`Inquiry ${ inquiry._id } queued`);
 
 		return LivechatRooms.findOneById(rid);
@@ -92,7 +91,7 @@ export const QueueManager = {
 		const inquiry = LivechatInquiry.findOneById(createLivechatInquiry({ rid, name, guest, message }));
 		logger.debug(`Generated inquiry for visitor ${ v._id } with id ${ inquiry._id } [Not queued]`);
 
-		await queueInquiry(room, inquiry, defaultAgent);
+		await QueueManager.queueInquiry(room, inquiry, defaultAgent);
 		logger.debug(`Inquiry ${ inquiry._id } queued`);
 
 		return room;

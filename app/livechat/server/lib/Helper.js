@@ -14,7 +14,7 @@ import { Apps, AppEvents } from '../../../apps/server';
 import notifications from '../../../notifications/server/lib/Notifications';
 import { sendNotification } from '../../../lib/server';
 import { sendMessage } from '../../../lib/server/functions/sendMessage';
-import { queueInquiry, saveQueueInquiry } from './QueueManager';
+import { QueueManager } from './QueueManager';
 
 const logger = new Logger('LivechatHelper');
 const emailValidationRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -249,7 +249,7 @@ export const dispatchInquiryQueued = (inquiry, agent) => {
 	}
 
 	if (!agent || !allowAgentSkipQueue(agent)) {
-		saveQueueInquiry(inquiry);
+		QueueManager.saveQueueInquiry(inquiry);
 	}
 
 	// Alert only the online agents of the queued request
@@ -442,7 +442,7 @@ export const forwardRoomToDepartment = async (room, guest, transferData) => {
 		logger.debug(`Forwarding succesful. Marking inquiry ${ inquiry._id } as ready`);
 		LivechatInquiry.readyInquiry(inquiry._id);
 		const newInquiry = LivechatInquiry.findOneById(inquiry._id);
-		await queueInquiry(room, newInquiry);
+		await QueueManager.queueInquiry(room, newInquiry);
 
 		logger.debug(`Inquiry ${ inquiry._id } queued succesfully`);
 	}
