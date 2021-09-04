@@ -1,7 +1,7 @@
 import { Match, check } from 'meteor/check';
 
 import { API } from '../../../../api/server';
-import { findAgentDepartments } from '../../../server/api/lib/agents';
+import { Omnichannel } from '../../../../../server/sdk';
 
 API.v1.addRoute('livechat/agents/:agentId/departments', { authRequired: true }, {
 	get() {
@@ -12,11 +12,11 @@ API.v1.addRoute('livechat/agents/:agentId/departments', { authRequired: true }, 
 			enabledDepartmentsOnly: Match.Maybe(String),
 		});
 
-		const departments = Promise.await(findAgentDepartments({
-			userId: this.userId,
-			enabledDepartmentsOnly: this.queryParams.enabledDepartmentsOnly && this.queryParams.enabledDepartmentsOnly === 'true',
-			agentId: this.urlParams.agentId,
-		}));
+		const departments = Promise.await(Omnichannel.findAgentDepartments(
+			this.userId,
+			this.queryParams.enabledDepartmentsOnly && this.queryParams.enabledDepartmentsOnly === 'true',
+			this.urlParams.agentId,
+		));
 
 		return API.v1.success(departments);
 	},
