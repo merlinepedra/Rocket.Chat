@@ -7,6 +7,8 @@ const getContent = (): string => `
 ${ process.env.DISABLE_ANIMATION ? 'window.DISABLE_ANIMATION = true;\n' : '' }
 
 ${ settings.get('API_Use_REST_For_DDP_Calls') ? 'window.USE_REST_FOR_DDP_CALLS = true;\n' : '' }
+${ settings.get('Bugsnag_api_key_client') ? `window.BUGSNAG_API_KEY_CLIENT = '${ settings.get('Bugsnag_api_key_client') }';\n` : '' }
+
 ${ settings.get('ECDH_Enabled') ? 'window.ECDH_Enabled = true;\n' : '' }
 // Custom_Script_Logged_Out
 window.addEventListener('Custom_Script_Logged_Out', function() {
@@ -37,7 +39,7 @@ window.addEventListener('load', function() {
 });
 ` : '' }`;
 
-settings.get(/(API_Use_REST_For_DDP_Calls|Custom_Script_Logged_Out|Custom_Script_Logged_In|Custom_Script_On_Logout|Accounts_ForgetUserSessionOnWindowClose|ECDH_Enabled)/, debounce(() => {
+settings.get(/(Bugsnag_api_key_client|API_Use_REST_For_DDP_Calls|Custom_Script_Logged_Out|Custom_Script_Logged_In|Custom_Script_On_Logout|Accounts_ForgetUserSessionOnWindowClose|ECDH_Enabled)/, debounce(() => {
 	const content = getContent();
 	addScript('scripts', content);
 }, 1000));

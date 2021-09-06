@@ -51,17 +51,14 @@ export const KonchatNotification = {
 				}
 
 				if (notification.payload && notification.payload.rid) {
-					if (n.addEventListener) {
-						n.addEventListener('reply', ({ response }) =>
-							Meteor.call('sendMessage', {
-								_id: Random.id(),
-								rid: notification.payload.rid,
-								msg: response,
-							}),
-						);
-					}
-
-					n.onclick = function() {
+					n.addEventListener('reply', ({ response }) =>
+						Meteor.call('sendMessage', {
+							_id: Random.id(),
+							rid: notification.payload.rid,
+							msg: response,
+						}),
+					);
+					n.addEventListener('click', () => {
 						this.close();
 						window.focus();
 						switch (notification.payload.type) {
@@ -72,7 +69,7 @@ export const KonchatNotification = {
 							case 'p':
 								return FlowRouter.go('group', { name: notification.payload.name, ...notification.payload.tmid && { tab: 'thread', context: notification.payload.tmid } }, { ...FlowRouter.current().queryParams, jump: notification.payload._id });
 						}
-					};
+					});
 				}
 			});
 		}

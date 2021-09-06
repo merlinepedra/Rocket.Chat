@@ -950,6 +950,12 @@ settings.addGroup('General', function() {
 		public: false,
 		secret: true,
 	});
+
+	this.add('Bugsnag_api_key_client', '', {
+		type: 'string',
+		public: true,
+	});
+
 	this.add('Restart', 'restart_server', {
 		type: 'action',
 		actionText: 'Restart_the_server',

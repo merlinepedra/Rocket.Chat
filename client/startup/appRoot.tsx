@@ -16,7 +16,31 @@ const createContainer = (): Element => {
 	return container;
 };
 
-Meteor.startup(() => {
+Meteor.startup(async () => {
 	const container = createContainer();
-	render(<AppRoot />, container);
+
+	if (window.BUGSNAG_API_KEY_CLIENT === undefined) {
+		return render(<AppRoot />, container);
+	}
+
+	const Bugsnag = (await import('@bugsnag/js')).default;
+	const BugsnagPluginReact = (await import('@bugsnag/plugin-react')).default;
+
+	const ErrorBoundary = Bugsnag.getPlugin('react')?.createErrorBoundary(React);
+
+	Bugsnag.start({
+		apiKey: window.BUGSNAG_API_KEY_CLIENT,
+		plugins: [new BugsnagPluginReact()],
+	});
+
+	render(
+		ErrorBoundary ? (
+			<ErrorBoundary>
+				<AppRoot />
+			</ErrorBoundary>
+		) : (
+			<AppRoot />
+		),
+		container,
+	);
 });

@@ -14,6 +14,7 @@ interface Window {
 	favico?: any;
 	USE_REST_FOR_DDP_CALLS?: boolean;
 	ECDH_Enabled?: boolean;
+	BUGSNAG_API_KEY_CLIENT?: string;
 }
 
 interface PromiseConstructor {
