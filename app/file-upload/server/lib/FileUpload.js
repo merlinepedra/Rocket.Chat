@@ -301,6 +301,7 @@ export const FileUpload = {
 			type: file.type,
 			rid,
 			userId,
+			unlisted: true,
 		};
 
 		return store.insertSync(details, buffer);

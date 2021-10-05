@@ -146,8 +146,7 @@ API.v1.addRoute(['dm.files', 'im.files'], { authRequired: true }, {
 		const { offset, count } = this.getPaginationItems();
 		const { sort, fields, query } = this.parseJsonQuery();
 
-		// thumbnails don't need to be fetched);
-		const ourQuery = Object.assign({}, query, { rid: findResult.room._id, name: new RegExp('^(?!thumb-).+') });
+		const ourQuery = Object.assign({}, query, { rid: findResult.room._id, unlisted: { $exists: false } });
 
 		const files = Uploads.find(ourQuery, {
 			sort: sort || { name: 1 },
