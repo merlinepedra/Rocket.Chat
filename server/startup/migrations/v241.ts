@@ -6,7 +6,7 @@ addMigration({
 	version: 241,
 	up() {
 		const images = Uploads.model.rawCollection().find({ type: { $regex: '^(image/).+' } });
-		const getAspectRatio = (image: Record<string, any>) => image.identify.size.width / image.identify.size.height;
+		const getAspectRatio = (image: Record<string, any>): number => image.identify.size.width / image.identify.size.height;
 
 		// proportion rate error margin 7%
 		const epsilon = 0.07;
@@ -31,7 +31,7 @@ addMigration({
 								},
 								{
 									$set: {
-										unlisted: true,
+										_hidden: true,
 									},
 								});
 						}

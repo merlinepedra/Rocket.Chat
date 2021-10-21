@@ -21,9 +21,7 @@ export class Uploads extends Base {
 			doc.instanceId = InstanceStatus.id();
 		});
 
-		this.tryEnsureIndex({ rid: 1 });
-		this.tryEnsureIndex({ uploadedAt: 1 });
-		this.tryEnsureIndex({ typeGroup: 1 });
+		this.tryEnsureIndex({ rid: 1, uploadedAt: -1, typeGroup: 1, _hidden: 1 });
 	}
 
 	findNotHiddenFilesOfRoom(roomId, searchText, fileType, limit) {
