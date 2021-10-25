@@ -5,7 +5,7 @@ import { Uploads } from '../../../app/models/server';
 addMigration({
 	version: 241,
 	up() {
-		const images = Uploads.model.rawCollection().find({ type: { $regex: '^(image/).+' } });
+		const images = Uploads.model.rawCollection().find({ typeGroup: 'image' });
 		const getAspectRatio = (image: Record<string, any>): number => image.identify.size.width / image.identify.size.height;
 
 		// proportion rate error margin 7%
