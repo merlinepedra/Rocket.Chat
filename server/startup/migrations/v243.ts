@@ -55,6 +55,9 @@ addMigration({
 	up() {
 		// thumbnails were introduced on 3.18 release ( 31 of august ) + add sort
 		const total = Uploads.model.rawCollection().find({ typeGroup: 'image', uploadedAt: { $gte: new Date('2021-08-31T00:00:00.000Z') } }, { sort: { rid: 1 } }).count();
+		Uploads.tryDropIndex({ rid: 1 });
+		Uploads.tryDropIndex({ uploadedAt: 1 });
+		Uploads.tryDropIndex({ typeGroup: 1 });
 		Promise.await(migrateThumbnails(total, 0));
 	},
 });
