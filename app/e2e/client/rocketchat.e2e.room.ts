@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import { Base64 } from 'meteor/base64';
 import { EJSON } from 'meteor/ejson';
 import { Random } from 'meteor/random';
@@ -28,6 +27,9 @@ import { roomTypes, RoomSettingsEnum } from '../../utils/client';
 import { log, logError } from './logger';
 import { E2ERoomState } from './E2ERoomState';
 import { call } from '../../../client/lib/utils/call';
+import type { IUser } from '../../../definition/IUser';
+import type { IRoom } from '../../../definition/IRoom';
+import type { IMessage } from '../../../definition/IMessage';
 
 const KEY_ID = Symbol('keyID');
 const PAUSED = Symbol('PAUSED');
@@ -59,12 +61,15 @@ const permitedMutations = {
 	],
 };
 
-const filterMutation = (currentState, nextState) => {
+const hasPermitedMutations = (state: E2ERoomState): state is keyof typeof permitedMutations =>
+	state in permitedMutations;
+
+const filterMutation = (currentState: E2ERoomState, nextState: E2ERoomState): E2ERoomState | false => {
 	if (currentState === nextState) {
-		return nextState === E2ERoomState.ERROR;
+		return nextState === E2ERoomState.ERROR ? false : nextState;
 	}
 
-	if (!(currentState in permitedMutations)) {
+	if (!hasPermitedMutations(currentState)) {
 		return nextState;
 	}
 
@@ -75,12 +80,29 @@ const filterMutation = (currentState, nextState) => {
 	return false;
 };
 
-export class E2ERoom extends Emitter {
-	state = undefined;
+export class E2ERoom extends Emitter<{
+	STATE_CHANGED: E2ERoomState;
+	PAUSED: boolean;
+} & {
+	[State in E2ERoomState]: E2ERoom;
+}> {
+	state: E2ERoomState = E2ERoomState.NOT_STARTED;
 
-	[PAUSED] = undefined;
+	[KEY_ID]: string;
 
-	constructor(userId, roomId, t) {
+	[PAUSED]: boolean | undefined = undefined;
+
+	userId: IUser['_id'];
+
+	roomId: IRoom['_id'];
+
+	typeOfRoom: IRoom['t'];
+
+	sessionKeyExportedString: string;
+
+	groupSessionKey: CryptoKey;
+
+	constructor(userId: IUser['_id'], roomId: IRoom['_id'], t: IRoom['t']) {
 		super();
 
 		this.userId = userId;
@@ -99,15 +121,15 @@ export class E2ERoom extends Emitter {
 		this.setState(E2ERoomState.NOT_STARTED);
 	}
 
-	log(...msg) {
+	log(...msg: unknown[]): void {
 		log(`E2E ROOM { state: ${ this.state }, rid: ${ this.roomId } }`, ...msg);
 	}
 
-	error(...msg) {
+	error(...msg: unknown[]): void {
 		logError(`E2E ROOM { state: ${ this.state }, rid: ${ this.roomId } }`, ...msg);
 	}
 
-	setState(requestedState) {
+	setState(requestedState: E2ERoomState): void {
 		const currentState = this.state;
 		const nextState = filterMutation(currentState, requestedState);
 
@@ -118,19 +140,19 @@ export class E2ERoom extends Emitter {
 
 		this.state = nextState;
 		this.log(currentState, '->', nextState);
-		this.emit('STATE_CHANGED', currentState, nextState, this);
+		this.emit('STATE_CHANGED', currentState);
 		this.emit(nextState, this);
 	}
 
-	isReady() {
+	isReady(): boolean {
 		return this.state === E2ERoomState.READY;
 	}
 
-	isDisabled() {
+	isDisabled(): boolean {
 		return this.state === E2ERoomState.DISABLED;
 	}
 
-	enable() {
+	enable(): void {
 		if (this.state === E2ERoomState.READY) {
 			return;
 		}
@@ -138,27 +160,27 @@ export class E2ERoom extends Emitter {
 		this.setState(E2ERoomState.READY);
 	}
 
-	disable() {
+	disable(): void {
 		this.setState(E2ERoomState.DISABLED);
 	}
 
-	pause() {
+	pause(): void {
 		this.log('PAUSED', this[PAUSED], '->', true);
 		this[PAUSED] = true;
 		this.emit('PAUSED', true);
 	}
 
-	resume() {
+	resume(): void {
 		this.log('PAUSED', this[PAUSED], '->', false);
 		this[PAUSED] = false;
 		this.emit('PAUSED', false);
 	}
 
-	keyReceived() {
+	keyReceived(): void {
 		this.setState(E2ERoomState.KEYS_RECEIVED);
 	}
 
-	async shouldConvertSentMessages() {
+	async shouldConvertSentMessages(): Promise<boolean> {
 		if (!this.isReady() || this[PAUSED]) {
 			return false;
 		}
@@ -172,23 +194,23 @@ export class E2ERoom extends Emitter {
 		return true;
 	}
 
-	shouldConvertReceivedMessages() {
+	shouldConvertReceivedMessages(): boolean {
 		return this.isReady();
 	}
 
-	isWaitingKeys() {
+	isWaitingKeys(): boolean {
 		return this.state === E2ERoomState.WAITING_KEYS;
 	}
 
-	get keyID() {
+	get keyID(): string {
 		return this[KEY_ID];
 	}
 
-	set keyID(keyID) {
+	set keyID(keyID: string) {
 		this[KEY_ID] = keyID;
 	}
 
-	async decryptSubscription() {
+	async decryptSubscription(): Promise<void> {
 		const subscription = Subscriptions.findOne({ rid: this.roomId });
 
 		const data = await (subscription.lastMessage?.msg && this.decrypt(subscription.lastMessage.msg));
@@ -208,14 +230,14 @@ export class E2ERoom extends Emitter {
 		this.log('decryptSubscriptions Done');
 	}
 
-	async decryptPendingMessages() {
-		return Messages.find({ rid: this.roomId, t: 'e2e', e2e: 'pending' }).forEach(async ({ _id, ...msg }) => {
+	async decryptPendingMessages(): Promise<void> {
+		return Messages.find({ rid: this.roomId, t: 'e2e', e2e: 'pending' }).forEach(async ({ _id, ...msg }: IMessage) => {
 			Messages.direct.update({ _id }, await this.decryptMessage(msg));
 		});
 	}
 
 	// Initiates E2E Encryption
-	async handshake() {
+	async handshake(): Promise<void> {
 		if (this.state !== E2ERoomState.KEYS_RECEIVED && this.state !== E2ERoomState.NOT_STARTED) {
 			return;
 		}
@@ -253,20 +275,24 @@ export class E2ERoom extends Emitter {
 		}
 	}
 
-	isSupportedRoomType(type) {
+	isSupportedRoomType(type: IRoom['t']): boolean {
 		return roomTypes.getConfig(type).allowRoomSettingChange({}, RoomSettingsEnum.E2E);
 	}
 
-	async importGroupKey(groupKey) {
+	async importGroupKey(groupKey: string): Promise<void> {
 		this.log('Importing room key ->', this.roomId);
 		// Get existing group key
 		// const keyID = groupKey.slice(0, 12);
 		groupKey = groupKey.slice(12);
-		groupKey = Base64.decode(groupKey);
+		const _groupKey = Base64.decode(groupKey);
 
 		// Decrypt obtained encrypted session key
 		try {
-			const decryptedKey = await decryptRSA(e2e.privateKey, groupKey);
+			if (e2e.privateKey === null) {
+				throw new Error('TODO');
+			}
+
+			const decryptedKey = await decryptRSA(e2e.privateKey, _groupKey);
 			this.sessionKeyExportedString = toString(decryptedKey);
 		} catch (error) {
 			return this.error('Error decrypting group key: ', error);
@@ -284,7 +310,7 @@ export class E2ERoom extends Emitter {
 		}
 	}
 
-	async createGroupKey() {
+	async createGroupKey(): Promise<void> {
 		this.log('Creating room key');
 		// Create group key
 		try {
@@ -307,7 +333,7 @@ export class E2ERoom extends Emitter {
 		}
 	}
 
-	async encryptKeyForOtherParticipants() {
+	async encryptKeyForOtherParticipants(): Promise<void> {
 		// Encrypt generated session key for every user in room and publish to subscription model.
 		try {
 			const { users } = await call('e2e.getUsersOfRoomWithoutKey', this.roomId);
@@ -317,9 +343,13 @@ export class E2ERoom extends Emitter {
 		}
 	}
 
-	async encryptForParticipant(user) {
+	async encryptForParticipant(user: IUser): Promise<void> {
 		let userKey;
 		try {
+			if (!user.e2e) {
+				throw new Error('missing e2e key pair for user');
+			}
+
 			userKey = await importRSAKey(JSON.parse(user.e2e.public_key), ['encrypt']);
 		} catch (error) {
 			return this.error('Error importing user key: ', error);
@@ -337,7 +367,7 @@ export class E2ERoom extends Emitter {
 	}
 
 	// Encrypts files before upload. I/O is in arraybuffers.
-	async encryptFile(file) {
+	async encryptFile(file: File): Promise<File | void> {
 		if (!this.isSupportedRoomType(this.typeOfRoom)) {
 			return;
 		}
@@ -354,18 +384,24 @@ export class E2ERoom extends Emitter {
 
 		const output = joinVectorAndEcryptedData(vector, result);
 
-		const encryptedFile = new File([toArrayBuffer(EJSON.stringify(output))], file.name);
+		const chunk = toArrayBuffer(EJSON.stringify(output));
+
+		if (!chunk) {
+			throw new Error('TODO');
+		}
+
+		const encryptedFile = new File([chunk], file.name);
 
 		return encryptedFile;
 	}
 
 	// Decrypt uploaded encrypted files. I/O is in arraybuffers.
-	async decryptFile(message) {
+	async decryptFile(message: string): Promise<ArrayBuffer | false | void> {
 		if (message[0] !== '{') {
 			return;
 		}
 
-		const [vector, cipherText] = splitVectorAndEcryptedData(EJSON.parse(message));
+		const [vector, cipherText] = splitVectorAndEcryptedData(EJSON.parse(message) as Uint8Array);
 
 		try {
 			return await decryptAES(vector, this.groupSessionKey, cipherText);
@@ -377,13 +413,9 @@ export class E2ERoom extends Emitter {
 	}
 
 	// Encrypts messages
-	async encryptText(data) {
-		if (!_.isObject(data)) {
-			data = new TextEncoder('UTF-8').encode(EJSON.stringify({ text: data, ack: Random.id((Random.fraction() + 1) * 20) }));
-		}
-
-		if (!this.isSupportedRoomType(this.typeOfRoom)) {
-			return data;
+	async encryptText(data: Uint8Array | string): Promise<string> {
+		if (typeof data === 'string') {
+			data = new TextEncoder().encode(EJSON.stringify({ text: data, ack: Random.id((Random.fraction() + 1) * 20) }));
 		}
 
 		const vector = crypto.getRandomValues(new Uint8Array(16));
@@ -391,14 +423,19 @@ export class E2ERoom extends Emitter {
 		try {
 			result = await encryptAES(vector, this.groupSessionKey, data);
 		} catch (error) {
-			return this.error('Error encrypting message: ', error);
+			this.error('Error encrypting message: ', error);
+			throw new Error('TODO');
 		}
 
 		return this.keyID + Base64.encode(joinVectorAndEcryptedData(vector, result));
 	}
 
 	// Helper function for encryption of messages
-	encrypt(message) {
+	async encrypt(message: IMessage): Promise<string> {
+		if (!this.isSupportedRoomType(this.typeOfRoom)) {
+			return message.msg;
+		}
+
 		let ts;
 		if (isNaN(TimeSync.serverOffset())) {
 			ts = new Date();
@@ -406,7 +443,7 @@ export class E2ERoom extends Emitter {
 			ts = new Date(Date.now() + TimeSync.serverOffset());
 		}
 
-		const data = new TextEncoder('UTF-8').encode(EJSON.stringify({
+		const data = new TextEncoder().encode(EJSON.stringify({
 			_id: message._id,
 			text: message.msg,
 			userId: this.userId,
@@ -418,14 +455,14 @@ export class E2ERoom extends Emitter {
 
 	// Decrypt messages
 
-	async decryptMessage(message) {
+	async decryptMessage(message: Omit<IMessage, '_id'>): Promise<Omit<IMessage, '_id'>> {
 		if (message.t !== 'e2e' || message.e2e === 'done') {
 			return message;
 		}
 
 		const data = await this.decrypt(message.msg);
 
-		if (!data?.text) {
+		if (typeof data === 'string' || !data?.text) {
 			return message;
 		}
 
@@ -436,7 +473,7 @@ export class E2ERoom extends Emitter {
 		};
 	}
 
-	async decrypt(message) {
+	async decrypt(message: string): Promise<string | { text: string } | void> {
 		if (!this.isSupportedRoomType(this.typeOfRoom)) {
 			return message;
 		}
@@ -453,13 +490,13 @@ export class E2ERoom extends Emitter {
 
 		try {
 			const result = await decryptAES(vector, this.groupSessionKey, cipherText);
-			return EJSON.parse(new TextDecoder('UTF-8').decode(new Uint8Array(result)));
+			return EJSON.parse(new TextDecoder().decode(new Uint8Array(result))) as { text: string };
 		} catch (error) {
 			return this.error('Error decrypting message: ', error, message);
 		}
 	}
 
-	provideKeyToUser(keyId) {
+	provideKeyToUser(keyId: string): void {
 		if (this.keyID !== keyId) {
 			return;
 		}

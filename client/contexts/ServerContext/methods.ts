@@ -47,7 +47,13 @@ export type ServerMethods = {
 	'deleteFileMessage': (...args: any[]) => any;
 	'deleteOAuthApp': (...args: any[]) => any;
 	'deleteUserOwnAccount': (...args: any[]) => any;
+	'e2e.fetchMyKeys': () => any;
+	'e2e.requestSubscriptionKeys': () => any;
 	'e2e.resetOwnE2EKey': (...args: any[]) => any;
+	'e2e.setRoomKeyID': (rid: IRoom['_id'], keyID: string) => void;
+	'e2e.getUsersOfRoomWithoutKey': (rid: IRoom['_id']) => { users: IUser[] };
+	'e2e.setUserPublicAndPrivateKeys': (...args: any[]) => any;
+	'e2e.updateGroupKey': (rid: IRoom['_id'], uid: IUser['_id'], keyID: string) => void;
 	'eraseRoom': (...args: any[]) => any;
 	'followMessage': FollowMessageMethod;
 	'getAvatarSuggestion': (...args: any[]) => any;

@@ -8,7 +8,7 @@ const processString = function(string: string, date: Date): string {
 	let obj;
 	try {
 		if (string[0] === '{') {
-			obj = EJSON.parse(string);
+			obj = EJSON.parse(string) as EJSON;
 		} else {
 			obj = {
 				message: string,

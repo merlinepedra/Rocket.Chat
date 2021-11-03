@@ -2,12 +2,17 @@ declare module 'meteor/rocketchat:tap-i18n' {
 	import { Tracker } from 'meteor/tracker';
 	import i18next from 'i18next';
 
+	type Options = {
+		[replacements: string]: unknown;
+	} & ({} | {
+		lng: string;
+	}) & ({} | {
+		postProcess: 'sprintf';
+		sprintf: unknown[];
+	});
+
 	namespace TAPi18n {
-		function __(s: string | undefined, options?: {
-			lng?: string;
-		} & {
-			[replacements: string]: boolean | number | string;
-		}): string;
+		function __(s: string | undefined, options?: Options): string;
 		function getLanguages(): {
 			[language: string]: {
 				name: string;
