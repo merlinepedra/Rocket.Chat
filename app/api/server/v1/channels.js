@@ -292,7 +292,7 @@ API.v1.addRoute('channels.files', { authRequired: true }, {
 		const { offset, count } = this.getPaginationItems();
 		const { sort, fields, query } = this.parseJsonQuery();
 
-		const ourQuery = Object.assign({}, query, { rid: findResult._id, _hidden: { $exists: false } });
+		const ourQuery = Object.assign({}, query, { rid: findResult._id, _hidden: { $ne: true } });
 
 		const files = Uploads.find(ourQuery, {
 			sort: sort || { name: 1 },
