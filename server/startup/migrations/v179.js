@@ -57,8 +57,8 @@ async function migrateDMs(models, total, current) {
 	}
 
 	const batch = await roomCollection.bulkWrite(actions, { ordered: false });
+
 	if (actions.length === batchSize) {
-		await batch;
 		return migrateDMs(models, total, current + batchSize);
 	}
 
