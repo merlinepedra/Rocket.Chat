@@ -92,31 +92,29 @@ export class E2ERoom extends Emitter<{
 
 	[PAUSED]: boolean | undefined = undefined;
 
-	userId: IUser['_id'];
-
-	roomId: IRoom['_id'];
-
-	typeOfRoom: IRoom['t'];
-
 	sessionKeyExportedString: string;
 
 	groupSessionKey: CryptoKey;
 
-	constructor(userId: IUser['_id'], roomId: IRoom['_id'], t: IRoom['t']) {
+	constructor(
+		public userId: IUser['_id'],
+		public roomId: IRoom['_id'],
+		public typeOfRoom: IRoom['t'],
+	) {
 		super();
 
-		this.userId = userId;
-		this.roomId = roomId;
-		this.typeOfRoom = t;
+		this.once(E2ERoomState.READY, () => {
+			this.decryptPendingMessages();
+			this.decryptSubscription();
+		});
 
-		this.once(E2ERoomState.READY, () => this.decryptPendingMessages());
-		this.once(E2ERoomState.READY, () => this.decryptSubscription());
 		this.on('STATE_CHANGED', (prev) => {
 			if (this.roomId === Session.get('openedRoom')) {
 				this.log(`[PREV: ${ prev }]`, 'State CHANGED');
 			}
+
+			this.handshake();
 		});
-		this.on('STATE_CHANGED', () => this.handshake());
 
 		this.setState(E2ERoomState.NOT_STARTED);
 	}

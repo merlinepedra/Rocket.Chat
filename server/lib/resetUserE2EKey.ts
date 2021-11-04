@@ -52,7 +52,7 @@ const sendResetNotitification = function(uid: string): void {
 	}
 };
 
-export function resetUserE2EEncriptionKey(uid: string, notifyUser: boolean): boolean {
+export function resetUserE2EEncriptionKey(uid: string, { notifyUser = false }: { notifyUser?: boolean } = {}): void {
 	if (notifyUser) {
 		sendResetNotitification(uid);
 	}
@@ -62,6 +62,4 @@ export function resetUserE2EEncriptionKey(uid: string, notifyUser: boolean): boo
 
 	// Force the user to logout, so that the keys can be generated again
 	Users.unsetLoginTokens(uid);
-
-	return true;
 }

@@ -3,9 +3,10 @@ import { useLocalStorage } from '@rocket.chat/fuselage-hooks';
 import React, { useCallback, useEffect } from 'react';
 
 import { e2e } from '../../../../app/e2e/client/rocketchat.e2e';
-import { useMethod } from '../../../contexts/ServerContext';
+import { useEndpoint } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
+import { useUserId } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
 const EndToEnd = (props) => {
@@ -15,7 +16,7 @@ const EndToEnd = (props) => {
 	const publicKey = useLocalStorage('public_key');
 	const privateKey = useLocalStorage('private_key');
 
-	const resetE2eKey = useMethod('e2e.resetOwnE2EKey');
+	const resetE2EEKeyRequest = useEndpoint('POST', 'users.resetE2EKey');
 
 	const { values, handlers, reset } = useForm({ password: '', passwordConfirm: '' });
 	const { password, passwordConfirm } = values;
@@ -40,16 +41,16 @@ const EndToEnd = (props) => {
 		}
 	}, [dispatchToastMessage, password, reset, t]);
 
+	const userId = useUserId();
+
 	const handleResetE2eKey = useCallback(async () => {
 		try {
-			const result = await resetE2eKey();
-			if (result) {
-				dispatchToastMessage({ type: 'success', message: t('User_e2e_key_was_reset') });
-			}
+			await resetE2EEKeyRequest({ userId });
+			dispatchToastMessage({ type: 'success', message: t('User_e2e_key_was_reset') });
 		} catch (error) {
 			dispatchToastMessage({ type: 'error', message: error });
 		}
-	}, [dispatchToastMessage, resetE2eKey, t]);
+	}, [dispatchToastMessage, resetE2EEKeyRequest, t, userId]);
 
 	useEffect(() => {
 		if (password.trim() === '') {

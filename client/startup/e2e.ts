@@ -14,7 +14,7 @@ import { onClientMessageReceived } from '../lib/onClientMessageReceived';
 import { isLayoutEmbedded } from '../lib/utils/isLayoutEmbedded';
 import { waitUntilFind } from '../lib/utils/waitUntilFind';
 
-const handle = async (roomId: IRoom['_id'], keyId: string): Promise<void> => {
+const handleE2EKeyRequest = async (roomId: IRoom['_id'], keyId: string): Promise<void> => {
 	const e2eRoom = await e2e.getInstanceByRoomId(roomId);
 	if (!e2eRoom) {
 		return;
@@ -46,13 +46,13 @@ Meteor.startup(() => {
 	Tracker.autorun(() => {
 		if (!e2e.isReady()) {
 			offClientMessageReceived?.();
-			Notifications.unUser('e2ekeyRequest', handle);
+			Notifications.unUser('e2ekeyRequest', handleE2EKeyRequest);
 			observable?.stop();
 			offClientBeforeSendMessage?.();
 			return;
 		}
 
-		Notifications.onUser('e2ekeyRequest', handle);
+		Notifications.onUser('e2ekeyRequest', handleE2EKeyRequest);
 
 		observable = Subscriptions.find().observe({
 			changed: async (doc: ISubscription) => {

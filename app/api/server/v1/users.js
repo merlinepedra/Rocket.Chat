@@ -850,7 +850,7 @@ API.v1.addRoute('users.resetE2EKey', { authRequired: true, twoFactorRequired: tr
 	post() {
 		// reset own keys
 		if (this.isUserFromParams()) {
-			resetUserE2EEncriptionKey(this.userId, false);
+			resetUserE2EEncriptionKey(this.userId);
 			return API.v1.success();
 		}
 
@@ -868,11 +868,12 @@ API.v1.addRoute('users.resetE2EKey', { authRequired: true, twoFactorRequired: tr
 			throw new Meteor.Error('error-not-allowed', 'Not allowed');
 		}
 
-		if (!resetUserE2EEncriptionKey(user._id, true)) {
+		try {
+			resetUserE2EEncriptionKey(user._id, { notifyUser: true });
+			return API.v1.success();
+		} catch (error) {
 			return API.v1.failure();
 		}
-
-		return API.v1.success();
 	},
 });
 

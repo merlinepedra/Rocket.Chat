@@ -9,7 +9,6 @@ import './methods/getUsersOfRoomWithoutKey';
 import './methods/updateGroupKey';
 import './methods/setRoomKeyID';
 import './methods/fetchMyKeys';
-import './methods/resetOwnE2EKey';
 import './methods/requestSubscriptionKeys';
 
 callbacks.add('afterJoinRoom', (_user: IUser, room: IRoom) => {

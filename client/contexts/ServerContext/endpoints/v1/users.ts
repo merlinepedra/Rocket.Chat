@@ -11,4 +11,7 @@ export type UsersEndpoints = {
 	'users.listTeams': {
 		GET: (params: { userId: IUser['_id'] }) => { teams: Array<ITeam> };
 	};
+	'users.resetE2EKey': {
+		POST: (params: { userId: IUser['_id'] }) => void;
+	};
 };

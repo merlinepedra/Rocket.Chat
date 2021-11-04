@@ -35,17 +35,18 @@ import type { IMessage } from '../../../definition/IMessage';
 import './events';
 import './tabbar';
 
-
 let failedToDecodeKey = false;
 
-class E2E extends Emitter {
-	started: boolean;
+class E2E extends Emitter<{
+	ready: void;
+}> {
+	started = false;
 
-	enabled: ReactiveVar<boolean>;
+	enabled: ReactiveVar<boolean> = new ReactiveVar(false);
 
-	private _ready: ReactiveVar<boolean>;
+	private _ready: ReactiveVar<boolean> = new ReactiveVar(false);
 
-	instancesByRoomId: Record<IRoom['_id'], E2ERoom>;
+	instancesByRoomId: Record<IRoom['_id'], E2ERoom> = {};
 
 	db_public_key: string | null;
 
@@ -55,10 +56,6 @@ class E2E extends Emitter {
 
 	constructor() {
 		super();
-		this.started = false;
-		this.enabled = new ReactiveVar(false);
-		this._ready = new ReactiveVar(false);
-		this.instancesByRoomId = {};
 
 		this.on('ready', () => {
 			this._ready.set(true);

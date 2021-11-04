@@ -49,7 +49,6 @@ export type ServerMethods = {
 	'deleteUserOwnAccount': (...args: any[]) => any;
 	'e2e.fetchMyKeys': () => any;
 	'e2e.requestSubscriptionKeys': () => any;
-	'e2e.resetOwnE2EKey': (...args: any[]) => any;
 	'e2e.setRoomKeyID': (rid: IRoom['_id'], keyID: string) => void;
 	'e2e.getUsersOfRoomWithoutKey': (rid: IRoom['_id']) => { users: IUser[] };
 	'e2e.setUserPublicAndPrivateKeys': (...args: any[]) => any;
