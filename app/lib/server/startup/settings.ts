@@ -1130,6 +1130,10 @@ settingsRegistry.addGroup('Message', function() {
 		type: 'boolean',
 		public: true,
 	});
+	this.add('Message_AllowSharing', true, {
+		type: 'boolean',
+		public: true,
+	});
 	this.add('Message_AllowEditing_BlockEditInMinutes', 0, {
 		type: 'int',
 		public: true,
