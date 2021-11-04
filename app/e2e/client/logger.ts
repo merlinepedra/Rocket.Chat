@@ -11,9 +11,9 @@ const isDebugEnabled = (): boolean => {
 };
 
 export const log = (context: string, ...msg: unknown[]): void => {
-	isDebugEnabled() && console.log(`[${ context }]`, ...msg);
+	isDebugEnabled() && console.log(`%c${ context }`, 'font-weight: bold', ...msg);
 };
 
 export const logError = (context: string, ...msg: unknown[]): void => {
-	isDebugEnabled() && console.error(`[${ context }]`, ...msg);
+	isDebugEnabled() && console.error(`%c${ context }`, 'font-weight: bold', ...msg);
 };
