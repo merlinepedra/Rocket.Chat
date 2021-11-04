@@ -44,7 +44,6 @@ async function migrateThumbnails(total: number, current: number): Promise<any> {
 	const batch = await Uploads.model.rawCollection().bulkWrite(thumbs, { ordered: false });
 
 	if (currentImages.length === batchSize) {
-		await batch;
 		return migrateThumbnails(total, current + batchSize);
 	}
 	return batch;
