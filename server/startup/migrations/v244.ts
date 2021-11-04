@@ -1,7 +1,7 @@
 import { addMigration } from '../../lib/migrations';
 import { Uploads } from '../../../app/models/server';
 
-const batchSize = 2;
+const batchSize = 5000;
 // proportion rate error margin 7%
 const epsilon = 0.07;
 // 2 seconds
