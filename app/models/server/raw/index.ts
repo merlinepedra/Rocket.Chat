@@ -46,11 +46,9 @@ import { CustomUserStatusRaw } from './CustomUserStatus';
 import LivechatAgentActivityModel from '../models/LivechatAgentActivity';
 import { LivechatAgentActivityRaw } from './LivechatAgentActivity';
 import { StatisticsRaw } from './Statistics';
-import NotificationQueueModel from '../models/NotificationQueue';
 import { NotificationQueueRaw } from './NotificationQueue';
 import LivechatBusinessHoursModel from '../models/LivechatBusinessHours';
 import { LivechatBusinessHoursRaw } from './LivechatBusinessHours';
-import ServerEventModel from '../models/ServerEvents';
 import { UsersSessionsRaw } from './UsersSessions';
 import UsersSessionsModel from '../models/UsersSessions';
 import { ServerEventsRaw } from './ServerEvents';
@@ -71,6 +69,8 @@ import { api } from '../../../../server/sdk/api';
 import { initWatchers } from '../../../../server/modules/watchers/watchers.module';
 import ImportDataModel from '../models/ImportData';
 import { ImportDataRaw } from './ImportData';
+import { OEmbedCacheRaw } from './OEmbedCache';
+import { InvitesRaw } from './Invites';
 
 const trashCollection = trash.rawCollection();
 
@@ -94,9 +94,7 @@ export const OAuthApps = new OAuthAppsRaw(OAuthAppsModel.model.rawCollection(), 
 export const CustomSounds = new CustomSoundsRaw(CustomSoundsModel.model.rawCollection(), trashCollection);
 export const CustomUserStatus = new CustomUserStatusRaw(CustomUserStatusModel.model.rawCollection(), trashCollection);
 export const LivechatAgentActivity = new LivechatAgentActivityRaw(LivechatAgentActivityModel.model.rawCollection(), trashCollection);
-export const NotificationQueue = new NotificationQueueRaw(NotificationQueueModel.model.rawCollection(), trashCollection);
 export const LivechatBusinessHours = new LivechatBusinessHoursRaw(LivechatBusinessHoursModel.model.rawCollection(), trashCollection);
-export const ServerEvents = new ServerEventsRaw(ServerEventModel.model.rawCollection(), trashCollection);
 export const Roles = new RolesRaw(RolesModel.model.rawCollection(), trashCollection, { Users, Subscriptions });
 export const UsersSessions = new UsersSessionsRaw(UsersSessionsModel.model.rawCollection(), trashCollection);
 export const LoginServiceConfiguration = new LoginServiceConfigurationRaw(LoginServiceConfigurationModel.model.rawCollection(), trashCollection);
@@ -111,8 +109,12 @@ export const ImportData = new ImportDataRaw(ImportDataModel.model.rawCollection(
 const { db } = MongoInternals.defaultRemoteCollectionDriver().mongo;
 const prefix = 'rocketchat_';
 
-export const Statistics = new StatisticsRaw(db.collection(`${ prefix }_statistics`), trashCollection);
+export const Statistics = new StatisticsRaw(db.collection(`${ prefix }statistics`), trashCollection);
 export const WebdavAccounts = new WebdavAccountsRaw(db.collection(`${ prefix }webdav_accounts`), trashCollection);
+export const OEmbedCache = new OEmbedCacheRaw(db.collection(`${ prefix }oembed_cache`), trashCollection);
+export const NotificationQueue = new NotificationQueueRaw(db.collection(`${ prefix }notification_queue`), trashCollection);
+export const Invites = new InvitesRaw(db.collection(`${ prefix }invites`), trashCollection);
+export const ServerEvents = new ServerEventsRaw(db.collection(`${ prefix }server_events`), trashCollection);
 
 const map = {
 	[Messages.col.collectionName]: MessagesModel,
