@@ -3,13 +3,13 @@ import os from 'os';
 import { HTTP } from 'meteor/http';
 import { check, Match } from 'meteor/check';
 
-import { Settings } from '../../../models';
 import { Info } from '../../../utils';
 import { getWorkspaceAccessToken } from '../../../cloud/server';
+import { Settings } from '../../../models/server/raw';
 
 export default () => {
 	try {
-		const uniqueID = Settings.findOne('uniqueID');
+		const uniqueID = Promise.await(Settings.findOne('uniqueID'));
 
 		const params = {
 			uniqueId: uniqueID.value,
@@ -25,7 +25,7 @@ export default () => {
 		};
 
 		const headers = {};
-		const token = getWorkspaceAccessToken();
+		const token = Promise.await(getWorkspaceAccessToken());
 		if (token) {
 			headers.Authorization = `Bearer ${ token }`;
 		}

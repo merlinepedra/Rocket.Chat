@@ -11,7 +11,7 @@ import { ImporterWebsocket } from './ImporterWebsocket';
 import { ProgressStep } from '../../lib/ImporterProgressStep';
 import { ImporterInfo } from '../../lib/ImporterInfo';
 import { RawImports } from '../models/RawImports';
-import { Settings, Imports } from '../../../models';
+import { Imports } from '../../../models';
 import { Logger } from '../../../logger';
 import { ImportDataConverter } from './ImportDataConverter';
 import { ImportData } from '../../../models/server';
@@ -21,6 +21,7 @@ import {
 	SelectionChannel,
 	SelectionUser,
 } from '..';
+import { Settings } from '../../../models/server/raw';
 
 /**
  * Base class for all of the importers.
@@ -244,33 +245,34 @@ export class Base {
 
 		switch (step) {
 			case ProgressStep.IMPORTING_STARTED:
-				this.oldSettings.Accounts_AllowedDomainsList = Settings.findOneById('Accounts_AllowedDomainsList').value;
-				Settings.updateValueById('Accounts_AllowedDomainsList', '');
+				this.oldSettings.Accounts_AllowedDomainsList = Promise.await(Settings.findOneById('Accounts_AllowedDomainsList')).value;
+				Promise.await(Settings.updateValueById('Accounts_AllowedDomainsList', ''));
 
-				this.oldSettings.Accounts_AllowUsernameChange = Settings.findOneById('Accounts_AllowUsernameChange').value;
-				Settings.updateValueById('Accounts_AllowUsernameChange', true);
+				this.oldSettings.Accounts_AllowUsernameChange = Promise.await(Settings.findOneById('Accounts_AllowUsernameChange')).value;
+				Promise.await(Settings.updateValueById('Accounts_AllowUsernameChange', true));
 
-				this.oldSettings.FileUpload_MaxFileSize = Settings.findOneById('FileUpload_MaxFileSize').value;
-				Settings.updateValueById('FileUpload_MaxFileSize', -1);
+				this.oldSettings.FileUpload_MaxFileSize = Promise.await(Settings.findOneById('FileUpload_MaxFileSize')).value;
+				Promise.await(Settings.updateValueById('FileUpload_MaxFileSize', -1));
 
-				this.oldSettings.FileUpload_MediaTypeWhiteList = Settings.findOneById('FileUpload_MediaTypeWhiteList').value;
-				Settings.updateValueById('FileUpload_MediaTypeWhiteList', '*');
+				this.oldSettings.FileUpload_MediaTypeWhiteList = Promise.await(Settings.findOneById('FileUpload_MediaTypeWhiteList')).value;
+				Promise.await(Settings.updateValueById('FileUpload_MediaTypeWhiteList', '*'));
 
-				this.oldSettings.FileUpload_MediaTypeBlackList = Settings.findOneById('FileUpload_MediaTypeBlackList').value;
-				Settings.updateValueById('FileUpload_MediaTypeBlackList', '');
+				this.oldSettings.FileUpload_MediaTypeBlackList = Promise.await(Settings.findOneById('FileUpload_MediaTypeBlackList')).value;
+				Promise.await(Settings.updateValueById('FileUpload_MediaTypeBlackList', ''));
 
-				this.oldSettings.UI_Allow_room_names_with_special_chars = Settings.findOneById('UI_Allow_room_names_with_special_chars').value;
-				Settings.updateValueById('UI_Allow_room_names_with_special_chars', true);
+				this.oldSettings.UI_Allow_room_names_with_special_chars = Promise.await(Settings.findOneById('UI_Allow_room_names_with_special_chars')).value;
+				Promise.await(Settings.updateValueById('UI_Allow_room_names_with_special_chars', true));
 				break;
 			case ProgressStep.DONE:
 			case ProgressStep.ERROR:
 			case ProgressStep.CANCELLED:
-				Settings.updateValueById('Accounts_AllowedDomainsList', this.oldSettings.Accounts_AllowedDomainsList);
-				Settings.updateValueById('Accounts_AllowUsernameChange', this.oldSettings.Accounts_AllowUsernameChange);
-				Settings.updateValueById('FileUpload_MaxFileSize', this.oldSettings.FileUpload_MaxFileSize);
-				Settings.updateValueById('FileUpload_MediaTypeWhiteList', this.oldSettings.FileUpload_MediaTypeWhiteList);
-				Settings.updateValueById('FileUpload_MediaTypeBlackList', this.oldSettings.FileUpload_MediaTypeBlackList);
-				Settings.updateValueById('UI_Allow_room_names_with_special_chars', this.oldSettings.UI_Allow_room_names_with_special_chars);
+				Promise.await(Promise.all([Settings.updateValueById('Accounts_AllowedDomainsList', this.oldSettings.Accounts_AllowedDomainsList),
+					Settings.updateValueById('Accounts_AllowUsernameChange', this.oldSettings.Accounts_AllowUsernameChange),
+					Settings.updateValueById('FileUpload_MaxFileSize', this.oldSettings.FileUpload_MaxFileSize),
+					Settings.updateValueById('FileUpload_MediaTypeWhiteList', this.oldSettings.FileUpload_MediaTypeWhiteList),
+					Settings.updateValueById('FileUpload_MediaTypeBlackList', this.oldSettings.FileUpload_MediaTypeBlackList),
+					Settings.updateValueById('UI_Allow_room_names_with_special_chars', this.oldSettings.UI_Allow_room_names_with_special_chars),
+				]));
 				break;
 		}
 

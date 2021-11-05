@@ -19,7 +19,7 @@ type NpsSurveyData = {
 };
 
 export const getAndCreateNpsSurvey = Meteor.bindEnvironment(async function getNpsSurvey(npsId: string) {
-	const token: string = getWorkspaceAccessToken();
+	const token: string = await getWorkspaceAccessToken();
 	if (!token) {
 		return false;
 	}

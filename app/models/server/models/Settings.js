@@ -253,4 +253,4 @@ export class Settings extends Base {
 	}
 }
 
-export default new Settings('settings', true);
+// export default new Settings('settings', true);

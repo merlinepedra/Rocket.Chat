@@ -21,7 +21,6 @@ import {
 	LivechatRooms,
 	Messages,
 	Subscriptions,
-	Settings,
 	Rooms,
 	LivechatDepartmentAgents,
 	LivechatDepartment,
@@ -40,6 +39,7 @@ import { normalizeTransferredByData, parseAgentCustomFields, updateDepartmentAge
 import { Apps, AppEvents } from '../../../apps/server';
 import { businessHourManager } from '../business-hour';
 import notifications from '../../../notifications/server/lib/Notifications';
+import { Settings } from '../../../models/server/raw';
 
 const logger = new Logger('Livechat');
 
@@ -498,7 +498,7 @@ export const Livechat = {
 	getInitSettings() {
 		const rcSettings = {};
 
-		Settings.findNotHiddenPublic([
+		Promise.await(Settings.findNotHiddenPublic([
 			'Livechat_title',
 			'Livechat_title_color',
 			'Livechat_enable_message_character_limit',
@@ -528,7 +528,7 @@ export const Livechat = {
 			'Livechat_force_accept_data_processing_consent',
 			'Livechat_data_processing_consent_text',
 			'Livechat_show_agent_info',
-		]).forEach((setting) => {
+		]).toArray()).forEach((setting) => {
 			rcSettings[setting._id] = setting.value;
 		});
 

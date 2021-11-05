@@ -9,7 +9,7 @@ import { Meteor } from 'meteor/meteor';
 import { settings, settingsRegistry } from '../../settings/server';
 import { Logger } from '../../logger';
 import { addStyle } from '../../ui-master/server/inject';
-import { Settings } from '../../models/server';
+import { Settings } from '../../models/server/raw';
 
 const logger = new Logger('rocketchat:theme');
 
@@ -61,7 +61,7 @@ export const theme = new class {
 			if (err != null) {
 				return logger.error(err);
 			}
-			Settings.updateValueById('css', data.css);
+			Promise.await(Settings.updateValueById('css', data.css));
 
 			return Meteor.startup(function() {
 				return Meteor.setTimeout(function() {

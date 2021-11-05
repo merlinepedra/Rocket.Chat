@@ -7,8 +7,8 @@ import * as peerCommandHandlers from './peerHandlers';
 import * as localCommandHandlers from './localHandlers';
 import { callbacks } from '../../../callbacks/server';
 import * as servers from '../servers';
-import { Settings } from '../../../models/server';
 import { Logger } from '../../../logger/server';
+import { Settings } from '../../../models/server/raw';
 
 const logger = new Logger('IRC Bridge');
 const queueLogger = logger.section('Queue');
@@ -18,10 +18,13 @@ const updateLastPing = _.throttle(Meteor.bindEnvironment(() => {
 	if (removed) {
 		return;
 	}
-	Settings.upsert({ _id: 'IRC_Bridge_Last_Ping' }, {
+	Settings.updateOne({ _id: 'IRC_Bridge_Last_Ping' }, {
 		$set: {
 			value: new Date(),
 		},
+	},
+	{
+		upsert: true,
 	});
 }), 1000 * 10);
 
@@ -51,7 +54,7 @@ class Bridge {
 		removed = false;
 		this.loggedInUsers = [];
 
-		const lastPing = Settings.findOneById('IRC_Bridge_Last_Ping');
+		const lastPing = Promise.await(Settings.findOneById('IRC_Bridge_Last_Ping'));
 		if (lastPing) {
 			if (Math.abs(moment(lastPing.value).diff()) < 1000 * 30) {
 				this.log('Not trying to connect.');
@@ -111,7 +114,7 @@ class Bridge {
 			return;
 		}
 
-		const lastResetTime = Settings.findOneById('IRC_Bridge_Reset_Time');
+		const lastResetTime = Promise.await(Settings.findOneById('IRC_Bridge_Reset_Time'));
 		if (lastResetTime && lastResetTime.value > this.initTime) {
 			this.stop();
 			this.remove();

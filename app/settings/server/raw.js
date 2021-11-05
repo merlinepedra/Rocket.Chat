@@ -1,4 +1,5 @@
-import Settings from '../../models/server/models/Settings';
+import { Settings } from '../../models/server/raw';
+
 
 const cache = new Map();
 

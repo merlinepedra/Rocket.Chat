@@ -3,15 +3,15 @@ import { HTTP } from 'meteor/http';
 
 import { getRedirectUri } from './getRedirectUri';
 import { retrieveRegistrationStatus } from './retrieveRegistrationStatus';
-import { Settings } from '../../../models';
 import { settings } from '../../../settings';
 import { saveRegistrationData } from './saveRegistrationData';
 import { SystemLogger } from '../../../../server/lib/logger/system';
+import { Settings } from '../../../models/server/raw';
 
 export function connectWorkspace(token) {
 	const { connectToCloud } = retrieveRegistrationStatus();
 	if (!connectToCloud) {
-		Settings.updateValueById('Register_Server', true);
+		Promise.await(Settings.updateValueById('Register_Server', true));
 	}
 
 	// shouldn't get here due to checking this on the method

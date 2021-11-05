@@ -7,7 +7,7 @@ import { Info } from '../../../utils';
 import { Users } from '../../../models';
 import logger from '../logger';
 import { sendMessagesToAdmins } from '../../../../server/lib/sendMessagesToAdmins';
-import { Settings } from '../../../models/server';
+import { Settings } from '../../../models/server/raw';
 // import getNewUpdates from '../sampleUpdateData';
 
 export default () => {
@@ -40,7 +40,7 @@ export default () => {
 	});
 
 	if (update.exists) {
-		Settings.updateValueById('Update_LatestAvailableVersion', update.lastestVersion.version);
+		Promise.await(Settings.updateValueById('Update_LatestAvailableVersion', update.lastestVersion.version));
 
 		sendMessagesToAdmins({
 			msgs: ({ adminUser }) => [{ msg: `*${ TAPi18n.__('Update_your_RocketChat', adminUser.language) }*\n${ TAPi18n.__('New_version_available_(s)', update.lastestVersion.version, adminUser.language) }\n${ update.lastestVersion.infoUrl }` }],

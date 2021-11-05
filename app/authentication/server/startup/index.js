@@ -8,8 +8,8 @@ import { escapeRegExp, escapeHTML } from '@rocket.chat/string-helpers';
 import * as Mailer from '../../../mailer/server/api';
 import { settings } from '../../../settings/server';
 import { callbacks } from '../../../callbacks/server';
-import { Roles, Users, Settings } from '../../../models/server';
-import { Users as UsersRaw } from '../../../models/server/raw';
+import { Roles, Users } from '../../../models/server';
+import { Settings, Users as UsersRaw } from '../../../models/server/raw';
 import { addUserRoles } from '../../../authorization/server';
 import { getAvatarSuggestionForUser } from '../../../lib/server/functions';
 import {
@@ -290,7 +290,7 @@ Accounts.insertUserDoc = _.wrap(Accounts.insertUserDoc, function(insertUserDoc, 
 		} else {
 			roles.push('admin');
 			if (settings.get('Show_Setup_Wizard') === 'pending') {
-				Settings.updateValueById('Show_Setup_Wizard', 'in_progress');
+				Promise.await(Settings.updateValueById('Show_Setup_Wizard', 'in_progress'));
 			}
 		}
 	}

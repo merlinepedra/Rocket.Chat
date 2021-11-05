@@ -76,7 +76,7 @@ Meteor.methods({
 
 		return connectWorkspace(token);
 	},
-	'cloud:disconnectWorkspace'() {
+	async 'cloud:disconnectWorkspace'() {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('error-invalid-user', 'Invalid user', { method: 'cloud:connectServer' });
 		}

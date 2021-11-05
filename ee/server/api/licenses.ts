@@ -1,9 +1,10 @@
 import { check } from 'meteor/check';
 
 import { ILicense, getLicenses, validateFormat, flatModules, getMaxActiveUsers } from '../../app/license/server/license';
-import { Settings, Users } from '../../../app/models/server';
+import { Users } from '../../../app/models/server';
 import { API } from '../../../app/api/server/api';
 import { hasPermission } from '../../../app/authorization/server';
+import { Settings } from '../../../app/models/server/raw';
 
 function licenseTransform(license: ILicense): ILicense {
 	return {
@@ -41,7 +42,7 @@ API.v1.addRoute('licenses.add', { authRequired: true }, {
 			return API.v1.failure('Invalid license');
 		}
 
-		Settings.updateValueById('Enterprise_License', license);
+		Promise.await(Settings.updateValueById('Enterprise_License', license));
 
 		return API.v1.success();
 	},

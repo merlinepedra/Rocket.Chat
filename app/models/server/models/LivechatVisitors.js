@@ -3,7 +3,7 @@ import s from 'underscore.string';
 import { escapeRegExp } from '@rocket.chat/string-helpers';
 
 import { Base } from './_Base';
-import Settings from './Settings';
+import { Settings } from '../raw';
 
 export class LivechatVisitors extends Base {
 	constructor() {
@@ -133,7 +133,7 @@ export class LivechatVisitors extends Base {
 			},
 		};
 
-		const livechatCount = Settings.findAndModify(query, null, update);
+		const livechatCount = Promise.await(Settings.findOneAndUpdate(query, update, null));
 
 		return `guest-${ livechatCount.value.value + 1 }`;
 	}

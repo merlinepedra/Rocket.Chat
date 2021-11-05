@@ -48,7 +48,7 @@ export function getWorkspaceAccessTokenWithScope(scope = '') {
 
 			if (e.response.data.error === 'oauth_invalid_client_credentials') {
 				SystemLogger.error('Server has been unregistered from cloud');
-				unregisterWorkspace();
+				Promise.await(unregisterWorkspace());
 			}
 		} else {
 			SystemLogger.error(e);

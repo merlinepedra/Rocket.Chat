@@ -18,7 +18,6 @@ import UserDataFiles from '../../../models/server/models/UserDataFiles';
 import Avatars from '../../../models/server/models/Avatars';
 import Users from '../../../models/server/models/Users';
 import Rooms from '../../../models/server/models/Rooms';
-import Settings from '../../../models/server/models/Settings';
 import { mime } from '../../../utils/lib/mimeTypes';
 import { roomTypes } from '../../../utils/server/lib/roomTypes';
 import { hasPermission } from '../../../authorization/server/functions/hasPermission';
@@ -29,15 +28,16 @@ import { Messages } from '../../../models/server';
 import { AppEvents, Apps } from '../../../apps/server';
 import { streamToBuffer } from './streamToBuffer';
 import { SystemLogger } from '../../../../server/lib/logger/system';
+import { Settings } from '../../../models/server/raw';
 
 const cookie = new Cookies();
 let maxFileSize = 0;
 
-settings.watch('FileUpload_MaxFileSize', function(value) {
+settings.watch('FileUpload_MaxFileSize', async function(value) {
 	try {
 		maxFileSize = parseInt(value);
 	} catch (e) {
-		maxFileSize = Settings.findOneById('FileUpload_MaxFileSize').packageValue;
+		maxFileSize = await Settings.findOneById('FileUpload_MaxFileSize')?.packageValue || 0;
 	}
 });
 

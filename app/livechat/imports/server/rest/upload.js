@@ -2,19 +2,20 @@ import { Meteor } from 'meteor/meteor';
 import filesize from 'filesize';
 
 import { settings } from '../../../../settings/server';
-import { Settings, LivechatRooms, LivechatVisitors } from '../../../../models';
+import { LivechatRooms, LivechatVisitors } from '../../../../models';
 import { fileUploadIsValidContentType } from '../../../../utils/server';
 import { FileUpload } from '../../../../file-upload';
 import { API } from '../../../../api/server';
 import { getUploadFormData } from '../../../../api/server/lib/getUploadFormData';
+import { Settings } from '../../../../models/server/raw';
 
 let maxFileSize;
 
-settings.watch('FileUpload_MaxFileSize', function(value) {
+settings.watch('FileUpload_MaxFileSize', async function(value) {
 	try {
 		maxFileSize = parseInt(value);
 	} catch (e) {
-		maxFileSize = Settings.findOneById('FileUpload_MaxFileSize').packageValue;
+		maxFileSize = await Settings.findOneById('FileUpload_MaxFileSize')?.packageValue || 0;
 	}
 });
 

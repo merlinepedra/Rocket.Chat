@@ -67,7 +67,6 @@ import OmnichannelQueueModel from '../models/OmnichannelQueue';
 import PermissionsModel from '../models/Permissions';
 import RolesModel from '../models/Roles';
 import RoomsModel from '../models/Rooms';
-import SettingsModel from '../models/Settings';
 import SubscriptionsModel from '../models/Subscriptions';
 import UsersModel from '../models/Users';
 
@@ -75,7 +74,6 @@ const trashCollection = trash.rawCollection();
 
 export const Permissions = new PermissionsRaw(PermissionsModel.model.rawCollection(), trashCollection);
 export const Subscriptions = new SubscriptionsRaw(SubscriptionsModel.model.rawCollection(), trashCollection);
-export const Settings = new SettingsRaw(SettingsModel.model.rawCollection(), trashCollection);
 export const Users = new UsersRaw(UsersModel.model.rawCollection(), trashCollection);
 export const Rooms = new RoomsRaw(RoomsModel.model.rawCollection(), trashCollection);
 export const LivechatCustomField = new LivechatCustomFieldRaw(LivechatCustomFieldModel.model.rawCollection(), trashCollection);
@@ -115,6 +113,7 @@ export const ReadReceipts = new ReadReceiptsRaw(db.collection(`${ prefix }read_r
 export const Reports = new ReportsRaw(db.collection(`${ prefix }reports`), trashCollection);
 export const ServerEvents = new ServerEventsRaw(db.collection(`${ prefix }server_events`), trashCollection);
 export const Sessions = new SessionsRaw(db.collection(`${ prefix }sessions`), db.collection(`${ prefix }sessions`, { readPreference: readSecondaryPreferred(db) }), trashCollection);
+export const Settings = new SettingsRaw(db.collection(`${ prefix }settings`), trashCollection);
 export const Statistics = new StatisticsRaw(db.collection(`${ prefix }statistics`), trashCollection);
 export const UsersSessions = new UsersSessionsRaw(db.collection('usersSessions'), trashCollection, { preventSetUpdatedAt: true });
 export const WebdavAccounts = new WebdavAccountsRaw(db.collection(`${ prefix }webdav_accounts`), trashCollection);
@@ -123,7 +122,6 @@ const map = {
 	[Messages.col.collectionName]: MessagesModel,
 	[Users.col.collectionName]: UsersModel,
 	[Subscriptions.col.collectionName]: SubscriptionsModel,
-	[Settings.col.collectionName]: SettingsModel,
 	[Roles.col.collectionName]: RolesModel,
 	[Permissions.col.collectionName]: PermissionsModel,
 	[LivechatInquiry.col.collectionName]: LivechatInquiryModel,

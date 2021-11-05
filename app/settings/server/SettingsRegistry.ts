@@ -1,7 +1,6 @@
 import { Emitter } from '@rocket.chat/emitter';
 import { isEqual } from 'underscore';
 
-import type SettingsModel from '../../models/server/models/Settings';
 import { ISetting, ISettingGroup, isSettingEnterprise, SettingValue } from '../../../definition/ISetting';
 import { SystemLogger } from '../../../server/lib/logger/system';
 import { overwriteSetting } from './functions/overwriteSetting';
@@ -9,6 +8,7 @@ import { overrideSetting } from './functions/overrideSetting';
 import { getSettingDefaults } from './functions/getSettingDefaults';
 import { validateSetting } from './functions/validateSetting';
 import type { ICachedSettings } from './CachedSettings';
+import { SettingsRaw } from '../../models/server/raw/Settings';
 
 export const blockedSettings = new Set<string>();
 export const hiddenSettings = new Set<string>();
@@ -77,13 +77,13 @@ const compareSettingsIgnoringKeys = (keys: Array<keyof ISetting>) =>
 const compareSettings = compareSettingsIgnoringKeys(['value', 'ts', 'createdAt', 'valueSource', 'packageValue', 'processEnvValue', '_updatedAt']);
 
 export class SettingsRegistry {
-	private model: typeof SettingsModel;
+	private model: SettingsRaw;
 
 	private store: ICachedSettings;
 
 	private _sorter: {[key: string]: number} = {};
 
-	constructor({ store, model }: { store: ICachedSettings; model: typeof SettingsModel }) {
+	constructor({ store, model }: { store: ICachedSettings; model: SettingsRaw }) {
 		this.store = store;
 		this.model = model;
 	}
@@ -143,18 +143,22 @@ export class SettingsRegistry {
 			const overwrittenKeys = Object.keys(settingOverwritten);
 			const removedKeys = Object.keys(settingStored).filter((key) => !['_updatedAt'].includes(key) && !overwrittenKeys.includes(key));
 
-			this.model.upsert({ _id }, {
+			this.model.update({ _id }, {
 				$set: { ...settingOverwrittenProps },
 				...removedKeys.length && {
 					$unset: removedKeys.reduce((unset, key) => ({ ...unset, [key]: 1 }), {}),
 				},
+			}, {
+				upsert: true,
 			});
 			return;
 		}
 
 		if (settingStored && isOverwritten) {
 			if (settingStored.value !== settingOverwritten.value) {
-				this.model.upsert({ _id }, settingProps);
+				this.model.update({ _id }, settingProps, {
+					upsert: true,
+				});
 			}
 			return;
 		}
@@ -172,7 +176,7 @@ export class SettingsRegistry {
 
 		const setting = isOverwritten ? settingOverwritten : settingOverwrittenDefault;
 
-		this.model.insert(setting); // no need to emit unless we remove the oplog
+		this.model.insertOne(setting); // no need to emit unless we remove the oplog
 
 		this.store.set(setting);
 	}
@@ -194,7 +198,7 @@ export class SettingsRegistry {
 
 		if (!this.store.has(_id)) {
 			options.ts = new Date();
-			this.model.insert(options);
+			this.model.insertOne(options as ISetting);
 			this.store.set(options as ISetting);
 		}
 

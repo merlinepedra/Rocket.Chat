@@ -5,7 +5,6 @@ import { Meteor } from 'meteor/meteor';
 import { InstanceStatus } from 'meteor/konecty:multiple-instances-status';
 
 import {
-	Settings,
 	Users,
 	Rooms,
 	Subscriptions,
@@ -18,7 +17,7 @@ import { settings } from '../../../settings/server';
 import { Info, getMongoInfo } from '../../../utils/server';
 import { getControl } from '../../../../server/lib/migrations';
 import { getStatistics as federationGetStatistics } from '../../../federation/server/functions/dashboard';
-import { NotificationQueue, Users as UsersRaw, Statistics, Sessions } from '../../../models/server/raw';
+import { NotificationQueue, Users as UsersRaw, Statistics, Sessions, Settings } from '../../../models/server/raw';
 import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 import { getAppsStatistics } from './getAppsStatistics';
 import { getServicesStatistics } from './getServicesStatistics';
@@ -62,7 +61,7 @@ export const statistics = {
 		// Setup Wizard
 		statistics.wizard = {};
 		wizardFields.forEach((field) => {
-			const record = Settings.findOne(field);
+			const record = Promise.await(Settings.findOne(field));
 			if (record) {
 				const wizardField = field.replace(/_/g, '').replace(field[0], field[0].toLowerCase());
 				statistics.wizard[wizardField] = record.value;
@@ -71,8 +70,8 @@ export const statistics = {
 
 		// Version
 		statistics.uniqueId = settings.get('uniqueID');
-		if (Settings.findOne('uniqueID')) {
-			statistics.installedAt = Settings.findOne('uniqueID').createdAt;
+		if (Promise.await(Settings.findOne('uniqueID'))) {
+			statistics.installedAt = Promise.await(Settings.findOne('uniqueID')).createdAt;
 		}
 
 		if (Info) {

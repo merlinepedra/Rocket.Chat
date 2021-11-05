@@ -4,7 +4,7 @@ import { hasPermission } from '../../../authorization';
 import { SystemLogger } from '../../../../server/lib/logger/system';
 import { settings } from '../../../settings';
 import OmniChannel from '../lib/OmniChannel';
-import { Settings } from '../../../models/server';
+import { Settings } from '../../../models/server/raw';
 
 Meteor.methods({
 	'livechat:facebook'(options) {

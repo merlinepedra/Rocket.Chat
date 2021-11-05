@@ -1,14 +1,15 @@
-import SettingsModel from '../../../models/server/models/Settings';
 import { CachedSettings } from '../CachedSettings';
 import { SettingsRegistry } from '../SettingsRegistry';
 import { ISetting } from '../../../../definition/ISetting';
+import { Settings } from '../../../models/server/raw';
 
 
 export const settings = new CachedSettings();
-SettingsModel.find().forEach((record: ISetting) => {
+Settings.find().forEach((record: ISetting) => {
 	settings.set(record);
+}).then(() => {
+	settings.initilized();
 });
 
-settings.initilized();
 
-export const settingsRegistry = new SettingsRegistry({ store: settings, model: SettingsModel });
+export const settingsRegistry = new SettingsRegistry({ store: settings, model: Settings });
