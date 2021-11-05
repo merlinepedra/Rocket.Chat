@@ -1,3 +1,4 @@
+import { IMessage } from './IMessage';
 import { IRocketChatRecord } from './IRocketChatRecord';
 import { IUser } from './IUser';
 
@@ -58,6 +59,8 @@ export interface ISubscription extends IRocketChatRecord {
 
 	department?: unknown;
 	v?: unknown;
+
+	lastMessage?: IMessage;
 }
 
 export interface IOmnichannelSubscription extends ISubscription {

@@ -4,7 +4,6 @@ import { Random } from 'meteor/random';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { EJSON } from 'meteor/ejson';
 import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
-import { Emitter } from '@rocket.chat/emitter';
 
 
 import { E2ERoom } from './rocketchat.e2e.room';
@@ -23,7 +22,7 @@ import {
 } from './helper';
 import * as banners from '../../../client/lib/banners';
 import { Rooms, Subscriptions, Messages } from '../../models/client';
-import { log, logError } from './logger';
+import { createDebugLogger } from './logger';
 import { waitUntilFind } from '../../../client/lib/utils/waitUntilFind';
 import { imperativeModal } from '../../../client/lib/imperativeModal';
 import SaveE2EPasswordModal from '../../../client/views/e2e/SaveE2EPasswordModal';
@@ -31,15 +30,14 @@ import EnterE2EPasswordModal from '../../../client/views/e2e/EnterE2EPasswordMod
 import { call } from '../../../client/lib/utils/call';
 import type { IRoom } from '../../../definition/IRoom';
 import type { IMessage } from '../../../definition/IMessage';
+import type { ISubscription } from '../../../definition/ISubscription';
 
 import './events';
 import './tabbar';
 
 let failedToDecodeKey = false;
 
-class E2E extends Emitter<{
-	ready: void;
-}> {
+class E2E {
 	started = false;
 
 	enabled: ReactiveVar<boolean> = new ReactiveVar(false);
@@ -54,26 +52,7 @@ class E2E extends Emitter<{
 
 	privateKey: CryptoKey | null;
 
-	constructor() {
-		super();
-
-		this.on('ready', () => {
-			this._ready.set(true);
-			this.log('startClient -> Done');
-			this.log('decryptSubscriptions');
-
-			this.decryptSubscriptions();
-			this.log('decryptSubscriptions -> Done');
-		});
-	}
-
-	log(...msg: unknown[]): void {
-		log('E2E', ...msg);
-	}
-
-	error(...msg: unknown[]): void {
-		logError('E2E', ...msg);
-	}
+	protected logger = createDebugLogger('E2E');
 
 	isEnabled(): boolean {
 		return this.enabled.get();
@@ -86,7 +65,7 @@ class E2E extends Emitter<{
 	async getInstanceByRoomId(rid: IRoom['_id']): Promise<E2ERoom | null> {
 		const room = await waitUntilFind(() => Rooms.findOne({ _id: rid }));
 
-		if (room.t !== 'd' && room.t !== 'p') {
+		if (!E2ERoom.isSupportedRoomType(room.t)) {
 			return null;
 		}
 
@@ -102,6 +81,7 @@ class E2E extends Emitter<{
 
 		if (!this.instancesByRoomId[rid]) {
 			this.instancesByRoomId[rid] = new E2ERoom(uid, rid, room.t);
+			this.instancesByRoomId[rid].handshake();
 		}
 
 		return this.instancesByRoomId[rid];
@@ -116,7 +96,7 @@ class E2E extends Emitter<{
 			return;
 		}
 
-		this.log('startClient -> STARTED');
+		this.logger.log('startClient -> STARTED');
 
 		this.started = true;
 		let public_key = Meteor._localStorage.getItem('public_key');
@@ -201,11 +181,13 @@ class E2E extends Emitter<{
 				},
 			});
 		}
-		this.emit('ready');
+
+		this._ready.set(true);
+		this.decryptSubscriptions();
 	}
 
 	async stopClient(): Promise<void> {
-		this.log('-> Stop Client');
+		this.logger.log('-> Stop Client');
 		this.closeAlert();
 
 		Meteor._localStorage.removeItem('public_key');
@@ -238,7 +220,7 @@ class E2E extends Emitter<{
 			this.db_public_key = public_key;
 			this.db_private_key = private_key;
 		} catch (error) {
-			this.error('Error fetching RSA keys: ', error);
+			this.logger.logError('Error fetching RSA keys: ', error);
 		}
 	}
 
@@ -250,7 +232,7 @@ class E2E extends Emitter<{
 
 			Meteor._localStorage.setItem('private_key', private_key);
 		} catch (error) {
-			this.error('Error importing private key: ', error);
+			this.logger.logError('Error importing private key: ', error);
 		}
 	}
 
@@ -261,7 +243,7 @@ class E2E extends Emitter<{
 			key = await generateRSAKey();
 			this.privateKey = key.privateKey;
 		} catch (error) {
-			return this.error('Error generating key: ', error);
+			return this.logger.logError('Error generating key: ', error);
 		}
 
 		try {
@@ -269,7 +251,7 @@ class E2E extends Emitter<{
 
 			Meteor._localStorage.setItem('public_key', JSON.stringify(publicKey));
 		} catch (error) {
-			return this.error('Error exporting public key: ', error);
+			return this.logger.logError('Error exporting public key: ', error);
 		}
 
 		try {
@@ -277,7 +259,7 @@ class E2E extends Emitter<{
 
 			Meteor._localStorage.setItem('private_key', JSON.stringify(privateKey));
 		} catch (error) {
-			this.error('Error exporting private key: ', error);
+			this.logger.logError('Error exporting private key: ', error);
 		}
 
 		this.requestSubscriptionKeys();
@@ -314,7 +296,7 @@ class E2E extends Emitter<{
 				joinVectorAndEcryptedData(vector, encodedPrivateKey),
 			);
 		} catch (error) {
-			return this.error('Error encrypting encodedPrivateKey: ', error);
+			return this.logger.logError('Error encrypting encodedPrivateKey: ', error);
 		}
 	}
 
@@ -328,7 +310,7 @@ class E2E extends Emitter<{
 		try {
 			baseKey = await importRawKey(toArrayBuffer(password));
 		} catch (error) {
-			this.error('Error creating a key based on user password: ', error);
+			this.logger.logError('Error creating a key based on user password: ', error);
 			throw new Error('TODO');
 		}
 
@@ -342,7 +324,7 @@ class E2E extends Emitter<{
 		try {
 			return await deriveKey(toArrayBuffer(uid), baseKey);
 		} catch (error) {
-			this.error('Error deriving baseKey: ', error);
+			this.logger.logError('Error deriving baseKey: ', error);
 			throw new Error('TODO');
 		}
 	}
@@ -438,16 +420,20 @@ class E2E extends Emitter<{
 		);
 	}
 
-	async decryptSubscription(rid: IRoom['_id']): Promise<void> {
-		const e2eRoom = await this.getInstanceByRoomId(rid);
-		this.log('decryptSubscription ->', rid);
+	async decryptSubscription(subscription: ISubscription): Promise<void> {
+		this.logger.log('decryptSubscription', { _id: subscription._id, rid: subscription.rid });
+
+		const e2eRoom = await this.getInstanceByRoomId(subscription.rid);
     e2eRoom?.decryptSubscription();
 	}
 
-	async decryptSubscriptions(): Promise<void> {
-		Subscriptions.find({
-			encrypted: true,
-		}).forEach((room: IRoom) => this.decryptSubscription(room._id));
+	decryptSubscriptions(): void {
+		this.logger.log('decryptSubscriptions');
+
+		Subscriptions.find({ encrypted: true })
+			.forEach((subscription: ISubscription) => {
+				this.decryptSubscription(subscription);
+			});
 	}
 
 	openAlert(config: Omit<banners.LegacyBannerPayload, 'id'>): void {

@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 
 import { e2e } from '../../app/e2e/client/rocketchat.e2e';
+import { E2ERoom } from '../../app/e2e/client/rocketchat.e2e.room';
 import { Subscriptions, Rooms } from '../../app/models/client';
 import { Notifications } from '../../app/notifications/client';
 import { settings } from '../../app/settings/client';
@@ -69,7 +70,7 @@ Meteor.startup(() => {
 				doc.encrypted ? e2eRoom.resume() : e2eRoom.pause();
 
 				// Cover private groups and direct messages
-				if (!e2eRoom.isSupportedRoomType(doc.t)) {
+				if (!E2ERoom.isSupportedRoomType(doc.t)) {
 					e2eRoom.disable();
 					return;
 				}
