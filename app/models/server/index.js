@@ -3,7 +3,6 @@ import { BaseDb } from './models/_BaseDb';
 import Avatars from './models/Avatars';
 import ExportOperations from './models/ExportOperations';
 import Messages from './models/Messages';
-import Reports from './models/Reports';
 import Rooms from './models/Rooms';
 import Settings from './models/Settings';
 import Subscriptions from './models/Subscriptions';
@@ -16,11 +15,8 @@ import Roles from './models/Roles';
 import CustomSounds from './models/CustomSounds';
 import CustomUserStatus from './models/CustomUserStatus';
 import Imports from './models/Imports';
-import Integrations from './models/Integrations';
 import IntegrationHistory from './models/IntegrationHistory';
-import CredentialTokens from './models/CredentialTokens';
 import EmojiCustom from './models/EmojiCustom';
-import OAuthApps from './models/OAuthApps';
 import SmarshHistory from './models/SmarshHistory';
 import LivechatCustomField from './models/LivechatCustomField';
 import LivechatDepartment from './models/LivechatDepartment';
@@ -31,11 +27,8 @@ import LivechatTrigger from './models/LivechatTrigger';
 import LivechatVisitors from './models/LivechatVisitors';
 import LivechatAgentActivity from './models/LivechatAgentActivity';
 import LivechatInquiry from './models/LivechatInquiry';
-import ReadReceipts from './models/ReadReceipts';
 import LivechatExternalMessage from './models/LivechatExternalMessages';
 import OmnichannelQueue from './models/OmnichannelQueue';
-import Analytics from './models/Analytics';
-import EmailInbox from './models/EmailInbox';
 import ImportData from './models/ImportData';
 
 export { AppsLogsModel } from './models/apps-logs-model';
@@ -52,7 +45,6 @@ export {
 	Avatars,
 	ExportOperations,
 	Messages,
-	Reports,
 	Rooms,
 	Settings,
 	Subscriptions,
@@ -65,11 +57,8 @@ export {
 	CustomSounds,
 	CustomUserStatus,
 	Imports,
-	Integrations,
 	IntegrationHistory,
-	CredentialTokens,
 	EmojiCustom,
-	OAuthApps,
 	SmarshHistory,
 	LivechatCustomField,
 	LivechatDepartment,
@@ -79,11 +68,8 @@ export {
 	LivechatTrigger,
 	LivechatVisitors,
 	LivechatAgentActivity,
-	ReadReceipts,
 	LivechatExternalMessage,
 	LivechatInquiry,
-	Analytics,
 	OmnichannelQueue,
-	EmailInbox,
 	ImportData,
 };
