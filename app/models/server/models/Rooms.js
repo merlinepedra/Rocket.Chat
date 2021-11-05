@@ -1385,5 +1385,6 @@ export class Rooms extends Base {
 		return this.find({ prid: { $exists: true } }).count();
 	}
 }
-
-export default new Rooms('room', true);
+const c = new Rooms('room', true);
+console.log(c);
+export default c;
