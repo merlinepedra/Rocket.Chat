@@ -7,6 +7,7 @@ import { EmojiCustom } from '../../models/server/raw';
 import { callbacks } from '../../callbacks';
 import { emoji } from '../../emoji';
 import { isTheLastMessage, msgStream } from '../../lib';
+import { canAccessRoomAsync } from '../../authorization/server/functions/canAccessRoom';
 import { hasPermission } from '../../authorization/server/functions/hasPermission';
 import { api } from '../../../server/sdk/api';
 
@@ -92,15 +93,17 @@ export const executeSetReaction = async function(reaction, messageId, shouldReac
 	}
 
 	const message = Messages.findOneById(messageId);
-
 	if (!message) {
 		throw new Meteor.Error('error-not-allowed', 'Not allowed', { method: 'setReaction' });
 	}
 
-	const room = Meteor.call('canAccessRoom', message.rid, Meteor.userId());
-
+	const room = Rooms.findOneById(message.rid);
 	if (!room) {
 		throw new Meteor.Error('error-not-allowed', 'Not allowed', { method: 'setReaction' });
+	}
+
+	if (!await canAccessRoomAsync(room, user)) {
+		throw new Meteor.Error('not-authorized', 'Not Authorized', { method: 'setReaction' });
 	}
 
 	return setReaction(room, user, message, reaction, shouldReact);
