@@ -91,48 +91,108 @@ class E2E {
 		delete this.instancesByRoomId[rid];
 	}
 
+	private getLocalKeyPair(): { publicKey: string; privateKey: string } | undefined {
+		const publicKey = Meteor._localStorage.getItem('public_key');
+		const privateKey = Meteor._localStorage.getItem('private_key');
+
+		if (!publicKey || !privateKey) {
+			return undefined;
+		}
+
+		return { publicKey, privateKey };
+	}
+
+	private async getRemoteKeyPair(): Promise<{ publicKey: string; privateKey: string } | undefined> {
+		const { public_key: publicKey, private_key: privateKey } = await call('e2e.fetchMyKeys');
+
+		if (!publicKey || !privateKey) {
+			return undefined;
+		}
+
+		return { publicKey, privateKey };
+	}
+
+	private async getKeyPair(): Promise<{ publicKey: string; privateKey: string } | undefined> {
+		this.logger.log('startClient', 'getKeyPair');
+
+		const localKeyPair = this.getLocalKeyPair();
+		const remoteKeyPair = await this.getRemoteKeyPair();
+
+		this.db_public_key = remoteKeyPair?.publicKey ?? null;
+		this.db_private_key = remoteKeyPair?.privateKey ?? null;
+
+		if (localKeyPair) {
+			this.logger.log('startClient', 'getKeyPair', 'local');
+			return localKeyPair;
+		}
+
+		if (!remoteKeyPair) {
+			this.logger.log('startClient', 'getKeyPair', 'none');
+			return undefined;
+		}
+
+		try {
+			this.logger.log('startClient', 'getKeyPair', 'remote');
+			return {
+				publicKey: remoteKeyPair.publicKey,
+				privateKey: await this.decodePrivateKey(remoteKeyPair.privateKey),
+			};
+		} catch (error) {
+			failedToDecodeKey = true;
+
+			this.openAlert({
+				title: TAPi18n.__(
+					"Wasn't possible to decode your encryption key to be imported.",
+				),
+				html: '<div>Your encryption password seems wrong. Click here to try again.</div>',
+				modifiers: ['large', 'danger'],
+				closable: true,
+				icon: 'key',
+				action: () => {
+					this.startClient();
+					this.closeAlert();
+				},
+			});
+
+			throw error;
+		}
+	}
+
+	private async loadKeys({ publicKey, privateKey }: { publicKey: string; privateKey: string }): Promise<void> {
+		this.logger.log('loadKeys');
+
+		try {
+			this.privateKey = await importRSAKey(EJSON.parse(privateKey) as JsonWebKey, ['decrypt']);
+
+			Meteor._localStorage.setItem('public_key', publicKey);
+			Meteor._localStorage.setItem('private_key', privateKey);
+		} catch (error) {
+			this.logger.logError(error);
+		}
+	}
+
 	async startClient(): Promise<void> {
 		if (this.started) {
+			this.logger.log('startClient', 'already started');
 			return;
 		}
 
-		this.logger.log('startClient -> STARTED');
+		this.logger.log('startClient');
 
 		this.started = true;
-		let public_key = Meteor._localStorage.getItem('public_key');
-		let private_key = Meteor._localStorage.getItem('private_key');
 
-		await this.loadKeysFromDB();
+		let keyPair;
 
-		if (!public_key && this.db_public_key) {
-			public_key = this.db_public_key;
+		try {
+			keyPair = await this.getKeyPair();
+		} catch (error) {
+			this.logger.logError(error);
+			this.started = false;
+			return;
 		}
 
-		if (!private_key && this.db_private_key) {
-			try {
-				private_key = await this.decodePrivateKey(this.db_private_key);
-			} catch (error) {
-				this.started = false;
-				failedToDecodeKey = true;
-				this.openAlert({
-					title: TAPi18n.__(
-						"Wasn't possible to decode your encryption key to be imported.",
-					),
-					html: '<div>Your encryption password seems wrong. Click here to try again.</div>',
-					modifiers: ['large', 'danger'],
-					closable: true,
-					icon: 'key',
-					action: () => {
-						this.startClient();
-						this.closeAlert();
-					},
-				});
-				return;
-			}
-		}
-
-		if (public_key && private_key) {
-			await this.loadKeys({ public_key, private_key });
+		if (keyPair) {
+			await this.loadKeys(keyPair);
 		} else {
 			await this.createAndLoadKeys();
 		}
@@ -183,7 +243,7 @@ class E2E {
 		}
 
 		this._ready.set(true);
-		this.decryptSubscriptions();
+		this.decryptLastMessages();
 	}
 
 	async stopClient(): Promise<void> {
@@ -210,29 +270,6 @@ class E2E {
 
 		if (Meteor._localStorage.getItem('e2e.randomPassword')) {
 			Meteor._localStorage.setItem('e2e.randomPassword', newPassword);
-		}
-	}
-
-	async loadKeysFromDB(): Promise<void> {
-		try {
-			const { public_key, private_key } = await call('e2e.fetchMyKeys');
-
-			this.db_public_key = public_key;
-			this.db_private_key = private_key;
-		} catch (error) {
-			this.logger.logError('Error fetching RSA keys: ', error);
-		}
-	}
-
-	async loadKeys({ public_key, private_key }: { public_key: string; private_key: string }): Promise<void> {
-		Meteor._localStorage.setItem('public_key', public_key);
-
-		try {
-			this.privateKey = await importRSAKey(EJSON.parse(private_key) as JsonWebKey, ['decrypt']);
-
-			Meteor._localStorage.setItem('private_key', private_key);
-		} catch (error) {
-			this.logger.logError('Error importing private key: ', error);
 		}
 	}
 
@@ -420,19 +457,19 @@ class E2E {
 		);
 	}
 
-	async decryptSubscription(subscription: ISubscription): Promise<void> {
-		this.logger.log('decryptSubscription', { _id: subscription._id, rid: subscription.rid });
+	async decryptLastMessage(subscription: ISubscription): Promise<void> {
+		this.logger.log('decryptLastMessage', { _id: subscription._id, rid: subscription.rid });
 
 		const e2eRoom = await this.getInstanceByRoomId(subscription.rid);
-    e2eRoom?.decryptSubscription();
+    e2eRoom?.decryptLastMessage();
 	}
 
-	decryptSubscriptions(): void {
-		this.logger.log('decryptSubscriptions');
+	decryptLastMessages(): void {
+		this.logger.log('decryptLastMessages');
 
-		Subscriptions.find({ encrypted: true })
+		Subscriptions.find({ encrypted: true, lastMessage: { $exists: true } })
 			.forEach((subscription: ISubscription) => {
-				this.decryptSubscription(subscription);
+				this.decryptLastMessage(subscription);
 			});
 	}
 

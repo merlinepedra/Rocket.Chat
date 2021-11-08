@@ -111,12 +111,20 @@ export class E2ERoom extends Emitter<{
 
 		this.once(E2ERoomState.READY, () => {
 			this.decryptPendingMessages();
-			this.decryptSubscription();
+			this.decryptLastMessage();
 		});
 
 		this.on('STATE_CHANGED', () => {
+			if (this.state !== E2ERoomState.KEYS_RECEIVED && this.state !== E2ERoomState.NOT_STARTED) {
+				return;
+			}
+
 			this.handshake();
 		});
+
+		this.on(E2ERoomState.ESTABLISHING, () => this.handleEstabilishing());
+		this.on(E2ERoomState.WAITING_KEYS, () => this.handleWaitingKeys());
+		this.on(E2ERoomState.CREATING_KEYS, () => this.handleCreatingKeys());
 	}
 
 	private setState(requestedState: E2ERoomState): void {
@@ -134,6 +142,55 @@ export class E2ERoom extends Emitter<{
 		this.emit(nextState, this);
 	}
 
+	private async handleEstabilishing(): Promise<void> {
+		try {
+			const subscription: ISubscription | undefined = Subscriptions.findOne({ rid: this.roomId });
+			if (subscription?.E2EKey) {
+				await this.importGroupKey(subscription.E2EKey);
+				this.setState(E2ERoomState.READY);
+				return;
+			}
+
+			const room: IRoom | undefined = Rooms.findOne({ _id: this.roomId });
+			if (room?.e2eKeyId) {
+				this.setState(E2ERoomState.WAITING_KEYS);
+				return;
+			}
+
+			this.setState(E2ERoomState.CREATING_KEYS);
+		} catch (error) {
+			this.catchError(error);
+		}
+	}
+
+	private async handleWaitingKeys(): Promise<void> {
+		const room: IRoom | undefined = Rooms.findOne({ _id: this.roomId });
+		if (room?.e2eKeyId) {
+			this.logger.log('e2ekeyRequest', { rid: this.roomId, e2eKeyId: room.e2eKeyId });
+			Notifications.notifyUsersOfRoom(this.roomId, 'e2ekeyRequest', this.roomId, room.e2eKeyId);
+		}
+	}
+
+	private async handleCreatingKeys(): Promise<void> {
+		// TODO CHECK_PERMISSION
+		await this.createGroupKey();
+		this.setState(E2ERoomState.READY);
+	}
+
+	handshake(): void {
+		this.logger.log('handshake');
+		this.setState(E2ERoomState.ESTABLISHING);
+	}
+
+	catchError(error: unknown): void {
+		this.setState(E2ERoomState.ERROR);
+		this.logger.logError(error);
+	}
+
+	enable(): void {
+		this.setState(E2ERoomState.READY);
+	}
+
 	isReady(): boolean {
 		return this.state === E2ERoomState.READY;
 	}
@@ -142,28 +199,31 @@ export class E2ERoom extends Emitter<{
 		return this.state === E2ERoomState.DISABLED;
 	}
 
-	enable(): void {
-		if (this.state === E2ERoomState.READY) {
-			return;
-		}
-
-		this.setState(E2ERoomState.READY);
-	}
-
 	disable(): void {
 		this.setState(E2ERoomState.DISABLED);
 	}
 
-	pause(): void {
+	private pause(): void {
 		this.logger.log('PAUSED', this[PAUSED], '->', true);
 		this[PAUSED] = true;
 		this.emit('PAUSED', true);
 	}
 
-	resume(): void {
+	private resume(): void {
 		this.logger.log('PAUSED', this[PAUSED], '->', false);
 		this[PAUSED] = false;
 		this.emit('PAUSED', false);
+	}
+
+	toggle(enabled = this.isDisabled()): void {
+		if (enabled && this.isDisabled()) {
+			this.resume();
+			return;
+		}
+
+		if (!enabled && !this.isDisabled()) {
+			this.pause();
+		}
 	}
 
 	keyReceived(): void {
@@ -214,25 +274,25 @@ export class E2ERoom extends Emitter<{
 		return undefined;
 	}
 
-	async decryptSubscription(): Promise<void> {
+	async decryptLastMessage(): Promise<void> {
 		const subscription: ISubscription | undefined = Subscriptions.findOne({ rid: this.roomId });
 
 		if (!subscription) {
-			this.logger.log('decryptSubscription', 'no subscription to decrypt');
+			this.logger.log('decryptLastMessage', 'no subscription to decrypt');
 			return;
 		}
 
 		const msg = subscription?.lastMessage?.msg;
 
 		if (!msg) {
-			this.logger.log('decryptSubscription', 'no last message to decrypt');
+			this.logger.log('decryptLastMessage', 'no last message to decrypt');
 			return;
 		}
 
 		const decryptedText = await this.decryptMessageText(msg);
 
 		if (!decryptedText) {
-			this.logger.log('decryptSubscription', 'nothing to do');
+			this.logger.log('decryptLastMessage', 'nothing to do');
 			return;
 		}
 
@@ -244,52 +304,13 @@ export class E2ERoom extends Emitter<{
 				'lastMessage.e2e': 'done',
 			},
 		});
-		this.logger.log('decryptSubscription', { _id: subscription._id }, 'done');
+		this.logger.log('decryptLastMessage', { _id: subscription._id }, 'done');
 	}
 
 	async decryptPendingMessages(): Promise<void> {
 		return Messages.find({ rid: this.roomId, t: 'e2e', e2e: 'pending' }).forEach(async ({ _id, ...msg }: IMessage) => {
 			Messages.direct.update({ _id }, await this.decryptMessage(msg));
 		});
-	}
-
-	// Initiates E2E Encryption
-	async handshake(): Promise<void> {
-		if (this.state !== E2ERoomState.KEYS_RECEIVED && this.state !== E2ERoomState.NOT_STARTED) {
-			return;
-		}
-
-		this.setState(E2ERoomState.ESTABLISHING);
-
-		try {
-			const groupKey = Subscriptions.findOne({ rid: this.roomId }).E2EKey;
-			if (groupKey) {
-				await this.importGroupKey(groupKey);
-				this.setState(E2ERoomState.READY);
-				return;
-			}
-		} catch (error) {
-			this.setState(E2ERoomState.ERROR);
-			this.logger.logError('Error fetching group key: ', error);
-			return;
-		}
-
-		try {
-			const room = Rooms.findOne({ _id: this.roomId });
-			if (!room.e2eKeyId) { // TODO CHECK_PERMISSION
-				this.setState(E2ERoomState.CREATING_KEYS);
-				await this.createGroupKey();
-				this.setState(E2ERoomState.READY);
-				return;
-			}
-
-			this.setState(E2ERoomState.WAITING_KEYS);
-			this.logger.log('Requesting room key');
-			Notifications.notifyUsersOfRoom(this.roomId, 'e2ekeyRequest', this.roomId, room.e2eKeyId);
-		} catch (error) {
-			// this.error = error;
-			this.setState(E2ERoomState.ERROR);
-		}
 	}
 
 	async importGroupKey(groupKey: string): Promise<void> {

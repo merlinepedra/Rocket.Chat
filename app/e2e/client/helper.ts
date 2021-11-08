@@ -63,7 +63,7 @@ export const exportJWKKey = (key: CryptoKey): Promise<JsonWebKey> =>
 	crypto.subtle.exportKey('jwk', key);
 
 export const importRSAKey = (keyData: JsonWebKey, keyUsages: KeyUsage[] = ['encrypt', 'decrypt']): Promise<CryptoKey> =>
-	crypto.subtle.importKey('jwk', keyData, { 	name: 'RSA-OAEP', 	hash: { name: 'SHA-256' } }, true, keyUsages);
+	crypto.subtle.importKey('jwk', keyData, { name: 'RSA-OAEP', 	hash: { name: 'SHA-256' } }, true, keyUsages);
 
 export const importAESKey = (keyData: JsonWebKey, keyUsages: KeyUsage[] = ['encrypt', 'decrypt']): Promise<CryptoKey> =>
 	crypto.subtle.importKey('jwk', keyData, { name: 'AES-CBC' }, true, keyUsages);

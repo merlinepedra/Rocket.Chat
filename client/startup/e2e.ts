@@ -67,7 +67,7 @@ Meteor.startup(() => {
 					return;
 				}
 
-				doc.encrypted ? e2eRoom.resume() : e2eRoom.pause();
+				e2eRoom.toggle(doc.encrypted);
 
 				// Cover private groups and direct messages
 				if (!E2ERoom.isSupportedRoomType(doc.t)) {
@@ -84,7 +84,7 @@ Meteor.startup(() => {
 					return;
 				}
 
-				e2eRoom.decryptSubscription();
+				e2eRoom.decryptLastMessage();
 			},
 			added: async (doc: ISubscription) => {
 				if (!doc.encrypted && !doc.E2EKey) {
@@ -113,21 +113,18 @@ Meteor.startup(() => {
 				return message;
 			}
 
-			const subscription = await waitUntilFind(() => Rooms.findOne({ _id: message.rid }));
-
-			subscription.encrypted ? e2eRoom.resume() : e2eRoom.pause();
+			const room: IRoom = await waitUntilFind(() => Rooms.findOne({ _id: message.rid }));
+			e2eRoom.toggle(room.encrypted);
 
 			if (!(await e2eRoom.shouldConvertSentMessages())) {
 				return message;
 			}
 
-			// Should encrypt this message.
-			const msg = await e2eRoom.encrypt(message);
-
-			message.msg = msg;
-			message.t = 'e2e';
-			message.e2e = 'pending';
-			return message;
+			return Object.assign(message, {
+				msg: await e2eRoom.encrypt(message),
+				t: 'e2e',
+				e2e: 'pending',
+			});
 		});
 	});
 });
