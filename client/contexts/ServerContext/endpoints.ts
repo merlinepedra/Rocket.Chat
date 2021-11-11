@@ -75,11 +75,19 @@ type Operation<M extends Method, P extends PathFor<M>> = M extends any
 		: never
 	: never;
 
+// type y = [string] extends [any, any] ? true : false;
+
+
 type ExtractParams<Q> = Q extends [any, any]
-	? [undefined?]
+	? []
 	: Q extends [any, any, any, ...any[]]
 	? [Q[2]]
 	: never;
+
+type a = Operation<'POST', 'ldap.syncNow'>
+type b = Parameters<a>
+type c = ExtractParams<b>
+// type d = c extends [] ? true : false
 
 export type Params<M extends Method, P extends PathFor<M>> = ExtractParams<
 	Parameters<Operation<M, P>>

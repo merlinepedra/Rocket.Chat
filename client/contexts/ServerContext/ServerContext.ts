@@ -21,9 +21,9 @@ type ServerContextValue = {
 	callEndpoint: <M extends Method, P extends PathFor<M>>(
 		method: M,
 		path: P,
-		params: Params<M, P>[0],
+		...params: Params<M, P>
 	) => Promise<Serialized<Return<M, P>>>;
-	uploadToEndpoint: (endpoint: string, params: any, formData: any) => Promise<void>;
+	uploadToEndpoint: (endpoint: string, params: any, formData?: any) => Promise<void>;
 	getStream: (
 		streamName: string,
 		options?: {},
@@ -73,16 +73,16 @@ export const useMethod = <MethodName extends keyof ServerMethods>(
 export const useEndpoint = <M extends 'GET' | 'POST' | 'DELETE', P extends PathFor<M>>(
 	method: M,
 	path: P,
-): ((params: Params<M, P>[0]) => Promise<Serialized<Return<M, P>>>) => {
+): ((...params: Params<M, P>) => Promise<Serialized<Return<M, P>>>) => {
 	const { callEndpoint } = useContext(ServerContext);
 
-	return useCallback((params) => callEndpoint(method, path, params), [callEndpoint, path, method]);
+	return useCallback((...params) => callEndpoint(method, path, ...params), [callEndpoint, path, method]);
 };
 
-export const useUpload = (endpoint: string): ((params: any, formData: any) => Promise<void>) => {
+export const useUpload = <P extends PathFor<'POST'>, D extends Params<'POST', P>>(endpoint: P): (D extends [] ? (formData?: FormData) => Promise<void> : (params: D[0], formData?: FormData) => Promise<void>) => {
 	const { uploadToEndpoint } = useContext(ServerContext);
 	return useCallback(
-		(params, formData: any) => uploadToEndpoint(endpoint, params, formData),
+		(params: D[0] | FormData, formData?: FormData) => uploadToEndpoint(endpoint, params, formData),
 		[endpoint, uploadToEndpoint],
 	);
 };
