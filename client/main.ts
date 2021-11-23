@@ -13,6 +13,7 @@ import './methods/setUserActiveStatus';
 import './methods/toggleFavorite';
 import './methods/updateMessage';
 import './startup';
+import './i18next.ts';
 import './views/admin';
 import './views/teams';
 import './templates';

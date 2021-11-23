@@ -1,12 +1,13 @@
 import { Accordion, Field, Select, FieldGroup } from '@rocket.chat/fuselage';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { useLanguages, useTranslation } from '../../../contexts/TranslationContext';
+import { useLanguages } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
 const PreferencesLocalizationSection = ({ onChange, commitRef, ...props }) => {
-	const t = useTranslation();
+	const { t } = useTranslation();
 	const userLanguage = useUserPreference('language') || '';
 	const languages = useLanguages();
 
