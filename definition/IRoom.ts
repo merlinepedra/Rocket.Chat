@@ -32,12 +32,7 @@ export interface IRoom extends IRocketChatRecord {
 	lastMessage?: IMessage;
 	lm?: Date;
 	usersCount: number;
-	jitsiTimeout: Date;
-	callStatus?: CallStatus;
-	webRtcCallStartTime?: Date;
-	servedBy?: {
-		_id: string;
-	};
+	jitsiTimeout?: Date;
 
 	streamingOptions?: {
 		id?: string;
@@ -82,7 +77,8 @@ export interface IDirectMessageRoom extends Omit<IRoom, 'default' | 'featured' |
 	usernames: Array<Username>;
 }
 
-export const isDirectMessageRoom = (room: Partial<IRoom>): room is IDirectMessageRoom => room.t === 'd';
+export const isDirectMessageRoom = (room: Partial<IRoom>): room is IDirectMessageRoom =>
+	room.t === 'd';
 
 export enum OmnichannelSourceType {
 	WIDGET = 'widget',
@@ -93,7 +89,8 @@ export enum OmnichannelSourceType {
 	OTHER = 'other', // catch-all source type
 }
 
-export interface IOmnichannelRoom extends Omit<IRoom, 'default' | 'featured' | 'broadcast' | 'featured' | ''> {
+export interface IOmnichannelRoom
+	extends Omit<IRoom, 'default' | 'featured' | 'broadcast' | 'featured' | ''> {
 	t: 'l';
 	v: {
 		_id?: string;
@@ -121,6 +118,10 @@ export interface IOmnichannelRoom extends Omit<IRoom, 'default' | 'featured' | '
 		ts: Date;
 		username: IUser['username'];
 	};
+
+	callStatus?: CallStatus;
+	webRtcCallStartTime?: Date;
+
 	onHold?: boolean;
 	departmentId?: string;
 
@@ -130,7 +131,12 @@ export interface IOmnichannelRoom extends Omit<IRoom, 'default' | 'featured' | '
 	closedAt: any;
 	metrics: any;
 	waitingResponse: any;
-	responseBy: any;
+	responseBy?: {
+		_id: string;
+		lastMessageTs: Date;
+		username: IUser['username'];
+	};
+
 	priorityId: any;
 	livechatData: any;
 	queuedAt?: Date;
@@ -140,4 +146,4 @@ export interface IOmnichannelRoom extends Omit<IRoom, 'default' | 'featured' | '
 	crmData?: unknown;
 }
 
-export const isOmnichannelRoom = (room: IRoom): room is IOmnichannelRoom & IRoom => room.t === 'l';
+export const isOmnichannelRoom = (room: IRoom): room is IOmnichannelRoom => room.t === 'l';

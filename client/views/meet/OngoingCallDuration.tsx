@@ -8,9 +8,14 @@ type OngoingCallDurationProps = {
 const OngoingCallDuration: FC<OngoingCallDurationProps> = ({ counter: defaultCounter = 0 }) => {
 	const [counter, setCounter] = useState(defaultCounter);
 	useEffect(() => {
-		setTimeout(() => setCounter(counter + 1), 1000);
-	}, [counter]);
+		const interval = setInterval(() => setCounter((counter) => counter + 1), 1000);
 
+		return (): void => {
+			clearInterval(interval);
+		};
+	}, []);
+
+	// TODO: use formatDuration
 	return (
 		<Box color='#E4E7EA' textAlign='center'>
 			{new Date(counter * 1000).toISOString().substr(11, 8)}

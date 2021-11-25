@@ -76,6 +76,12 @@ export type OmnichannelEndpoints = {
 			];
 		}>;
 	};
+	'livechat/room': {
+		GET: (params: { token: string; rid?: string; agentId?: string }) => {
+			room: IOmnichannelRoom;
+			newRoom: boolean;
+		};
+	};
 	'livechat/rooms': {
 		GET: (params: {
 			guest: string;
