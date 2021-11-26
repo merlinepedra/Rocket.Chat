@@ -7,7 +7,6 @@ type RoomID = string;
 
 export interface ISubscription extends IRocketChatRecord {
 	u: Pick<IUser, '_id' | 'username' | 'name'>;
-	v?: Pick<IUser, '_id' | 'username' | 'name'>;
 	rid: RoomID;
 	open: boolean;
 	ts: Date;
@@ -61,7 +60,10 @@ export interface ISubscription extends IRocketChatRecord {
 }
 
 export interface IOmnichannelSubscription extends ISubscription {
-	department?: string; // TODO REMOVE/DEPRECATE no need keeo in both room and subscription
+	/* @deprecated */
+	department?: string; // TODO REMOVE/DEPRECATE no need keep in both room and subscription
+	/* @deprecated */
+	v?: IOmnichannelRoom['v'];
 }
 
 export interface ISubscriptionDirectMessage extends Omit<ISubscription, 'name'> {

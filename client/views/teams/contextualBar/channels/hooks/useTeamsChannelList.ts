@@ -6,7 +6,7 @@ import { useScrollableRecordList } from '../../../../../hooks/lists/useScrollabl
 import { useComponentDidUpdate } from '../../../../../hooks/useComponentDidUpdate';
 import { RecordList } from '../../../../../lib/lists/RecordList';
 import { getConfig } from '../../../../../lib/utils/getConfig';
-import { mapMessageFromApi } from '../../../../../lib/utils/mapMessageFromApi';
+import { mapRoomFromApi } from '../../../../../lib/utils/mapRoomFromApi';
 
 type TeamsChannelListOptions = {
 	teamId: string;
@@ -41,17 +41,17 @@ export const useTeamsChannelList = (
 			});
 
 			return {
-				items: rooms.map(
-					({ _updatedAt, lastMessage, lm, ts, jitsiTimeout, webRtcCallStartTime, ...room }) => ({
-						jitsiTimeout: new Date(jitsiTimeout),
-						...(lm && { lm: new Date(lm) }),
-						...(ts && { ts: new Date(ts) }),
-						_updatedAt: new Date(_updatedAt),
-						...(lastMessage && { lastMessage: mapMessageFromApi(lastMessage) }),
-						...(webRtcCallStartTime && { webRtcCallStartTime: new Date(webRtcCallStartTime) }),
-						...room,
-					}),
-				),
+				items: rooms.map(mapRoomFromApi),
+				// ({ _updatedAt, lastMessage, lm, ts, jitsiTimeout, webRtcCallStartTime, ...room }) => ({
+				// 	...(jitsiTimeout && { jitsiTimeout: new Date(jitsiTimeout) }),
+				// 	...(lm && { lm: new Date(lm) }),
+				// 	...(ts && { ts: new Date(ts) }),
+				// 	_updatedAt: new Date(_updatedAt),
+				// 	...(lastMessage && { lastMessage: mapMessageFromApi(lastMessage) }),
+				// 	...(webRtcCallStartTime && { webRtcCallStartTime: new Date(webRtcCallStartTime) }),
+				// 	...room,
+				// }),
+				// ),
 				itemCount: total,
 			};
 		},
