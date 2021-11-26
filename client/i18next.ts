@@ -2,10 +2,8 @@ import i18n, { ReadCallback } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 export const loadResource = async (lng: string): Promise<string> => {
-	const translation = await require(`../i18n/en.i18n.json`);
+	const { default: translation } = await import(`../i18n/${lng}.json`);
 
-	console.log(`../i18n/${lng}.i18n.json`);
-	console.log(translation);
 	return translation;
 };
 
@@ -18,6 +16,7 @@ i18n
 					callback(null, resource);
 				})
 				.catch((reason) => {
+					console.error(reason);
 					callback(reason, null);
 				});
 		},
