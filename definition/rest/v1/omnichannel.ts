@@ -122,4 +122,27 @@ export type OmnichannelEndpoints = {
 			}[];
 		}>;
 	};
+
+	'livechat/webrtc.call': {
+		GET: (params: { rid: string }) => {
+			videoCall: {
+				rid: 'string';
+				provider: 'webrtc';
+				callStatus: 'ringing' | 'ended' | 'declined';
+			};
+		};
+	};
+
+	'livechat/webrtc.call/:callId': {
+		PUT: <T>(params: { rid: string; status: T }) => {
+			status: T;
+		};
+	};
+
+	'livechat/visitor.callStatus': {
+		POST: <T>(params: { token: string; callStatus: T; rid: string; callId: string }) => {
+			token: string;
+			callStatus: T;
+		};
+	};
 };

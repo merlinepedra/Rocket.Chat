@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 
 import UserAvatar from '../../components/avatar/UserAvatar';
 import { useLayout } from '../../contexts/LayoutContext';
-import './styles.css';
+// import './styles.css';
 
 export const MeetPageEnded: FC<{
 	username: string;

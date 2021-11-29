@@ -14,5 +14,6 @@ import './methods/toggleFavorite';
 import './methods/updateMessage';
 import './startup';
 import './views/admin';
+import './views/meet';
 import './views/teams';
 import './templates';

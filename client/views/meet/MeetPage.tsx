@@ -7,29 +7,29 @@ import { AsyncStatePhase } from '../../lib/asyncState';
 import { mapRoomFromApi } from '../../lib/utils/mapRoomFromApi';
 import NotFoundPage from '../notFound/NotFoundPage';
 import PageLoading from '../root/PageLoading';
-import CallPage from './CallPage';
+import CallPage from './CallPage/CallPage';
 import { MeetPageEnded } from './MeetPageEnded';
-import './styles.css';
+// import './styles.css';
 
 export const MeetPage: FC = () => {
 	const visitorToken = useQueryStringParameter('token');
 
-	const roomId = useRouteParameter('rid');
+	const rid = useRouteParameter('rid');
 	const layout = useQueryStringParameter('layout');
 
 	const closeCallTab = (): void => window.close();
 
-	if (!visitorToken || !roomId) {
-		throw new Error('No visitor token provided');
+	if (!visitorToken && !rid) {
+		throw new Error('No visitor token or room id provided');
 	}
 
 	const result = useEndpointData(
 		`rooms.info`,
 		useMemo(
 			() => ({
-				roomId,
+				roomId: rid,
 			}),
-			[roomId],
+			[rid],
 		),
 	);
 
@@ -49,7 +49,7 @@ export const MeetPage: FC = () => {
 
 	const visitorName = room.fname;
 	const visitorId = room.v._id;
-	const agentName = room.responseBy.username || room.servedBy.username;
+	const agentName = room.responseBy?.username || room.servedBy?.username;
 	const status = room.callStatus || 'ended';
 	const startTime = room.webRtcCallStartTime;
 
@@ -61,8 +61,7 @@ export const MeetPage: FC = () => {
 
 	return (
 		<CallPage
-			roomId={roomId}
-			status={status}
+			rid={rid}
 			visitorToken={visitorToken}
 			visitorId={visitorId}
 			setStatus={startTime}
