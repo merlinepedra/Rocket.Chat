@@ -37,24 +37,22 @@ const ToolBox: FC<ToolBoxProps> = ({ className }) => {
 	const visibleActions = isMobile ? [] : actions.slice(0, 6);
 
 	const hiddenActions: MenuProps['options'] = Object.fromEntries(
-		(isMobile ? actions : actions.slice(6))
-			.filter((action) => !action.unlisted)
-			.map((item) => {
-				hiddenActionRenderers.current = {
-					...hiddenActionRenderers.current,
-					[item.id]: item.renderOption || renderMenuOption,
-				};
-				return [
-					item.id,
-					{
-						label: { title: t(item.title), icon: item.icon },
-						action: (): void => {
-							openTabBar(item.id);
-						},
-						...item,
+		(isMobile ? actions : actions.slice(6)).map((item) => {
+			hiddenActionRenderers.current = {
+				...hiddenActionRenderers.current,
+				[item.id]: item.renderOption || renderMenuOption,
+			};
+			return [
+				item.id,
+				{
+					label: { title: t(item.title), icon: item.icon },
+					action: (): void => {
+						openTabBar(item.id);
 					},
-				] as any;
-			}),
+					...item,
+				},
+			] as any;
+		}).slice(0,-1),
 	);
 
 	const actionDefault = useMutableCallback((e) => {

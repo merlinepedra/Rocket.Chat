@@ -84,5 +84,4 @@ addAction('apps-contextual-bar', {
 	icon: 'members',
 	template: lazy(() => import('../../contextualBar/Apps')),
 	order: 300,
-	unlisted: true,
 });
