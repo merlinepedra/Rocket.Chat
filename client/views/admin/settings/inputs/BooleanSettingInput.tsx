@@ -16,7 +16,7 @@ function BooleanSettingInput({
 }) {
 	const handleChange = (event) => {
 		const value = event.currentTarget.checked;
-		onChangeValue && onChangeValue(value);
+		onChangeValue?.(value);
 	};
 
 	return (

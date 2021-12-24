@@ -14,7 +14,7 @@ const Encrypted = ({ room }) => {
 	const toggleE2E = useMethod('saveRoomSettings');
 	const encryptedLabel = t('Encrypted');
 	const handleE2EClick = useMutableCallback(() => {
-		toggleE2E(room._id, 'encrypted', !(room && room.encrypted));
+		toggleE2E(room._id, 'encrypted', !room?.encrypted);
 	});
 	return e2eEnabled && room?.encrypted ? (
 		<Header.State

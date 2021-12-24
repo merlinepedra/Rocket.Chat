@@ -41,19 +41,19 @@ const getShouldOpenDirectMessage = (
 };
 
 const getUserIsMuted = (room, user, userCanPostReadonly) => {
-	if (room && room.ro) {
-		if (Array.isArray(room.unmuted) && room.unmuted.indexOf(user && user.username) !== -1) {
+	if (room?.ro) {
+		if (Array.isArray(room.unmuted) && room.unmuted.indexOf(user?.username) !== -1) {
 			return false;
 		}
 
 		if (userCanPostReadonly) {
-			return Array.isArray(room.muted) && room.muted.indexOf(user && user.username) !== -1;
+			return Array.isArray(room.muted) && room.muted.indexOf(user?.username) !== -1;
 		}
 
 		return true;
 	}
 
-	return room && Array.isArray(room.muted) && room.muted.indexOf(user && user.username) > -1;
+	return room && Array.isArray(room.muted) && room.muted.indexOf(user?.username) > -1;
 };
 
 const WarningModal = ({ text, confirmText, close, confirm, ...props }) => {
@@ -103,15 +103,12 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 
 	const otherUserCanPostReadonly = useAllPermissions('post-readonly', rid);
 
-	const isIgnored =
-		currentSubscription &&
-		currentSubscription.ignored &&
-		currentSubscription.ignored.indexOf(uid) > -1;
+	const isIgnored = currentSubscription?.ignored && currentSubscription.ignored.indexOf(uid) > -1;
 	const isMuted = getUserIsMuted(room, user, otherUserCanPostReadonly);
 
 	const endpointPrefix = room.t === 'p' ? 'groups' : 'channels';
 
-	const roomConfig = room && room.t && roomTypes.getConfig(room.t);
+	const roomConfig = room?.t && roomTypes.getConfig(room.t);
 
 	const [
 		roomCanSetOwner,
@@ -133,7 +130,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 		]),
 	];
 
-	const roomName = room && room.t && escapeHTML(roomTypes.getRoomName(room.t, room));
+	const roomName = room?.t && escapeHTML(roomTypes.getRoomName(room.t, room));
 
 	const userCanSetOwner = usePermission('set-owner', rid);
 	const userCanSetLeader = usePermission('set-leader', rid);
@@ -293,7 +290,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 		[ignoreUserAction, isIgnored, ownUserId, roomCanIgnore, t, uid],
 	);
 
-	const isUserBlocked = currentSubscription && currentSubscription.blocker;
+	const isUserBlocked = currentSubscription?.blocker;
 	const toggleBlock = useMethod(isUserBlocked ? 'unblockUser' : 'blockUser');
 	const toggleBlockUserAction = useMutableCallback(async () => {
 		try {
@@ -401,7 +398,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 							...(roomKeys.length && { rooms: roomKeys }),
 						});
 						closeModal();
-						reload && reload();
+						reload?.();
 					}}
 				/>,
 			);
@@ -415,7 +412,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 				confirm={async () => {
 					await removeUserAction({ roomId: rid, userId: uid });
 					closeModal();
-					reload && reload();
+					reload?.();
 				}}
 			/>,
 		);

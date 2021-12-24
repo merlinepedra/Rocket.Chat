@@ -16,13 +16,7 @@ import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
 const useCustomSoundsOptions = () =>
-	useMemo(
-		() =>
-			CustomSounds &&
-			CustomSounds.getList &&
-			CustomSounds.getList().map(({ _id, name }) => [_id, name]),
-		[],
-	);
+	useMemo(() => CustomSounds?.getList?.().map(({ _id, name }) => [_id, name]), []);
 
 const PreferencesSoundSection = ({ onChange, commitRef, ...props }) => {
 	const t = useTranslation();

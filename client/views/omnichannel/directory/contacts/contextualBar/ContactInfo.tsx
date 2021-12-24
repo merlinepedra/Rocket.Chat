@@ -127,13 +127,13 @@ const ContactInfo = ({ id, rid, route }) => {
 							</Info>
 						</Field>
 					)}
-					{visitorEmails && visitorEmails.length && (
+					{visitorEmails?.length && (
 						<Field>
 							<Label>{t('Email')}</Label>
 							<Info>{visitorEmails[0].address}</Info>
 						</Field>
 					)}
-					{phone && phone.length && (
+					{phone?.length && (
 						<Field>
 							<Label>{t('Phone')}</Label>
 							<Info>{phone[0].phoneNumber}</Info>

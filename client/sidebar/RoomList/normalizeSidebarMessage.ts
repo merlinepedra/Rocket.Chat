@@ -13,11 +13,11 @@ export const normalizeSidebarMessage = (message, t) => {
 			(attachment) => attachment.title || attachment.description,
 		);
 
-		if (attachment && attachment.description) {
+		if (attachment?.description) {
 			return escapeHTML(attachment.description);
 		}
 
-		if (attachment && attachment.title) {
+		if (attachment?.title) {
 			return escapeHTML(attachment.title);
 		}
 

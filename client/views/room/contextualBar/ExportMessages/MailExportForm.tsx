@@ -30,7 +30,7 @@ const MailExportForm = ({ onCancel, rid }) => {
 	const t = useTranslation();
 
 	const room = useUserRoom(rid);
-	const roomName = room && room.t && roomTypes.getRoomName(room.t, room);
+	const roomName = room?.t && roomTypes.getRoomName(room.t, room);
 
 	const [selectedMessages, setSelected] = useState([]);
 

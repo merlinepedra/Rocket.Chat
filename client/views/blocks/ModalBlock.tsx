@@ -45,16 +45,16 @@ function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }) {
 
 		if (errors && Object.keys(errors).length) {
 			const element = ref.current.querySelector(focusableElementsStringInvalid);
-			element && element.focus();
+			element?.focus();
 		} else {
 			const element = ref.current.querySelector(focusableElementsString);
-			element && element.focus();
+			element?.focus();
 		}
 	}, [errors]);
 	// save focus to restore after close
 	const previousFocus = useMemo(() => document.activeElement, []);
 	// restore the focus after the component unmount
-	useEffect(() => () => previousFocus && previousFocus.focus(), [previousFocus]);
+	useEffect(() => () => previousFocus?.focus(), [previousFocus]);
 	// Handle Tab, Shift + Tab, Enter and Escape
 	const handleKeyDown = useCallback(
 		(event) => {

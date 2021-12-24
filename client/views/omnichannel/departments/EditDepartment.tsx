@@ -48,7 +48,7 @@ function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 		useSelectForwardDepartment = () => {},
 	} = useSubscription(formsSubscription);
 
-	const initialAgents = useRef((data && data.agents) || []);
+	const initialAgents = useRef(data?.agents || []);
 
 	const MaxChats = useEeNumberInput();
 	const VisitorInactivity = useEeNumberInput();
@@ -514,7 +514,7 @@ function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 							<Field.Label mb='x4'>{t('Agents')}:</Field.Label>
 							<Box display='flex' flexDirection='column' height='50vh'>
 								<DepartmentsAgentsTable
-									agents={data && data.agents}
+									agents={data?.agents}
 									setAgentListFinal={setAgentList}
 									setAgentsAdded={setAgentsAdded}
 									setAgentsRemoved={setAgentsRemoved}

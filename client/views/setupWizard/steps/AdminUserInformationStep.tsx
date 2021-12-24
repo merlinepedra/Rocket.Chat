@@ -45,7 +45,7 @@ function AdminUserInformationStep({ step, title, active }) {
 			await loginWithPassword(email, password);
 		} catch (error) {
 			if (error.error === 'error-invalid-email') {
-				onRegistrationEmailSent && onRegistrationEmailSent();
+				onRegistrationEmailSent?.();
 				return;
 			}
 			dispatchToastMessage({ type: 'error', message: error });

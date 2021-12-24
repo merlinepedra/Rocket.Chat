@@ -31,8 +31,8 @@ function DepartmentsPage({ data, header, setParams, params, title, renderRow, ch
 					<GenericTable
 						header={header}
 						renderRow={renderRow}
-						results={data && data.departments}
-						total={data && data.total}
+						results={data?.departments}
+						total={data?.total}
 						setParams={setParams}
 						params={params}
 						renderFilter={({ onChange, ...props }) => (

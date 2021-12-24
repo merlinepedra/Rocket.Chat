@@ -20,7 +20,7 @@ function RelativeUrlSettingInput({
 	const getAbsoluteUrl = useAbsoluteUrl();
 
 	const handleChange = (event) => {
-		onChangeValue && onChangeValue(event.currentTarget.value);
+		onChangeValue?.(event.currentTarget.value);
 	};
 
 	return (

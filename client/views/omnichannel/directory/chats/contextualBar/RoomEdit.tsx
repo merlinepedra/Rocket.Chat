@@ -87,7 +87,7 @@ function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
 					type: options ? 'select' : 'text',
 					required,
 					defaultValue,
-					options: options && options.split(',').map((item) => item.trim()),
+					options: options?.split(',').map((item) => item.trim()),
 				});
 		});
 		return jsonObj;
@@ -95,9 +95,7 @@ function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
 
 	const jsonCustomField = useMemo(
 		() =>
-			allCustomFields && allCustomFields.customFields
-				? jsonConverterToValidFormat(allCustomFields.customFields)
-				: {},
+			allCustomFields?.customFields ? jsonConverterToValidFormat(allCustomFields.customFields) : {},
 		[allCustomFields],
 	);
 
@@ -122,8 +120,8 @@ function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
 		try {
 			saveRoom(userData, roomData);
 			dispatchToastMessage({ type: 'success', message: t('Saved') });
-			reload && reload();
-			reloadInfo && reloadInfo();
+			reload?.();
+			reloadInfo?.();
 			close();
 		} catch (error) {
 			dispatchToastMessage({ type: 'error', message: error });

@@ -10,8 +10,7 @@ const TwoFactorEmail = (props) => {
 	const t = useTranslation();
 	const user = useUser();
 
-	const isEnabled =
-		user && user.services && user.services.email2fa && user.services.email2fa.enabled;
+	const isEnabled = user?.services?.email2fa?.enabled;
 
 	const enable2faAction = useEndpointAction(
 		'POST',

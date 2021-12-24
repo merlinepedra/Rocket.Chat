@@ -26,7 +26,7 @@ const AccountTokensTable = ({ data, reload }) => {
 
 	const [params, setParams] = useState({ current: 0, itemsPerPage: 25 });
 
-	const tokensTotal = data && data.success ? data.tokens.length : 0;
+	const tokensTotal = data?.success ? data.tokens.length : 0;
 
 	const { current, itemsPerPage } = params;
 

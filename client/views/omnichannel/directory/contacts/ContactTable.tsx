@@ -127,9 +127,9 @@ function ContactTable({ setContactReload }) {
 			>
 				<Table.Cell withTruncatedText>{username}</Table.Cell>
 				<Table.Cell withTruncatedText>{name}</Table.Cell>
-				<Table.Cell withTruncatedText>{phone && phone.length && phone[0].phoneNumber}</Table.Cell>
+				<Table.Cell withTruncatedText>{phone?.length && phone[0].phoneNumber}</Table.Cell>
 				<Table.Cell withTruncatedText>
-					{visitorEmails && visitorEmails.length && visitorEmails[0].address}
+					{visitorEmails?.length && visitorEmails[0].address}
 				</Table.Cell>
 				<Table.Cell withTruncatedText>{lastChat && formatDate(lastChat.ts)}</Table.Cell>
 			</Table.Row>
@@ -141,8 +141,8 @@ function ContactTable({ setContactReload }) {
 		<GenericTable
 			header={header}
 			renderRow={renderRow}
-			results={data && data.visitors}
-			total={data && data.total}
+			results={data?.visitors}
+			total={data?.total}
 			setParams={setParams}
 			params={params}
 			renderFilter={({ onChange, ...props }) => (

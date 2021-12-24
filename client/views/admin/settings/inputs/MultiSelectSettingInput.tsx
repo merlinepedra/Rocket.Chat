@@ -21,7 +21,7 @@ function MultiSelectSettingInput({
 	const t = useTranslation();
 
 	const handleChange = (value) => {
-		onChangeValue && onChangeValue(value);
+		onChangeValue?.(value);
 		// onChangeValue && onChangeValue([...event.currentTarget.querySelectorAll('option')].filter((e) => e.selected).map((el) => el.value));
 	};
 	const Component = autocomplete ? MultiSelectFiltered : MultiSelect;

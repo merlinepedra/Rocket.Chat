@@ -28,8 +28,8 @@ const CustomFieldsPage = ({ data, header, setParams, params, title, renderRow, c
 					<GenericTable
 						header={header}
 						renderRow={renderRow}
-						results={data && data.customFields}
-						total={data && data.total}
+						results={data?.customFields}
+						total={data?.total}
 						setParams={setParams}
 						params={params}
 						renderFilter={({ onChange, ...props }) => (

@@ -26,7 +26,7 @@ Meteor.methods({
 		if (originalMessage.msg === message.msg) {
 			return;
 		}
-		if (originalMessage && originalMessage.u && originalMessage.u._id) {
+		if (originalMessage?.u?._id) {
 			editOwn = originalMessage.u._id === Meteor.userId();
 		}
 

@@ -94,7 +94,7 @@ function ContactNewEdit({ id, data, close }) {
 					type: options ? 'select' : 'text',
 					required,
 					defaultValue,
-					options: options && options.split(',').map((item) => item.trim()),
+					options: options?.split(',').map((item) => item.trim()),
 				});
 		});
 		return jsonObj;
@@ -102,9 +102,7 @@ function ContactNewEdit({ id, data, close }) {
 
 	const jsonCustomField = useMemo(
 		() =>
-			allCustomFields && allCustomFields.customFields
-				? jsonConverterToValidFormat(allCustomFields.customFields)
-				: {},
+			allCustomFields?.customFields ? jsonConverterToValidFormat(allCustomFields.customFields) : {},
 		[allCustomFields],
 	);
 

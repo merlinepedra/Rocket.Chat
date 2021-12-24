@@ -39,7 +39,7 @@ function ConnectToCloudSection({ onRegisterStatusChange, ...props }) {
 		} catch (error) {
 			dispatchToastMessage({ type: 'error', message: error });
 		} finally {
-			await (onRegisterStatusChange && onRegisterStatusChange());
+			await onRegisterStatusChange?.();
 			setConnecting(false);
 		}
 	};

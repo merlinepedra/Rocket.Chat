@@ -42,7 +42,7 @@ const useValues = (view) => {
 
 	const initializer = useMutableCallback(() => {
 		const filterInputFields = ({ element, elements = [] }) => {
-			if (element && element.initialValue) {
+			if (element?.initialValue) {
 				return true;
 			}
 

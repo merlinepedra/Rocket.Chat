@@ -18,7 +18,7 @@ function SelectTimezoneSettingInput({
 	onResetButtonClick,
 }) {
 	const handleChange = (value) => {
-		onChangeValue && onChangeValue(value);
+		onChangeValue?.(value);
 	};
 
 	return (

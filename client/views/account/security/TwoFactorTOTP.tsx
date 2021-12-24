@@ -36,7 +36,7 @@ const TwoFactorTOTP = (props) => {
 	const { authCode } = values;
 	const { handleAuthCode } = handlers;
 
-	const totpEnabled = user && user.services && user.services.totp && user.services.totp.enabled;
+	const totpEnabled = user?.services?.totp?.enabled;
 
 	const closeModal = useCallback(() => setModal(null), [setModal]);
 

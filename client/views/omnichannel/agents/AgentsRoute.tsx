@@ -159,7 +159,7 @@ function AgentsRoute() {
 						<Box mi='x4' />
 					</Table.Cell>
 				)}
-				<Table.Cell withTruncatedText>{emails && emails.length && emails[0].address}</Table.Cell>
+				<Table.Cell withTruncatedText>{emails?.length && emails[0].address}</Table.Cell>
 				<Table.Cell withTruncatedText>
 					{statusLivechat === 'available' ? t('Available') : t('Not_Available')}
 				</Table.Cell>

@@ -47,7 +47,7 @@ function WorkspaceRegistrationSection({
 		} catch (error) {
 			dispatchToastMessage({ type: 'error', message: error });
 		} finally {
-			await (onRegisterStatusChange && onRegisterStatusChange());
+			await onRegisterStatusChange?.();
 			setProcessing(false);
 		}
 	};

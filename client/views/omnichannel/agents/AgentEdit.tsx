@@ -34,14 +34,14 @@ function AgentEdit({ data, userDepartments, availableDepartments, uid, reset, ..
 	const email = getUserEmailAddress(user);
 	const options = useMemo(
 		() =>
-			availableDepartments && availableDepartments.departments
+			availableDepartments?.departments
 				? availableDepartments.departments.map(({ _id, name }) => [_id, name || _id])
 				: [],
 		[availableDepartments],
 	);
 	const initialDepartmentValue = useMemo(
 		() =>
-			userDepartments && userDepartments.departments
+			userDepartments?.departments
 				? userDepartments.departments.map(({ departmentId }) => departmentId)
 				: [],
 		[userDepartments],

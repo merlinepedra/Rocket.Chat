@@ -133,8 +133,8 @@ function IntegrationsTable({ type }) {
 			ref={ref}
 			header={header}
 			renderRow={renderRow}
-			results={data && data.integrations}
-			total={data && data.total}
+			results={data?.integrations}
+			total={data?.total}
 			setParams={setParams}
 			params={params}
 			renderFilter={({ onChange, ...props }) => (

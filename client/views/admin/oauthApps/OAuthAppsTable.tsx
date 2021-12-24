@@ -58,7 +58,7 @@ export function OAuthAppsTable() {
 		[formatDateAndTime, onClick],
 	);
 
-	return <GenericTable header={header} renderRow={renderRow} results={data && data.oauthApps} />;
+	return <GenericTable header={header} renderRow={renderRow} results={data?.oauthApps} />;
 }
 
 export default OAuthAppsTable;

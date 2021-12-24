@@ -82,7 +82,7 @@ function EditUser({ data, roles, onReload, ...props }) {
 	const saveAvatarQuery = useMemo(
 		() => ({
 			userId: data._id,
-			avatarUrl: avatarObj && avatarObj.avatarUrl,
+			avatarUrl: avatarObj?.avatarUrl,
 		}),
 		[data._id, avatarObj],
 	);

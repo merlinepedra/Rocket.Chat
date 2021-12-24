@@ -65,8 +65,8 @@ const UserCardWithData = ({ username, onClose, target, open, rid }) => {
 	}, [data, username, showRealNames, state, getRoles]);
 
 	const handleOpen = useMutableCallback((e) => {
-		open && open(e);
-		onClose && onClose();
+		open?.(e);
+		onClose?.();
 	});
 
 	const { actions: actionsDefinition, menu: menuOptions } = useActionSpread(

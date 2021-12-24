@@ -54,7 +54,7 @@ function ConnectionStatusBar() {
 
 	const handleRetryClick = (event) => {
 		event.preventDefault();
-		reconnect && reconnect();
+		reconnect?.();
 	};
 
 	return (

@@ -154,7 +154,7 @@ function EditSound({ close, onChange, data, ...props }) {
 						<Button square onClick={clickUpload}>
 							<Icon name='upload' size='x20' />
 						</Button>
-						{(sound && sound.name) || 'none'}
+						{sound?.name || 'none'}
 					</Margins>
 				</Box>
 			</Field>

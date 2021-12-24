@@ -21,7 +21,7 @@ function SelectSettingInput({
 	const t = useTranslation();
 
 	const handleChange = (value) => {
-		onChangeValue && onChangeValue(value);
+		onChangeValue?.(value);
 	};
 
 	return (

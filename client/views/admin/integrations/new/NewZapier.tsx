@@ -30,7 +30,7 @@ export default function NewZapier({ ...props }) {
 		if (!script) {
 			importZapier();
 		}
-		return () => script && script.parentNode.removeChild(script);
+		return () => script?.parentNode.removeChild(script);
 	}, [script]);
 
 	return (

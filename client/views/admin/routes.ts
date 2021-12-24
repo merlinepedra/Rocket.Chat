@@ -3,8 +3,10 @@ import { Meteor } from 'meteor/meteor';
 
 import { createRouteGroup } from '../../lib/createRouteGroup';
 
-export const registerAdminRoute = createRouteGroup('admin', '/admin', () =>
-	import('./AdministrationRouter'),
+export const registerAdminRoute = createRouteGroup(
+	'admin',
+	'/admin',
+	() => import('./AdministrationRouter'),
 );
 
 registerAdminRoute('/custom-sounds/:context?/:id?', {

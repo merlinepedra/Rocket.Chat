@@ -44,8 +44,8 @@ function EditCustomSound({ _id, onChange, ...props }) {
 	}
 
 	const handleChange = () => {
-		onChange && onChange();
-		reload && reload();
+		onChange?.();
+		reload?.();
 	};
 
 	return <EditSound data={data.sounds[0]} onChange={handleChange} {...props} />;

@@ -15,12 +15,10 @@ const TeamAutocomplete = (props) => {
 
 	const options = useMemo(
 		() =>
-			(data &&
-				data.teams.map(({ name, teamId, _id, avatarETag, t }) => ({
-					value: teamId,
-					label: { name, avatarETag, type: t, _id },
-				}))) ||
-			[],
+			data?.teams.map(({ name, teamId, _id, avatarETag, t }) => ({
+				value: teamId,
+				label: { name, avatarETag, type: t, _id },
+			})) || [],
 		[data],
 	);
 

@@ -32,7 +32,7 @@ const Room = () => {
 	const openUserInfo = useTabBarOpenUserInfo();
 
 	const hideFlexTab = useUserPreference('hideFlexTab');
-	const isOpen = useMutableCallback(() => !!(tab && tab.template));
+	const isOpen = useMutableCallback(() => !!tab?.template);
 
 	const appsContextualBarContext = useAppsContextualBar();
 

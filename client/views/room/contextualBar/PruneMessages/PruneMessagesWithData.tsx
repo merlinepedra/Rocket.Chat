@@ -41,7 +41,7 @@ const PruneMessagesWithData = ({ rid, tabBar }) => {
 	const { name, usernames } = room;
 
 	const setModal = useSetModal();
-	const onClickClose = useMutableCallback(() => tabBar && tabBar.close());
+	const onClickClose = useMutableCallback(() => tabBar?.close());
 	const closeModal = useCallback(() => setModal(null), [setModal]);
 	const dispatchToastMessage = useToastMessageDispatch();
 	const pruneMessages = useEndpoint('POST', 'rooms.cleanHistory');

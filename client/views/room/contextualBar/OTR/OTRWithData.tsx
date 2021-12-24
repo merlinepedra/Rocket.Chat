@@ -10,7 +10,7 @@ import OTR from './OTR';
 import OTRModal from './OTRModal';
 
 const OTRWithData = ({ rid, tabBar }) => {
-	const onClickClose = useMutableCallback(() => tabBar && tabBar.close());
+	const onClickClose = useMutableCallback(() => tabBar?.close());
 
 	const setModal = useSetModal();
 	const closeModal = useMutableCallback(() => setModal());

@@ -42,7 +42,7 @@ export function handleInstallError(apiError) {
 			break;
 		case 'app_user_error':
 			message = messages.join('');
-			if (payload && payload.username) {
+			if (payload?.username) {
 				message = t('Apps_User_Already_Exists', { username: payload.username });
 			}
 			break;

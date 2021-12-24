@@ -67,8 +67,8 @@ const UserRow = ({
 					<Box mi='x4' />
 				</Table.Cell>
 			)}
-			<Table.Cell style={style}>{emails && emails.length && emails[0].address}</Table.Cell>
-			{mediaQuery && <Table.Cell style={style}>{roles && roles.join(', ')}</Table.Cell>}
+			<Table.Cell style={style}>{emails?.length && emails[0].address}</Table.Cell>
+			{mediaQuery && <Table.Cell style={style}>{roles?.join(', ')}</Table.Cell>}
 			<Table.Cell fontScale='p3' color='hint' style={style}>
 				{statusText}
 			</Table.Cell>

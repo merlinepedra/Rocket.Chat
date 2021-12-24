@@ -17,7 +17,7 @@ function GenericSettingInput({
 	onResetButtonClick,
 }) {
 	const handleChange = (event) => {
-		onChangeValue && onChangeValue(event.currentTarget.value);
+		onChangeValue?.(event.currentTarget.value);
 	};
 
 	return (

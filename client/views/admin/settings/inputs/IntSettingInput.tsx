@@ -17,7 +17,7 @@ function IntSettingInput({
 	onResetButtonClick,
 }) {
 	const handleChange = (event) => {
-		onChangeValue && onChangeValue(parseInt(event.currentTarget.value, 10));
+		onChangeValue?.(parseInt(event.currentTarget.value, 10));
 	};
 
 	return (

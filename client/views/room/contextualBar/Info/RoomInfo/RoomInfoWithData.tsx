@@ -74,7 +74,7 @@ const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetSta
 	const handleDelete = useMutableCallback(() => {
 		const onConfirm = async () => {
 			try {
-				resetState && resetState({});
+				resetState?.({});
 				await deleteRoom({ roomId: rid });
 				dispatchToastMessage({ type: 'success', message: t('Room_has_been_deleted') });
 				!resetState && router.push({});

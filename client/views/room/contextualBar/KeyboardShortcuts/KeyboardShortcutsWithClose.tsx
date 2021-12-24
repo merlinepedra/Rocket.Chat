@@ -5,7 +5,7 @@ import React, { memo } from 'react';
 import KeyboardShortcuts from './KeyboardShortcuts';
 
 const KeyboardShortcutsWithClose = ({ tabBar }) => {
-	const handleClose = useMutableCallback(() => tabBar && tabBar.close());
+	const handleClose = useMutableCallback(() => tabBar?.close());
 	return <KeyboardShortcuts handleClose={handleClose} />;
 };
 

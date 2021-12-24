@@ -54,9 +54,7 @@ const FileItem = ({ fileData, isDeletionAllowed, onClickDelete, index }) => {
 				_id={_id}
 				name={name}
 				url={url}
-				onClickDelete={
-					isDeletionAllowed && isDeletionAllowed({ uid: user?._id, ts }) && onClickDelete
-				}
+				onClickDelete={isDeletionAllowed?.({ uid: user?._id, ts }) && onClickDelete}
 			/>
 		</Box>
 	);

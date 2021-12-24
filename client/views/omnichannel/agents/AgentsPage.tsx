@@ -16,8 +16,8 @@ function AgentsPage({ data, reload, header, setParams, params, title, renderRow,
 					<GenericTable
 						header={header}
 						renderRow={renderRow}
-						results={data && data.users}
-						total={data && data.total}
+						results={data?.users}
+						total={data?.total}
 						setParams={setParams}
 						params={params}
 						renderFilter={({ onChange, ...props }) => (

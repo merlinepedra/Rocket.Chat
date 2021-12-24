@@ -51,7 +51,7 @@ const ChatsPerDepartmentChart = ({ params, reloadRef, ...props }) => {
 
 	useEffect(() => {
 		if (state === AsyncStatePhase.RESOLVED) {
-			if (chartData && chartData.success) {
+			if (chartData?.success) {
 				delete chartData.success;
 				Object.entries(chartData).forEach(([name, value]) => {
 					updateChartData(name, [value.open, value.closed]);

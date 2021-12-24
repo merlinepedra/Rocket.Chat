@@ -81,8 +81,8 @@ function EmailInboxTable() {
 		<GenericTable
 			header={header}
 			renderRow={renderRow}
-			results={data && data.emailInboxes}
-			total={data && data.total}
+			results={data?.emailInboxes}
+			total={data?.total}
 			setParams={setParams}
 			params={params}
 		/>

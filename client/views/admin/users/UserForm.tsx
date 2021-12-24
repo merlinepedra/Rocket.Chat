@@ -82,14 +82,9 @@ export default function UserForm({
 						<Field>
 							<Field.Label>{t('Name')}</Field.Label>
 							<Field.Row>
-								<TextInput
-									error={errors && errors.name}
-									flexGrow={1}
-									value={name}
-									onChange={handleName}
-								/>
+								<TextInput error={errors?.name} flexGrow={1} value={name} onChange={handleName} />
 							</Field.Row>
-							{errors && errors.name && <Field.Error>{errors.name}</Field.Error>}
+							{errors?.name && <Field.Error>{errors.name}</Field.Error>}
 						</Field>
 					),
 					[t, name, handleName, errors],
@@ -100,14 +95,14 @@ export default function UserForm({
 							<Field.Label>{t('Username')}</Field.Label>
 							<Field.Row>
 								<TextInput
-									error={errors && errors.username}
+									error={errors?.username}
 									flexGrow={1}
 									value={username}
 									onChange={handleUsername}
 									addon={<Icon name='at' size='x20' />}
 								/>
 							</Field.Row>
-							{errors && errors.username && <Field.Error>{errors.username}</Field.Error>}
+							{errors?.username && <Field.Error>{errors.username}</Field.Error>}
 						</Field>
 					),
 					[t, username, handleUsername, errors],
@@ -118,7 +113,7 @@ export default function UserForm({
 							<Field.Label>{t('Email')}</Field.Label>
 							<Field.Row>
 								<TextInput
-									error={errors && errors.email}
+									error={errors?.email}
 									flexGrow={1}
 									value={email}
 									error={!isEmail(email) && email.length > 0 ? 'error' : undefined}
@@ -126,7 +121,7 @@ export default function UserForm({
 									addon={<Icon name='mail' size='x20' />}
 								/>
 							</Field.Row>
-							{errors && errors.email && <Field.Error>{errors.email}</Field.Error>}
+							{errors?.email && <Field.Error>{errors.email}</Field.Error>}
 							<Field.Row>
 								<Box
 									flexGrow={1}
@@ -199,7 +194,7 @@ export default function UserForm({
 							<Field.Label>{t('Password')}</Field.Label>
 							<Field.Row>
 								<PasswordInput
-									errors={errors && errors.password}
+									errors={errors?.password}
 									autoComplete='off'
 									flexGrow={1}
 									value={password}
@@ -207,7 +202,7 @@ export default function UserForm({
 									addon={<Icon name='key' size='x20' />}
 								/>
 							</Field.Row>
-							{errors && errors.password && <Field.Error>{errors.password}</Field.Error>}
+							{errors?.password && <Field.Error>{errors.password}</Field.Error>}
 						</Field>
 					),
 					[t, password, handlePassword, errors],

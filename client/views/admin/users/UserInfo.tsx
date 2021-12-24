@@ -101,8 +101,7 @@ export function UserInfoWithData({ uid, username, onReload, ...props }) {
 			data={data.user}
 			onChange={onChange}
 			actions={
-				data &&
-				data.user && (
+				data?.user && (
 					<UserInfoActions
 						isActive={data.user.active}
 						isAdmin={admin}

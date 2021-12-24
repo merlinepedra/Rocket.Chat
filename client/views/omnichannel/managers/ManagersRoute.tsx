@@ -127,7 +127,7 @@ function ManagersRoute() {
 						<Box mi='x4' />
 					</Table.Cell>
 				)}
-				<Table.Cell withTruncatedText>{emails && emails.length && emails[0].address}</Table.Cell>
+				<Table.Cell withTruncatedText>{emails?.length && emails[0].address}</Table.Cell>
 				<RemoveManagerButton _id={_id} reload={reload} />
 			</Table.Row>
 		),

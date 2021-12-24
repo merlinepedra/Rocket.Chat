@@ -24,14 +24,14 @@ function ColorSettingInput({
 
 	const handleChange = useCallback(
 		(event) => {
-			onChangeValue && onChangeValue(event.currentTarget.value);
+			onChangeValue?.(event.currentTarget.value);
 		},
 		[onChangeValue],
 	);
 
 	const handleEditorTypeChange = useCallback(
 		(value) => {
-			onChangeEditor && onChangeEditor(value);
+			onChangeEditor?.(value);
 		},
 		[onChangeEditor],
 	);

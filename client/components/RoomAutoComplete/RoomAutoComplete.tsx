@@ -16,12 +16,10 @@ const RoomAutoComplete = (props) => {
 	);
 	const options = useMemo(
 		() =>
-			(data &&
-				data.items.map(({ name, _id, avatarETag, t }) => ({
-					value: _id,
-					label: { name, avatarETag, type: t },
-				}))) ||
-			[],
+			data?.items.map(({ name, _id, avatarETag, t }) => ({
+				value: _id,
+				label: { name, avatarETag, type: t },
+			})) || [],
 		[data],
 	);
 
