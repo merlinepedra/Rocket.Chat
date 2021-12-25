@@ -2,7 +2,7 @@
 import { Button, TextInput, Field, Modal, Box, Throbber } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
 import { Meteor } from 'meteor/meteor';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, ReactElement } from 'react';
 
 import { useRouteParameter, useRoute } from '../../../contexts/RouterContext';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -15,9 +15,9 @@ const getChangePasswordReason = ({
 	requirePasswordChangeReason = requirePasswordChange
 		? 'You_need_to_change_your_password'
 		: 'Please_enter_your_new_password_below',
-} = {}) => requirePasswordChangeReason;
+} = {}): unknown => requirePasswordChangeReason;
 
-const ResetPassword = () => {
+const ResetPassword = (): ReactElement => {
 	const user = useUser();
 	const t = useTranslation();
 	const setUserPassword = useMethod('setUserPassword');

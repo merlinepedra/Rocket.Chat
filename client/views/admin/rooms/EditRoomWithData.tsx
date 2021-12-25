@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Box, Skeleton } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import EditRoom from './EditRoom';
 
-function EditRoomWithData({ rid }) {
+function EditRoomWithData({ rid }): ReactElement {
 	const {
 		value: data = {},
 		phase: state,

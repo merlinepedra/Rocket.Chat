@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Margins, TextInput, Field, Icon } from '@rocket.chat/fuselage';
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useMemo, useEffect, ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import VerticalBar from '../../../components/VerticalBar';
@@ -11,7 +11,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFileInput } from '../../../hooks/useFileInput';
 import { validate, createSoundData } from './lib';
 
-function EditSound({ close, onChange, data, ...props }) {
+function EditSound({ close, onChange, data, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setModal = useSetModal();
@@ -60,7 +60,7 @@ function EditSound({ close, onChange, data, ...props }) {
 
 					const reader = new FileReader();
 					reader.readAsBinaryString(sound);
-					reader.onloadend = () => {
+					reader.onloadend = (): void => {
 						try {
 							uploadCustomSound(reader.result, sound.type, soundData);
 							return dispatchToastMessage({ type: 'success', message: t('File_uploaded') });
@@ -96,13 +96,13 @@ function EditSound({ close, onChange, data, ...props }) {
 	}, [saveAction, sound, onChange]);
 
 	const handleDeleteButtonClick = useCallback(() => {
-		const handleClose = () => {
+		const handleClose = (): void => {
 			setModal(null);
 			close();
 			onChange();
 		};
 
-		const handleDelete = async () => {
+		const handleDelete = async (): Promise<void> => {
 			try {
 				await deleteCustomSound(_id);
 				setModal(() => (
@@ -116,7 +116,7 @@ function EditSound({ close, onChange, data, ...props }) {
 			}
 		};
 
-		const handleCancel = () => {
+		const handleCancel = (): void => {
 			setModal(null);
 		};
 
@@ -141,7 +141,7 @@ function EditSound({ close, onChange, data, ...props }) {
 				<Field.Row>
 					<TextInput
 						value={name}
-						onChange={(e) => setName(e.currentTarget.value)}
+						onChange={(e): void => setName(e.currentTarget.value)}
 						placeholder={t('Name')}
 					/>
 				</Field.Row>

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Tabs } from '@rocket.chat/fuselage';
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, ReactElement } from 'react';
 
 import Page from '../../components/Page';
 import { useCurrentRoute, useRoute, useRouteParameter } from '../../contexts/RouterContext';
@@ -10,7 +10,7 @@ import ChannelsTab from './ChannelsTab';
 import TeamsTab from './TeamsTab';
 import UserTab from './UserTab';
 
-function DirectoryPage() {
+function DirectoryPage(): ReactElement {
 	const t = useTranslation();
 
 	const defaultTab = useSetting('Accounts_Directory_DefaultView');
@@ -29,7 +29,10 @@ function DirectoryPage() {
 		}
 	}, [routeName, directoryRoute, tab, federationEnabled, defaultTab]);
 
-	const handleTabClick = useCallback((tab) => () => directoryRoute.push({ tab }), [directoryRoute]);
+	const handleTabClick = useCallback(
+		(tab) => (): void => directoryRoute.push({ tab }),
+		[directoryRoute],
+	);
 
 	return (
 		<Page>

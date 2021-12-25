@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { RoomManager } from '../../../../../../app/ui-utils/client/lib/RoomManager';
 import { roomTypes, UiTextContext } from '../../../../../../app/utils/client';
@@ -31,7 +31,13 @@ const retentionPolicyAppliesTo = {
 	d: 'RetentionPolicy_AppliesToDMs',
 };
 
-const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetState }) => {
+const RoomInfoWithData = ({
+	rid,
+	openEditing,
+	onClickBack,
+	onEnterRoom,
+	resetState,
+}): ReactElement => {
 	const onClickClose = useTabBarClose();
 	const t = useTranslation();
 
@@ -72,7 +78,7 @@ const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetSta
 		usePermission(type === 'c' ? 'leave-c' : 'leave-p') && room.cl !== false && joined;
 
 	const handleDelete = useMutableCallback(() => {
-		const onConfirm = async () => {
+		const onConfirm = async (): Promise<void> => {
 			try {
 				resetState?.({});
 				await deleteRoom({ roomId: rid });
@@ -97,7 +103,7 @@ const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetSta
 	});
 
 	const handleLeave = useMutableCallback(() => {
-		const leave = async () => {
+		const leave = async (): Promise<void> => {
 			try {
 				await leaveRoom(rid);
 				router.push({});
@@ -123,7 +129,7 @@ const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetSta
 	});
 
 	const handleHide = useMutableCallback(async () => {
-		const hide = async () => {
+		const hide = async (): Promise<void> => {
 			try {
 				await hideRoom(rid);
 				router.push({});
@@ -148,7 +154,7 @@ const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetSta
 	});
 
 	const onMoveToTeam = useMutableCallback(async () => {
-		const onConfirm = async (teamId) => {
+		const onConfirm = async (teamId): Promise<void> => {
 			try {
 				await moveChannelToTeam({ rooms: [rid], teamId });
 			} catch (error) {
@@ -170,7 +176,7 @@ const RoomInfoWithData = ({ rid, openEditing, onClickBack, onEnterRoom, resetSta
 
 	const onConvertToTeam = useMutableCallback(async () => {
 		const data = type === 'c' ? { channelId: rid } : { roomId: rid };
-		const onConfirm = async () => {
+		const onConfirm = async (): Promise<void> => {
 			try {
 				await convertRoomToTeam(data);
 			} catch (error) {

@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../components/NotAuthorizedPage';
 import { usePermission } from '../../contexts/AuthorizationContext';
 import UserTable from './UserTable';
 
-function UserTab(props) {
+function UserTab(props): ReactElement {
 	const canViewOutsideRoom = usePermission('view-outside-room');
 	const canViewDM = usePermission('view-d-room');
 

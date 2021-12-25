@@ -1,7 +1,7 @@
 // @ts-nocheck
 import moment from 'moment';
 
-export const getMomentChartLabelsAndData = () => {
+export const getMomentChartLabelsAndData = (): [timingLabels: string[], initData: number[]] => {
 	const timingLabels = [];
 	const initData = [];
 	const today = moment().startOf('day');

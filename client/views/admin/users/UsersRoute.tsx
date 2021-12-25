@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import { usePermission } from '../../../contexts/AuthorizationContext';
 import UsersPage from './UsersPage';
 
-function UsersRoute() {
+function UsersRoute(): ReactElement {
 	const canViewUserAdministration = usePermission('view-user-administration');
 
 	if (!canViewUserAdministration) {

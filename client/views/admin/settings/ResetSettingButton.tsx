@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Button, Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function ResetSettingButton(props) {
+function ResetSettingButton(props): ReactElement {
 	const t = useTranslation();
 
 	return (

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Icon, Tag } from '@rocket.chat/fuselage';
-import React, { memo, useMemo } from 'react';
+import React, { memo, ReactElement, useMemo } from 'react';
 
 import { useRoutePath } from '../../contexts/RouterContext';
 import Sidebar from './Sidebar';
@@ -13,7 +13,7 @@ const NavigationItem = ({
 	label,
 	currentPath,
 	tag,
-}) => {
+}): ReactElement => {
 	const params = useMemo(() => ({ group: pathGroup }), [pathGroup]);
 	const path = useRoutePath(pathSection, params);
 	const isActive = path === currentPath || false;

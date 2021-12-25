@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import { usePermission } from '../../../contexts/AuthorizationContext';
@@ -8,12 +8,12 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { Mailer } from './Mailer';
 
-const useSendMail = () => {
+const useSendMail = (): (() => void) => {
 	const meteorSendMail = useMethod('Mailer.sendMail');
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	return ({ fromEmail, subject, emailBody, dryRun, query }) => {
+	return ({ fromEmail, subject, emailBody, dryRun, query }): void => {
 		if (query.error) {
 			dispatchToastMessage({
 				type: 'error',
@@ -44,7 +44,7 @@ const useSendMail = () => {
 	};
 };
 
-export default function MailerRoute() {
+export default function MailerRoute(): ReactElement {
 	const canAccessMailer = usePermission('access-mailer');
 	const sendMail = useSendMail();
 

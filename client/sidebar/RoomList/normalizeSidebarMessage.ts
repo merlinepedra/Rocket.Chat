@@ -3,7 +3,7 @@ import { escapeHTML } from '@rocket.chat/string-helpers';
 
 import { filterMarkdown } from '../../../app/markdown/lib/markdown';
 
-export const normalizeSidebarMessage = (message, t) => {
+export const normalizeSidebarMessage = (message, t): string | undefined => {
 	if (message.msg) {
 		return escapeHTML(filterMarkdown(message.msg));
 	}

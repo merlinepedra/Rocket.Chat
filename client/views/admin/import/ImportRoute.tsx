@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import { usePermission } from '../../../contexts/AuthorizationContext';
@@ -8,7 +8,7 @@ import ImportProgressPage from './ImportProgressPage';
 import NewImportPage from './NewImportPage';
 import PrepareImportPage from './PrepareImportPage';
 
-function ImportHistoryRoute({ page }) {
+function ImportHistoryRoute({ page }): ReactElement {
 	const canRunImport = usePermission('run-import');
 
 	if (!canRunImport) {

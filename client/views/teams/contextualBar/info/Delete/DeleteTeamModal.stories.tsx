@@ -9,8 +9,8 @@ export default {
 };
 
 const commonProps = {
-	onConfirm: () => {},
-	onCancel: () => {},
+	onConfirm: () => undefined,
+	onCancel: () => undefined,
 };
 
 const rooms = Array.from({ length: 15 }).map((_, i) => ({

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useMethod } from '../../../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../../../contexts/ToastMessagesContext';
@@ -9,7 +9,7 @@ import { useForm } from '../../../../../hooks/useForm';
 import { useTabBarClose } from '../../../providers/ToolboxProvider';
 import AddUsers from './AddUsers';
 
-const AddUsersWithData = ({ rid, onClickBack, reload }) => {
+const AddUsersWithData = ({ rid, onClickBack, reload }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box, Icon, Button, Scrollable } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useToastMessageDispatch } from '../contexts/ToastMessagesContext';
 import { useTranslation } from '../contexts/TranslationContext';
 
-const defaultWrapperRenderer = (text) => (
+const defaultWrapperRenderer = (text): ReactElement => (
 	<Box
 		fontFamily='mono'
 		alignSelf='center'
@@ -19,7 +19,7 @@ const defaultWrapperRenderer = (text) => (
 	</Box>
 );
 
-const TextCopy = ({ text, wrapper = defaultWrapperRenderer, ...props }) => {
+const TextCopy = ({ text, wrapper = defaultWrapperRenderer, ...props }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

@@ -1,17 +1,19 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 
-const ChannelToTeamModal = ({ onClose, onConfirm }) => {
+const ChannelToTeamModal = ({ onClose, onConfirm }): ReactElement => {
 	const [step, setStep] = useState(1);
 	const [teamId, setTeamId] = useState();
 
-	const nextStep = () => setStep(step + 1);
+	const nextStep = (): void => setStep(step + 1);
 
 	if (step === 2) {
-		return <StepTwo onClose={onClose} onCancel={onClose} onConfirm={() => onConfirm(teamId)} />;
+		return (
+			<StepTwo onClose={onClose} onCancel={onClose} onConfirm={(): void => onConfirm(teamId)} />
+		);
 	}
 
 	return (

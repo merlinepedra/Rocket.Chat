@@ -11,7 +11,7 @@ import {
 	Divider,
 	FieldGroup,
 } from '@rocket.chat/fuselage';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { ReactElement, useCallback, useMemo, useState } from 'react';
 
 import { isEmail } from '../../../../lib/utils/isEmail';
 import CustomFieldsForm from '../../../components/CustomFieldsForm';
@@ -26,7 +26,7 @@ export default function UserForm({
 	prepend,
 	errors,
 	...props
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const [hasCustomFields, setHasCustomFields] = useState(false);
 

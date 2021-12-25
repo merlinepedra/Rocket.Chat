@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import { useSetModal } from '../../../contexts/ModalContext';
@@ -12,7 +12,7 @@ import { useResizeInlineBreakpoint } from '../../../hooks/useResizeInlineBreakpo
 import AccountTokensRow from './AccountTokensRow';
 import InfoModal from './InfoModal';
 
-const AccountTokensTable = ({ data, reload }) => {
+const AccountTokensTable = ({ data, reload }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setModal = useSetModal();
@@ -65,7 +65,7 @@ const AccountTokensTable = ({ data, reload }) => {
 
 	const onRegenerate = useCallback(
 		(name) => {
-			const onConfirm = async () => {
+			const onConfirm = async (): Promise<void> => {
 				try {
 					setModal(null);
 
@@ -112,7 +112,7 @@ const AccountTokensTable = ({ data, reload }) => {
 
 	const onRemove = useCallback(
 		(name) => {
-			const onConfirm = async () => {
+			const onConfirm = async (): Promise<void> => {
 				try {
 					await removeToken({ tokenName: name });
 

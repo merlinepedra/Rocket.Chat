@@ -3,7 +3,7 @@ import React from 'react';
 
 import { roomTypes } from '../../../../app/utils/client';
 
-const RoomLinkList = ({ rooms }) => {
+const RoomLinkList = ({ rooms }): ReactElement => {
 	const roomsArray = Object.values(rooms);
 	return roomsArray.map((room, i) => (
 		<React.Fragment key={i}>

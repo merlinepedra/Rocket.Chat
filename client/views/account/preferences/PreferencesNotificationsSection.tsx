@@ -8,7 +8,7 @@ import {
 	Button,
 	Box,
 } from '@rocket.chat/fuselage';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, ReactElement } from 'react';
 
 import { KonchatNotification } from '../../../../app/ui';
 import { useSetting } from '../../../contexts/SettingsContext';
@@ -27,7 +27,7 @@ const emailNotificationOptionsLabelMap = {
 	nothing: 'Email_Notification_Mode_Disabled',
 };
 
-const PreferencesNotificationsSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesNotificationsSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const [notificationsPermission, setNotificationsPermission] = useState();

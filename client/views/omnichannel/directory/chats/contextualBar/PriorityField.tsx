@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../../../hooks/useEndpointData';
@@ -10,7 +10,7 @@ import Info from '../../../components/Info';
 import Label from '../../../components/Label';
 import { FormSkeleton } from '../../Skeleton';
 
-const PriorityField = ({ id }) => {
+const PriorityField = ({ id }): ReactElement => {
 	const t = useTranslation();
 	const {
 		value: data,

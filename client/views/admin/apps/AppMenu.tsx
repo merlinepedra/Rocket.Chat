@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Icon, Menu } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import { useSetModal } from '../../../contexts/ModalContext';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -11,7 +11,7 @@ import IframeModal from './IframeModal';
 import WarningModal from './WarningModal';
 import { appEnabledStatuses, warnStatusChange, handleAPIError } from './helpers';
 
-function AppMenu({ app, ...props }) {
+function AppMenu({ app, ...props }): ReactElement {
 	const t = useTranslation();
 	const setModal = useSetModal();
 	const appsRoute = useRoute('admin-apps');
@@ -63,7 +63,7 @@ function AppMenu({ app, ...props }) {
 			return;
 		}
 
-		const confirm = async () => {
+		const confirm = async (): Promise<void> => {
 			try {
 				await syncApp();
 			} catch (error) {
@@ -83,7 +83,7 @@ function AppMenu({ app, ...props }) {
 	]);
 
 	const handleDisable = useCallback(() => {
-		const confirm = async () => {
+		const confirm = async (): Promise<void> => {
 			closeModal();
 			try {
 				const { status } = await setAppStatus({ status: 'manually_disabled' });
@@ -103,7 +103,7 @@ function AppMenu({ app, ...props }) {
 	}, [app.name, closeModal, setAppStatus, setModal, t]);
 
 	const handleUninstall = useCallback(() => {
-		const uninstall = async () => {
+		const uninstall = async (): Promise<void> => {
 			closeModal();
 			try {
 				await uninstallApp();
@@ -113,7 +113,7 @@ function AppMenu({ app, ...props }) {
 		};
 
 		if (isSubscribed) {
-			const confirm = async () => {
+			const confirm = async (): Promise<void> => {
 				await handleSubscription();
 			};
 

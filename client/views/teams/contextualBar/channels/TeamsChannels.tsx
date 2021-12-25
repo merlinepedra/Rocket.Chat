@@ -4,7 +4,7 @@ import {
 	useLocalStorage,
 	useDebouncedValue,
 } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { ReactElement, useCallback, useMemo, useState } from 'react';
 
 import { roomTypes } from '../../../../../app/utils/client';
 import { usePermission } from '../../../../contexts/AuthorizationContext';
@@ -18,13 +18,13 @@ import AddExistingModal from './AddExistingModal';
 import BaseTeamsChannels from './BaseTeamsChannels';
 import { useTeamsChannelList } from './hooks/useTeamsChannelList';
 
-const useReactModal = (Component, props) => {
+const useReactModal = (Component, props): unknown => {
 	const setModal = useSetModal();
 
 	return useMutableCallback((e) => {
 		e.preventDefault();
 
-		const handleClose = () => {
+		const handleClose = (): void => {
 			setModal(null);
 		};
 
@@ -32,7 +32,7 @@ const useReactModal = (Component, props) => {
 	});
 };
 
-const TeamsChannels = ({ teamId, rid }) => {
+const TeamsChannels = ({ teamId, rid }): ReactElement => {
 	const [state, setState] = useState({});
 	const onClickClose = useTabBarClose();
 

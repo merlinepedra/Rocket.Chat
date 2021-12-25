@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../../../components/VerticalBar';
 import { useRoute, useRouteParameter } from '../../../../../contexts/RouterContext';
@@ -10,7 +10,7 @@ import RoomEditWithData from './RoomEditWithData';
 
 const PATH = 'live';
 
-const ChatsContextualBar = ({ rid }) => {
+const ChatsContextualBar = ({ rid }): ReactElement => {
 	const t = useTranslation();
 
 	const context = useRouteParameter('context');
@@ -19,7 +19,7 @@ const ChatsContextualBar = ({ rid }) => {
 
 	const closeContextualBar = useTabBarClose();
 
-	const handleRoomEditBarCloseButtonClick = () => {
+	const handleRoomEditBarCloseButtonClick = (): void => {
 		directoryRoute.push({ id: rid, tab: 'room-info' });
 	};
 

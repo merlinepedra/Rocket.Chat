@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table, Margins, Box, CheckBox, Throbber } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, memo } from 'react';
+import React, { useState, memo, ReactElement } from 'react';
 
 import { AuthorizationUtils } from '../../../../app/authorization/lib';
 
@@ -13,7 +13,7 @@ const RoleCell = ({
 	onChange,
 	lineHovered,
 	permissionId,
-}) => {
+}): ReactElement => {
 	const [granted, setGranted] = useState(() => !!grantedRoles.includes(_id));
 	const [loading, setLoading] = useState(false);
 

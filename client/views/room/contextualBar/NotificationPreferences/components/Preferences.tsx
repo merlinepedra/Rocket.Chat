@@ -1,8 +1,15 @@
 // @ts-nocheck
 import { Field, Select } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export const Preferences = ({ name, options, onChange, optionDefault, children, ...props }) => (
+export const Preferences = ({
+	name,
+	options,
+	onChange,
+	optionDefault,
+	children,
+	...props
+}): ReactElement => (
 	<Field {...props}>
 		<Field.Label>{name}</Field.Label>
 		<Field.Row>

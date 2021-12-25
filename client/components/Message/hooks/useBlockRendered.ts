@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, Ref } from 'react';
 
-export const useBlockRendered = () => {
+export const useBlockRendered = (): { className: string; ref: Ref } => {
 	const ref = useRef();
 	useEffect(() => {
 		ref.current.dispatchEvent(new Event('rendered'));

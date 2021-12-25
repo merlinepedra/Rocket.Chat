@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, Icon, Box, Accordion, Field, FieldGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { integrations as eventList } from '../../../../../app/integrations/lib/rocketchat';
 import { useMethod } from '../../../../contexts/ServerContext';
@@ -9,7 +9,7 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useFormatDateAndTime } from '../../../../hooks/useFormatDateAndTime';
 import { useHighlightedCode } from '../../../../hooks/useHighlightedCode';
 
-function HistoryItem({ data, ...props }) {
+function HistoryItem({ data, ...props }): ReactElement {
 	const t = useTranslation();
 
 	const replayOutgoingIntegration = useMethod('replayOutgoingIntegration');

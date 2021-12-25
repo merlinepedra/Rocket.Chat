@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Button, Table, Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useEndpoint } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function SendTestButton({ id }) {
+function SendTestButton({ id }): ReactElement {
 	const t = useTranslation();
 
 	const dispatchToastMessage = useToastMessageDispatch();
@@ -18,7 +18,7 @@ function SendTestButton({ id }) {
 				small
 				ghost
 				title={t('Send_Test_Email')}
-				onClick={(e) =>
+				onClick={(e): void =>
 					e.preventDefault() &
 					e.stopPropagation() &
 					sendTest() &

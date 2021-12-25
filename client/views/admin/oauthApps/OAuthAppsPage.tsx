@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 // import VerticalBar from '../../components/VerticalBar';
@@ -10,7 +10,7 @@ import EditOauthAppWithData from './EditOauthAppWithData';
 import OAuthAddApp from './OAuthAddApp';
 import OAuthAppsTable from './OAuthAppsTable';
 
-export function OAuthAppsPage() {
+export function OAuthAppsPage(): ReactElement {
 	const t = useTranslation();
 
 	const router = useRoute('admin-oauth-apps');
@@ -23,13 +23,17 @@ export function OAuthAppsPage() {
 			<Page>
 				<Page.Header title={t('OAuth_Applications')}>
 					{context && (
-						<Button alignSelf='flex-end' onClick={() => router.push({})}>
+						<Button alignSelf='flex-end' onClick={(): void => router.push({})}>
 							<Icon name='back' />
 							{t('Back')}
 						</Button>
 					)}
 					{!context && (
-						<Button primary alignSelf='flex-end' onClick={() => router.push({ context: 'new' })}>
+						<Button
+							primary
+							alignSelf='flex-end'
+							onClick={(): void => router.push({ context: 'new' })}
+						>
 							<Icon name='plus' />
 							{t('New_Application')}
 						</Button>

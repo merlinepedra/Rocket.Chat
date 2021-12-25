@@ -1,10 +1,16 @@
 // @ts-nocheck
 import { Box, Field, TextInput, Select, ToggleSwitch } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const RoleForm = ({ values, handlers, className, editing = false, isProtected = false }) => {
+const RoleForm = ({
+	values,
+	handlers,
+	className,
+	editing = false,
+	isProtected = false,
+}): ReactElement => {
 	const t = useTranslation();
 
 	const { name, description, scope, mandatory2fa } = values;

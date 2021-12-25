@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Skeleton } from '@rocket.chat/fuselage';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, ReactElement } from 'react';
 
 import { useMethod } from '../../../contexts/ServerContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -12,7 +12,7 @@ const initialData = Array.from({ length: 3 }).map(() => ({ title: '', value: '' 
 const conversationsInitialData = [initialData, initialData];
 const productivityInitialData = [initialData];
 
-const Overview = ({ type, dateRange, departmentId }) => {
+const Overview = ({ type, dateRange, departmentId }): ReactElement => {
 	const t = useTranslation();
 
 	const { start, end } = dateRange;
@@ -35,7 +35,7 @@ const Overview = ({ type, dateRange, departmentId }) => {
 	}, [type]);
 
 	useEffect(() => {
-		async function fetchData() {
+		async function fetchData(): Promise<void> {
 			if (!start || !end) {
 				return;
 			}

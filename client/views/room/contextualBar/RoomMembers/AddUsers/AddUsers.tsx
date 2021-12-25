@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Field, Button } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import UserAutoCompleteMultiple from '../../../../../components/UserAutoCompleteMultiple';
 import VerticalBar from '../../../../../components/VerticalBar';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 
-const AddUsers = ({ onClickClose, onClickBack, onClickSave, value, onChange }) => {
+const AddUsers = ({ onClickClose, onClickBack, onClickSave, value, onChange }): ReactElement => {
 	const t = useTranslation();
 
 	return (

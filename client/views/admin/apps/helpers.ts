@@ -15,19 +15,21 @@ const appErroredStatuses = [
 	AppStatus.INVALID_LICENSE_DISABLED,
 ];
 
-export const apiCurlGetter = (absoluteUrl) => (method, api) => {
-	const example = api.examples[method] || {};
-	return Utilities.curl({
-		url: absoluteUrl(api.computedPath),
-		method,
-		params: example.params,
-		query: example.query,
-		content: example.content,
-		headers: example.headers,
-	}).split('\n');
-};
+export const apiCurlGetter =
+	(absoluteUrl) =>
+	(method, api): string => {
+		const example = api.examples[method] || {};
+		return Utilities.curl({
+			url: absoluteUrl(api.computedPath),
+			method,
+			params: example.params,
+			query: example.query,
+			content: example.content,
+			headers: example.headers,
+		}).split('\n');
+	};
 
-export function handleInstallError(apiError) {
+export function handleInstallError(apiError): void {
 	if (!apiError.xhr || !apiError.xhr.responseJSON) {
 		return;
 	}
@@ -57,13 +59,13 @@ export function handleInstallError(apiError) {
 	dispatchToastMessage({ type: 'error', message });
 }
 
-const shouldHandleErrorAsWarning = (message) => {
+const shouldHandleErrorAsWarning = (message): boolean => {
 	const warnings = ['Could not reach the Marketplace'];
 
 	return warnings.includes(message);
 };
 
-export const handleAPIError = (error) => {
+export const handleAPIError = (error): void => {
 	const message =
 		(error.xhr && error.xhr.responseJSON && error.xhr.responseJSON.error) || error.message;
 
@@ -75,7 +77,7 @@ export const handleAPIError = (error) => {
 	dispatchToastMessage({ type: 'error', message });
 };
 
-export const warnStatusChange = (appName, status) => {
+export const warnStatusChange = (appName, status): void => {
 	if (appErroredStatuses.includes(status)) {
 		dispatchToastMessage({ type: 'error', message: (t(`App_status_${status}`), appName) });
 		return;
@@ -94,7 +96,7 @@ export const appButtonProps = ({
 	subscriptionInfo,
 	pricingPlans,
 	isEnterpriseOnly,
-}) => {
+}): unknown | undefined => {
 	const canUpdate =
 		installed && version && marketplaceVersion && semver.lt(version, marketplaceVersion);
 	if (canUpdate) {
@@ -150,7 +152,11 @@ export const appButtonProps = ({
 	};
 };
 
-export const appStatusSpanProps = ({ installed, status, subscriptionInfo }) => {
+export const appStatusSpanProps = ({
+	installed,
+	status,
+	subscriptionInfo,
+}): unknown | undefined => {
 	if (!installed) {
 		return;
 	}
@@ -187,9 +193,9 @@ export const appStatusSpanProps = ({ installed, status, subscriptionInfo }) => {
 	};
 };
 
-export const formatPrice = (price) => `\$${Number.parseFloat(price).toFixed(2)}`;
+export const formatPrice = (price): string => `\$${Number.parseFloat(price).toFixed(2)}`;
 
-export const formatPricingPlan = ({ strategy, price, tiers = [] }) => {
+export const formatPricingPlan = ({ strategy, price, tiers = [] }): string => {
 	const { perUnit = false } =
 		(Array.isArray(tiers) && tiers.find((tier) => tier.price === price)) || {};
 

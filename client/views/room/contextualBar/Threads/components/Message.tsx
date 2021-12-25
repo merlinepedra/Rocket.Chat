@@ -9,7 +9,7 @@ import RawText from '../../../../../components/RawText';
 import UserAvatar from '../../../../../components/avatar/UserAvatar';
 import * as MessageTemplate from '../../../components/MessageTemplate';
 
-function isIterable(obj) {
+function isIterable(obj): boolean {
 	// checks for null and undefined
 	if (obj == null) {
 		return false;
@@ -30,8 +30,8 @@ export default memo(function Message({
 	unread,
 	mention,
 	all,
-	t = (e) => e,
-	formatDate = (e) => e,
+	t = (e): unknown => e,
+	formatDate = (e): unknown => e,
 	tlm,
 	className = [],
 	...props

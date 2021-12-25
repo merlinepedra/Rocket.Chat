@@ -1,9 +1,9 @@
 // @ts-nocheck
 import { Box, Divider } from '@rocket.chat/fuselage';
-import React, { Fragment } from 'react';
+import React, { Fragment, ReactElement } from 'react';
 import flattenChildren from 'react-keyed-flatten-children';
 
-const CounterRow = ({ children, ...props }) => (
+const CounterRow = ({ children, ...props }): ReactElement => (
 	<Box
 		pb='x28'
 		pi='x20'

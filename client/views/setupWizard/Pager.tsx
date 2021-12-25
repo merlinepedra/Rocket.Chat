@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Button, ButtonGroup } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../contexts/TranslationContext';
 
-export function Pager({ disabled, onBackClick, isContinueEnabled = true }) {
+export function Pager({ disabled, onBackClick, isContinueEnabled = true }): ReactElement {
 	const t = useTranslation();
 
 	return (

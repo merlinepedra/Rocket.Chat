@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { roomTypes, UiTextContext } from '../../../../../app/utils/client';
 import { GenericModalDoNotAskAgain } from '../../../../components/GenericModal';
@@ -33,7 +33,7 @@ const retentionPolicyAppliesTo = {
 	d: 'RetentionPolicy_AppliesToDMs',
 };
 
-const TeamsInfoWithLogic = ({ room, openEditing }) => {
+const TeamsInfoWithLogic = ({ room, openEditing }): ReactElement => {
 	const onClickClose = useTabBarClose();
 	const openTabbar = useTabBarOpen();
 	const t = useTranslation();
@@ -72,7 +72,7 @@ const TeamsInfoWithLogic = ({ room, openEditing }) => {
 	// const canLeave = usePermission('leave-team'); /* && room.cl !== false && joined */
 
 	const onClickDelete = useMutableCallback(() => {
-		const onConfirm = async (deletedRooms) => {
+		const onConfirm = async (deletedRooms): Promise<void> => {
 			const roomsToRemove =
 				Array.isArray(deletedRooms) && deletedRooms.length > 0 ? deletedRooms : [];
 
@@ -91,7 +91,7 @@ const TeamsInfoWithLogic = ({ room, openEditing }) => {
 	});
 
 	const onClickLeave = useMutableCallback(() => {
-		const onConfirm = async (roomsLeft) => {
+		const onConfirm = async (roomsLeft): Promise<void> => {
 			const roomsToLeave = Array.isArray(roomsLeft) && roomsLeft.length > 0 ? roomsLeft : [];
 
 			try {
@@ -112,7 +112,7 @@ const TeamsInfoWithLogic = ({ room, openEditing }) => {
 	});
 
 	const handleHide = useMutableCallback(async () => {
-		const hide = async () => {
+		const hide = async (): Promise<void> => {
 			try {
 				await hideTeam(room._id);
 				router.push({});
@@ -150,7 +150,7 @@ const TeamsInfoWithLogic = ({ room, openEditing }) => {
 	const onClickViewChannels = useCallback(() => openTabbar('team-channels'), [openTabbar]);
 
 	const onClickConvertToChannel = useMutableCallback(() => {
-		const onConfirm = async (roomsToRemove) => {
+		const onConfirm = async (roomsToRemove): Promise<void> => {
 			try {
 				await convertTeamToChannel({
 					teamId: room.teamId,

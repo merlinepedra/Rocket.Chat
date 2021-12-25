@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import VerticalBar from '../../../components/VerticalBar';
@@ -8,7 +8,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import EditRoomContextBar from './EditRoomContextBar';
 import RoomsTable from './RoomsTable';
 
-export function RoomsPage() {
+export function RoomsPage(): ReactElement {
 	const t = useTranslation();
 
 	const context = useRouteParameter('context');
@@ -16,7 +16,7 @@ export function RoomsPage() {
 
 	const roomsRoute = useRoute('admin-rooms');
 
-	const handleVerticalBarCloseButtonClick = () => {
+	const handleVerticalBarCloseButtonClick = (): void => {
 		roomsRoute.push({});
 	};
 

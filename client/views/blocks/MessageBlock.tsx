@@ -6,7 +6,7 @@ import {
 	kitContext,
 	messageParser,
 } from '@rocket.chat/fuselage-ui-kit';
-import React from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 import * as ActionManager from '../../../app/ui-message/client/ActionManager';
 import { useBlockRendered } from '../../components/Message/hooks/useBlockRendered';
@@ -14,14 +14,14 @@ import { renderMessageBody } from '../../lib/utils/renderMessageBody';
 import './textParsers';
 
 // TODO: move this to fuselage-ui-kit itself
-const mrkdwn = ({ text } = {}) =>
+const mrkdwn = ({ text } = {}): ReactNode =>
 	text && <span dangerouslySetInnerHTML={{ __html: renderMessageBody({ msg: text }) }} />;
 
 messageParser.mrkdwn = mrkdwn;
-function MessageBlock({ mid: _mid, rid, blocks, appId }) {
+function MessageBlock({ mid: _mid, rid, blocks, appId }): ReactElement {
 	const { ref, className } = useBlockRendered();
 	const context = {
-		action: ({ actionId, value, blockId, mid = _mid }) => {
+		action: ({ actionId, value, blockId, mid = _mid }): void => {
 			ActionManager.triggerBlockAction({
 				blockId,
 				actionId,

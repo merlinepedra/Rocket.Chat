@@ -12,7 +12,7 @@ import {
 	Margins,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 
 import { isEmail } from '../../../../lib/utils/isEmail';
 import AutoCompleteDepartment from '../../../components/AutoCompleteDepartment';
@@ -47,7 +47,7 @@ const initialValues = {
 	imapSecure: false,
 };
 
-const getInitialValues = (data) => {
+const getInitialValues = (data): unknown => {
 	if (!data) {
 		return initialValues;
 	}
@@ -76,7 +76,7 @@ const getInitialValues = (data) => {
 	};
 };
 
-function EmailInboxForm({ id, data }) {
+function EmailInboxForm({ id, data }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setModal = useSetModal();
@@ -148,7 +148,7 @@ function EmailInboxForm({ id, data }) {
 
 	const handleDelete = useMutableCallback((e) => {
 		e.stopPropagation();
-		const onDeleteManager = async () => {
+		const onDeleteManager = async (): Promise<void> => {
 			try {
 				await handleRemoveClick();
 				dispatchToastMessage({ type: 'success', message: t('Removed') });
@@ -162,7 +162,7 @@ function EmailInboxForm({ id, data }) {
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteManager}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			>
 				{t('You_will_not_be_able_to_recover_email_inbox')}

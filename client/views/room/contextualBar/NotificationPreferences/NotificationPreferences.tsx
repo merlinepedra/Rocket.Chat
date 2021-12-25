@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, ButtonGroup, FieldGroup, Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -16,7 +16,7 @@ const NotificationPreferences = ({
 	handlePlaySound,
 	handleOptions,
 	handleSaveButton,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (

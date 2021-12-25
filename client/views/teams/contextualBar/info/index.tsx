@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Callout } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import { useEndpointData } from '../../../../hooks/useEndpointData';
 import EditChannelWithData from '../../../room/contextualBar/Info/EditRoomInfo';
 import TeamsInfoWithData from './TeamsInfoWithData';
 
-export default function TeamsInfoWithRooms({ rid }) {
+export default function TeamsInfoWithRooms({ rid }): ReactElement {
 	const [editing, setEditing] = useState(false);
 	const onClickBack = useMutableCallback(() => setEditing(false));
 	const t = useTranslation();

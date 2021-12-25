@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import { useSetModal } from '../../../contexts/ModalContext';
@@ -10,7 +10,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointAction } from '../../../hooks/useEndpointAction';
 import AgentInfo from './AgentInfo';
 
-function AgentInfoActions({ reload }) {
+function AgentInfoActions({ reload }): ReactElement {
 	const t = useTranslation();
 	const _id = useRouteParameter('id');
 	const agentsRoute = useRoute('omnichannel-agents');
@@ -28,7 +28,7 @@ function AgentInfoActions({ reload }) {
 
 	const handleDelete = useMutableCallback((e) => {
 		e.stopPropagation();
-		const onDeleteAgent = async () => {
+		const onDeleteAgent = async (): Promise<void> => {
 			try {
 				await handleRemoveClick();
 				dispatchToastMessage({ type: 'success', message: t('Agent_removed') });
@@ -42,7 +42,7 @@ function AgentInfoActions({ reload }) {
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteAgent}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			/>,
 		);

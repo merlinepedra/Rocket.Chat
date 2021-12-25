@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { SidebarSection } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import Omnichannel from '../sections/Omnichannel';
 import SideBarItemTemplateWithData from './SideBarItemTemplateWithData';
@@ -9,7 +9,7 @@ const sections = {
 	Omnichannel,
 };
 
-const Row = ({ data, item }) => {
+const Row = ({ data, item }): ReactElement => {
 	const { extended, t, SideBarItemTemplate, AvatarTemplate, openedRoom, sidebarViewMode } = data;
 
 	if (typeof item === 'string') {

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Field, ButtonGroup, Button, CheckBox, Callout } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import UserAutoCompleteMultiple from '../../../../components/UserAutoCompleteMultiple';
 import VerticalBar from '../../../../components/VerticalBar';
@@ -29,7 +29,7 @@ const PruneMessages = ({
 	onClickClose,
 	onClickPrune,
 	onChangeUsers,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	const inclusiveCheckboxId = useUniqueId();

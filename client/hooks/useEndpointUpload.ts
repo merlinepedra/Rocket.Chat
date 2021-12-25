@@ -4,7 +4,11 @@ import { useCallback } from 'react';
 import { useUpload } from '../contexts/ServerContext';
 import { useToastMessageDispatch } from '../contexts/ToastMessagesContext';
 
-export const useEndpointUpload = (endpoint, params = {}, successMessage) => {
+export const useEndpointUpload = (
+	endpoint,
+	params = {},
+	successMessage,
+): ((...args: unknown[]) => unknown) => {
 	const sendData = useUpload(endpoint);
 	const dispatchToastMessage = useToastMessageDispatch();
 

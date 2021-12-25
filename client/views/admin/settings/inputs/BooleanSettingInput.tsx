@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, ToggleSwitch } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import ResetSettingButton from '../ResetSettingButton';
 
@@ -13,8 +13,8 @@ function BooleanSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
-	const handleChange = (event) => {
+}): ReactElement {
+	const handleChange = (event): void => {
 		const value = event.currentTarget.checked;
 		onChangeValue?.(value);
 	};

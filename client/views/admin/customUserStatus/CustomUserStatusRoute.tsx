@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, Icon } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import Page from '../../../components/Page';
@@ -14,7 +14,7 @@ import AddCustomUserStatus from './AddCustomUserStatus';
 import CustomUserStatus from './CustomUserStatus';
 import EditCustomUserStatusWithData from './EditCustomUserStatusWithData';
 
-function CustomUserStatusRoute() {
+function CustomUserStatusRoute(): ReactElement {
 	const route = useRoute('custom-user-status');
 	const context = useRouteParameter('context');
 	const id = useRouteParameter('id');
@@ -39,14 +39,14 @@ function CustomUserStatusRoute() {
 
 	const { value: data, reload } = useEndpointData('custom-user-status.list', query);
 
-	const handleItemClick = (_id) => () => {
+	const handleItemClick = (_id) => (): void => {
 		route.push({
 			context: 'edit',
 			id: _id,
 		});
 	};
 
-	const handleHeaderClick = (id) => {
+	const handleHeaderClick = (id): void => {
 		setSort(([sortBy, sortDirection]) => {
 			if (sortBy === id) {
 				return [id, sortDirection === 'asc' ? 'desc' : 'asc'];

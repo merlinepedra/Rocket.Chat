@@ -4,7 +4,7 @@ import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-export const useErrorHandler = () => {
+export const useErrorHandler = (): ((...args: unknown[]) => unknown) => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

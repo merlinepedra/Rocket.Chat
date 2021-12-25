@@ -1,14 +1,23 @@
 // @ts-nocheck
 import { Option, ActionButton } from '@rocket.chat/fuselage';
 import { usePrefersReducedMotion } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { ReactiveUserStatus } from '../../../../../../components/UserStatus';
 import UserAvatar from '../../../../../../components/avatar/UserAvatar';
 import { usePreventProgation } from '../../../../../../hooks/usePreventProgation';
 import UserActions from './UserActions';
 
-export const MemberItem = ({ _id, status, name, username, onClickView, style, rid, reload }) => {
+export const MemberItem = ({
+	_id,
+	status,
+	name,
+	username,
+	onClickView,
+	style,
+	rid,
+	reload,
+}): ReactElement => {
 	const [showButton, setShowButton] = useState();
 
 	const isReduceMotionEnabled = usePrefersReducedMotion();

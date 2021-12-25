@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import { useAtLeastOnePermission } from '../../../contexts/AuthorizationContext';
@@ -9,7 +9,7 @@ import EditIntegrationsPage from './edit/EditIntegrationsPage';
 import OutgoingWebhookHistoryPage from './edit/OutgoingWebhookHistoryPage';
 import NewIntegrationsPage from './new/NewIntegrationsPage';
 
-function IntegrationsRoute() {
+function IntegrationsRoute(): ReactElement {
 	const canViewIntegrationsPage = useAtLeastOnePermission(
 		useMemo(
 			() => [

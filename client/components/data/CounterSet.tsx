@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Grid } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Counter from './Counter';
 
-function CounterSet({ counters = [] }) {
+function CounterSet({ counters = [] }): ReactElement {
 	return (
 		<Grid>
 			{counters.map(({ count, variation, description }, i) => (

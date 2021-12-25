@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box, Accordion, Icon, FieldGroup } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
-export const NotificationByDevice = ({ device, icon, children }) => (
+export const NotificationByDevice = ({ device, icon, children }): ReactElement => (
 	<Accordion.Item
 		title={
 			<Box display='flex' alignItems='center'>

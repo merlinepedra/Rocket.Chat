@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const Field = ({ children }) => <Box mb='x16'>{children}</Box>;
+const Field = ({ children }): ReactElement => <Box mb='x16'>{children}</Box>;
 
 export default Field;

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const Label = (props) => <Box mbe='x8' fontScale='p4' color='default' {...props} />;
+const Label = (props): ReactElement => <Box mbe='x8' fontScale='p4' color='default' {...props} />;
 
 export default Label;

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Throbber, Callout } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import Subtitle from '../../../components/Subtitle';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -9,7 +9,7 @@ import { useSetting } from '../../../contexts/SettingsContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function ConnectToCloudSection({ onRegisterStatusChange, ...props }) {
+function ConnectToCloudSection({ onRegisterStatusChange, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -19,7 +19,7 @@ function ConnectToCloudSection({ onRegisterStatusChange, ...props }) {
 	const syncWorkspace = useMethod('cloud:syncWorkspace');
 	const hasAcceptedTerms = useSetting('Cloud_Service_Agree_PrivacyTerms');
 
-	const handleRegisterButtonClick = async () => {
+	const handleRegisterButtonClick = async (): Promise<void> => {
 		setConnecting(true);
 
 		try {

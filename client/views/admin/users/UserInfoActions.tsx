@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ButtonGroup, Menu, Option } from '@rocket.chat/fuselage';
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 
 import ConfirmOwnerChangeWarningModal from '../../../components/ConfirmOwnerChangeWarningModal';
 import GenericModal from '../../../components/GenericModal';
@@ -14,7 +14,14 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useActionSpread } from '../../hooks/useActionSpread';
 import UserInfo from '../../room/contextualBar/UserInfo';
 
-export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, onReload }) => {
+export const UserInfoActions = ({
+	username,
+	_id,
+	isActive,
+	isAdmin,
+	onChange,
+	onReload,
+}): ReactElement => {
 	const t = useTranslation();
 	const setModal = useSetModal();
 
@@ -37,7 +44,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 		onChange();
 	}, [setModal, onChange]);
 
-	const handleDeletedUser = () => {
+	const handleDeletedUser = (): void => {
 		setModal();
 		userRoute.push({});
 		onReload();
@@ -45,7 +52,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 
 	const confirmOwnerChanges =
 		(action, modalProps = {}) =>
-		async () => {
+		async (): Promise<void> => {
 			try {
 				return await action();
 			} catch (error) {
@@ -56,11 +63,11 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 							shouldChangeOwner={shouldChangeOwner}
 							shouldBeRemoved={shouldBeRemoved}
 							{...modalProps}
-							onConfirm={async () => {
+							onConfirm={async (): Promise<void> => {
 								await action(true);
 								setModal();
 							}}
-							onCancel={() => {
+							onCancel={(): Promise<void> => {
 								setModal();
 								onChange();
 							}}
@@ -102,7 +109,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 			<GenericModal
 				variant='danger'
 				onConfirm={deleteUser}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			>
 				{t(`Delete_User_Warning_${erasureType}`)}
@@ -155,7 +162,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 			<GenericModal
 				variant='danger'
 				onConfirm={resetE2EEKey}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Reset')}
 			>
 				{t('E2E_Reset_Other_Key_Warning')}
@@ -168,7 +175,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 			<GenericModal
 				variant='danger'
 				onConfirm={resetTOTP}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Reset')}
 			>
 				{t('TOTP_Reset_Other_Key_Warning')}
@@ -319,7 +326,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 				ghost={false}
 				flexShrink={0}
 				key='menu'
-				renderItem={({ label: { label, icon }, ...props }) => (
+				renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 					<Option label={label} title={label} icon={icon} {...props} />
 				)}
 				options={menuOptions}
@@ -328,7 +335,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange, on
 	}, [menuOptions]);
 
 	const actions = useMemo(() => {
-		const mapAction = ([key, { label, icon, action }]) => (
+		const mapAction = ([key, { label, icon, action }]): ReactElement => (
 			<UserInfo.Action key={key} title={label} label={label} onClick={action} icon={icon} />
 		);
 		return [...actionsDefinition.map(mapAction), menu].filter(Boolean);

@@ -1,12 +1,12 @@
 // @ts-nocheck
-import React, { Suspense, useEffect } from 'react';
+import React, { ReactElement, Suspense, useEffect } from 'react';
 
 import PageSkeleton from '../../components/PageSkeleton';
 import { useCurrentRoute, useRoute } from '../../contexts/RouterContext';
 import SettingsProvider from '../../providers/SettingsProvider';
 import AdministrationLayout from './AdministrationLayout';
 
-function AdministrationRouter({ renderRoute }) {
+function AdministrationRouter({ renderRoute }): ReactElement {
 	const [routeName] = useCurrentRoute();
 	const defaultRoute = useRoute('admin-info');
 	useEffect(() => {

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import RawText from '../../../components/RawText';
@@ -9,7 +9,7 @@ import { useSetting } from '../../../contexts/SettingsContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import Wrapper from './Wrapper';
 
-const Installation = () => {
+const Installation = (): ReactElement => {
 	const t = useTranslation();
 
 	const siteUrl = useSetting('Site_Url')?.replace(/\/$/, '');

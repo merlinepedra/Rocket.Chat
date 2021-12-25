@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useRef } from 'react';
 
-export const useComponentDidUpdate = (effect, dependencies = []) => {
+export const useComponentDidUpdate = (effect, dependencies = []): void => {
 	const hasMounted = useRef(false);
 	useEffect(() => {
 		if (!hasMounted.current) {

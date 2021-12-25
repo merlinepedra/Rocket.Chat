@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotificationStatus from './NotificationStatus';
 
-function Unread(props) {
+function Unread(props): ReactElement {
 	return <NotificationStatus label='Unread' bg='primary-500' {...props} />;
 }
 

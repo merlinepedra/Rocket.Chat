@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, MultiSelect } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import TimeRangeFieldsAssembler from './TimeRangeFieldsAssembler';
@@ -15,7 +15,7 @@ export const DAYS_OF_WEEK = [
 	'Sunday',
 ];
 
-const BusinessHoursForm = ({ values, handlers, className }) => {
+const BusinessHoursForm = ({ values, handlers, className }): ReactElement => {
 	const t = useTranslation();
 
 	const daysOptions = useMemo(() => DAYS_OF_WEEK.map((day) => [day, t(day)]), [t]);

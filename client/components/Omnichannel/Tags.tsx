@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Field, TextInput, Chip, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { useToastMessageDispatch } from '../../contexts/ToastMessagesContext';
@@ -11,12 +11,17 @@ import { useEndpointData } from '../../hooks/useEndpointData';
 import { formsSubscription } from '../../views/omnichannel/additionalForms';
 import { FormSkeleton } from './Skeleton';
 
-const Tags = ({ tags = [], handler = () => {}, error = '', tagRequired = false }) => {
+const Tags = ({
+	tags = [],
+	handler = (): void => undefined,
+	error = '',
+	tagRequired = false,
+}): ReactElement => {
 	const { value: tagsResult = [], phase: stateTags } = useEndpointData('livechat/tags.list');
 	const t = useTranslation();
 	const forms = useSubscription(formsSubscription);
 
-	const { useCurrentChatTags = () => {} } = forms;
+	const { useCurrentChatTags = (): void => undefined } = forms;
 	const Tags = useCurrentChatTags();
 
 	const dispatchToastMessage = useToastMessageDispatch();
@@ -24,7 +29,7 @@ const Tags = ({ tags = [], handler = () => {}, error = '', tagRequired = false }
 	const [tagValue, handleTagValue] = useState('');
 	const [paginatedTagValue, handlePaginatedTagValue] = useState(tags);
 
-	const removeTag = (tag) => {
+	const removeTag = (tag): void => {
 		const tagsFiltered = tags.filter((tagArray) => tagArray !== tag);
 		handler(tagsFiltered);
 	};
@@ -58,7 +63,7 @@ const Tags = ({ tags = [], handler = () => {}, error = '', tagRequired = false }
 				<Field.Row>
 					<Tags
 						value={paginatedTagValue}
-						handler={(tags) => {
+						handler={(tags): void => {
 							handler(tags.map((tag) => tag.label));
 							handlePaginatedTagValue(tags);
 						}}
@@ -70,7 +75,7 @@ const Tags = ({ tags = [], handler = () => {}, error = '', tagRequired = false }
 						<TextInput
 							error={error}
 							value={tagValue?.value ? tagValue.value : tagValue}
-							onChange={(event) => handleTagValue(event.target.value)}
+							onChange={(event): void => handleTagValue(event.target.value)}
 							flexGrow={1}
 							placeholder={t('Enter_a_tag')}
 						/>
@@ -80,7 +85,7 @@ const Tags = ({ tags = [], handler = () => {}, error = '', tagRequired = false }
 					</Field.Row>
 					<Field.Row justifyContent='flex-start'>
 						{tags.map((tag, i) => (
-							<Chip key={i} onClick={() => removeTag(tag)} mie='x8'>
+							<Chip key={i} onClick={(): void => removeTag(tag)} mie='x8'>
 								{tag?.value ? tag.value : tag}
 							</Chip>
 						))}

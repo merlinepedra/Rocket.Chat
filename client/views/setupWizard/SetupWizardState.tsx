@@ -1,5 +1,13 @@
 // @ts-nocheck
-import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+	useCallback,
+	useMemo,
+	ReactElement,
+} from 'react';
 
 import { useRouteParameter, useRoute } from '../../contexts/RouterContext';
 import { useMethod } from '../../contexts/ServerContext';
@@ -8,7 +16,7 @@ import SetupWizardPage from './SetupWizardPage';
 
 export const finalStep = 'final';
 
-const useStepRouting = () => {
+const useStepRouting = (): [currentStep: unknown, setCurrentStep: unknown] => {
 	const param = useRouteParameter('step');
 	const userId = useUserId();
 	const setupWizardRoute = useRoute('setup-wizard');
@@ -39,7 +47,7 @@ const useStepRouting = () => {
 	return [currentStep, setCurrentStep];
 };
 
-const useParameters = () => {
+const useParameters = (): unknown => {
 	const [loaded, setLoaded] = useState(false);
 	const [settings, setSettings] = useState([]);
 	const [canDeclineServerRegistration, setCapableOfDeclineServerRegistration] = useState(false);
@@ -47,7 +55,7 @@ const useParameters = () => {
 
 	useEffect(() => {
 		let mounted = true;
-		const requestParameters = async () => {
+		const requestParameters = async (): Promise<void> => {
 			try {
 				const { settings = [], allowStandaloneServer = false } =
 					(await getSetupWizardParameters()) || {};
@@ -68,7 +76,7 @@ const useParameters = () => {
 
 		requestParameters();
 
-		return () => {
+		return (): void => {
 			mounted = false;
 		};
 	}, [getSetupWizardParameters]);
@@ -84,12 +92,12 @@ const SetupWizardContext = createContext({
 	loaded: false,
 	settings: [],
 	canDeclineServerRegistration: false,
-	goToPreviousStep: () => {},
-	goToNextStep: () => {},
-	goToFinalStep: () => {},
+	goToPreviousStep: () => undefined,
+	goToNextStep: () => undefined,
+	goToFinalStep: () => undefined,
 });
 
-function SetupWizardState() {
+function SetupWizardState(): ReactElement {
 	const [currentStep, setCurrentStep] = useStepRouting();
 	const { loaded, settings, canDeclineServerRegistration } = useParameters();
 
@@ -131,6 +139,6 @@ function SetupWizardState() {
 	);
 }
 
-export const useSetupWizardContext = () => useContext(SetupWizardContext);
+export const useSetupWizardContext = (): unknown => useContext(SetupWizardContext);
 
 export default SetupWizardState;

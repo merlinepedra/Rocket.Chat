@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import CounterContainer from '../counter/CounterContainer';
@@ -8,7 +8,7 @@ const defaultValue = { title: '', value: '00:00:00' };
 
 const initialData = [defaultValue, defaultValue, defaultValue, defaultValue];
 
-const ProductivityOverview = ({ params, reloadRef, ...props }) => {
+const ProductivityOverview = ({ params, reloadRef, ...props }): ReactElement => {
 	const {
 		value: data,
 		phase: state,

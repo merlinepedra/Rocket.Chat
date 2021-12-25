@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Skeleton } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Extended from './Extended';
 
-const ExtendedSkeleton = ({ showAvatar }) => (
+const ExtendedSkeleton = ({ showAvatar }): ReactElement => (
 	<Box height='x44'>
 		<Extended
 			title={<Skeleton width='100%' />}

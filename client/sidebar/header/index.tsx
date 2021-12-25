@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Sidebar } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { useTranslation } from '../../contexts/TranslationContext';
 import { useUser } from '../../contexts/UserContext';
@@ -13,7 +13,7 @@ import Login from './actions/Login';
 import Search from './actions/Search';
 import Sort from './actions/Sort';
 
-const HeaderWithData = () => {
+const HeaderWithData = (): ReactElement => {
 	const user = useUser();
 	const t = useTranslation();
 	useSidebarPaletteColor();

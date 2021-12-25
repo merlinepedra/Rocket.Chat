@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon, Pagination } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useCallback, useState, useEffect, ReactElement } from 'react';
 
 import { integrationHistoryStreamer } from '../../../../../app/integrations/client/streamer';
 import Page from '../../../../components/Page';
@@ -13,7 +13,7 @@ import { AsyncStatePhase } from '../../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import HistoryContent from './HistoryContent';
 
-function OutgoingWebhookHistoryPage(props) {
+function OutgoingWebhookHistoryPage(props): ReactElement {
 	const dispatchToastMessage = useToastMessageDispatch();
 	const t = useTranslation();
 
@@ -41,7 +41,7 @@ function OutgoingWebhookHistoryPage(props) {
 
 	const { value: data, phase: state, reload } = useEndpointData('integrations.history', query);
 
-	const handleClearHistory = async () => {
+	const handleClearHistory = async (): Promise<void> => {
 		try {
 			await clearHistory();
 			dispatchToastMessage({ type: 'success', message: t('Integration_History_Cleared') });
@@ -52,7 +52,7 @@ function OutgoingWebhookHistoryPage(props) {
 		}
 	};
 
-	const handleClickReturn = () => {
+	const handleClickReturn = (): void => {
 		router.push({});
 	};
 
@@ -90,7 +90,7 @@ function OutgoingWebhookHistoryPage(props) {
 			integrationHistoryStreamer.on(id, handleDataChange);
 		}
 
-		return () => integrationHistoryStreamer.removeListener(id, handleDataChange);
+		return (): void => integrationHistoryStreamer.removeListener(id, handleDataChange);
 	}, [handleDataChange, id, mounted]);
 
 	const showingResultsLabel = useCallback(

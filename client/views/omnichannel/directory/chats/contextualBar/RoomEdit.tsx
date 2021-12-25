@@ -24,7 +24,7 @@ const initialValuesRoom = {
 	priorityId: '',
 };
 
-const getInitialValuesRoom = (room) => {
+const getInitialValuesRoom = (room): unknown => {
 	if (!room) {
 		return initialValuesRoom;
 	}
@@ -39,7 +39,7 @@ const getInitialValuesRoom = (room) => {
 	};
 };
 
-function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
+function RoomEdit({ room, visitor, reload, reloadInfo, close }): ReactElement {
 	const t = useTranslation();
 
 	const {
@@ -47,7 +47,7 @@ function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
 		handlers: handlersRoom,
 		hasUnsavedChanges: hasUnsavedChangesRoom,
 	} = useForm(getInitialValuesRoom(room));
-	const canViewCustomFields = () =>
+	const canViewCustomFields = (): boolean =>
 		hasAtLeastOnePermission(['view-livechat-room-customfields', 'edit-livechat-room-customfields']);
 
 	const { handleTopic, handleTags, handlePriorityId } = handlersRoom;
@@ -55,7 +55,7 @@ function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
 
 	const forms = useSubscription(formsSubscription);
 
-	const { usePrioritiesSelect = () => {} } = forms;
+	const { usePrioritiesSelect = (): unknown => undefined } = forms;
 
 	const PrioritiesSelect = usePrioritiesSelect();
 
@@ -78,7 +78,7 @@ function RoomEdit({ room, visitor, reload, reloadInfo, close }) {
 		'livechat/priorities.list',
 	);
 
-	const jsonConverterToValidFormat = (customFields) => {
+	const jsonConverterToValidFormat = (customFields): unknown => {
 		const jsonObj = {};
 		customFields.forEach(({ _id, label, visibility, options, scope, defaultValue, required }) => {
 			(visibility === 'visible') & (scope === 'room') &&

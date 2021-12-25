@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { AutoComplete, Option } from '@rocket.chat/fuselage';
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, ReactElement, useMemo, useState } from 'react';
 
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import Avatar from './Avatar';
 
-const TeamAutocomplete = (props) => {
+const TeamAutocomplete = (props): ReactElement => {
 	const [filter, setFilter] = useState('');
 
 	const { value: data } = useEndpointData(
@@ -27,12 +27,12 @@ const TeamAutocomplete = (props) => {
 			{...props}
 			filter={filter}
 			setFilter={setFilter}
-			renderSelected={({ label }) => (
+			renderSelected={({ label }): ReactElement => (
 				<>
 					<Avatar size='x20' {...label} test='selected' /> {label.name}
 				</>
 			)}
-			renderItem={({ value, label, ...props }) => (
+			renderItem={({ value, label, ...props }): ReactElement => (
 				<Option key={value} {...props} label={label.name} avatar={<Avatar {...label} />} />
 			)}
 			options={options}

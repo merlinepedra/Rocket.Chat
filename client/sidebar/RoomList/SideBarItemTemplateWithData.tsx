@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Badge, Sidebar } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { roomTypes } from '../../../app/utils/client';
 import { RoomIcon } from '../../components/RoomIcon';
@@ -8,7 +8,7 @@ import { useLayout } from '../../contexts/LayoutContext';
 import RoomMenu from '../RoomMenu';
 import { normalizeSidebarMessage } from './normalizeSidebarMessage';
 
-const getMessage = (room, lastMessage, t) => {
+const getMessage = (room, lastMessage, t): string => {
 	if (!lastMessage) {
 		return t('No_messages_yet');
 	}
@@ -38,7 +38,7 @@ function SideBarItemTemplateWithData({
 	style,
 	// sidebarViewMode,
 	isAnonymous,
-}) {
+}): ReactElement {
 	const { sidebar } = useLayout();
 
 	const href = roomTypes.getRouteLink(room.t, room);
@@ -96,7 +96,7 @@ function SideBarItemTemplateWithData({
 			threadUnread={threadUnread}
 			selected={selected}
 			href={href}
-			onClick={() => !selected && sidebar.toggle()}
+			onClick={(): void => !selected && sidebar.toggle()}
 			aria-label={title}
 			title={title}
 			time={lastMessage?.ts}
@@ -108,7 +108,7 @@ function SideBarItemTemplateWithData({
 			menu={
 				!isAnonymous &&
 				!isQueued &&
-				(() => (
+				((): ReactElement => (
 					<RoomMenu
 						alert={alert}
 						threadUnread={threadUnread}
@@ -126,7 +126,7 @@ function SideBarItemTemplateWithData({
 	);
 }
 
-const propsAreEqual = (prevProps, nextProps) => {
+const propsAreEqual = (prevProps, nextProps): boolean => {
 	if (
 		[
 			'id',

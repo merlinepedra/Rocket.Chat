@@ -16,7 +16,7 @@ import {
 	TextAreaInput,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { ReactElement, useCallback, useMemo, useRef } from 'react';
 
 import { e2e } from '../../../../../../app/e2e/client/rocketchat.e2e';
 import { MessageTypesValues } from '../../../../../../app/lib/lib/MessageTypes';
@@ -43,7 +43,7 @@ const typeMap = {
 	d: 'DMs',
 };
 
-const useInitialValues = (room, settings) => {
+const useInitialValues = (room, settings): unknown => {
 	const {
 		t,
 		ro,
@@ -113,11 +113,11 @@ const useInitialValues = (room, settings) => {
 	);
 };
 
-const getCanChangeType = (room, canCreateChannel, canCreateGroup, isAdmin) =>
+const getCanChangeType = (room, canCreateChannel, canCreateGroup, isAdmin): unknown =>
 	(!room.default || isAdmin) &&
 	((room.t === 'p' && canCreateChannel) || (room.t === 'c' && canCreateGroup));
 
-function EditChannel({ room, onClickClose, onClickBack }) {
+function EditChannel({ room, onClickClose, onClickBack }): ReactElement {
 	const t = useTranslation();
 
 	const setModal = useSetModal();
@@ -206,7 +206,8 @@ function EditChannel({ room, onClickClose, onClickBack }) {
 		canViewReactWhenReadOnly,
 		canViewEncrypted,
 	] = useMemo(() => {
-		const isAllowed = roomTypes.getConfig(room.t)?.allowRoomSettingChange || (() => {});
+		const isAllowed =
+			roomTypes.getConfig(room.t)?.allowRoomSettingChange || ((): undefined => undefined);
 		return [
 			isAllowed(room, RoomSettingsEnum.NAME),
 			isAllowed(room, RoomSettingsEnum.TOPIC),
@@ -255,7 +256,7 @@ function EditChannel({ room, onClickClose, onClickBack }) {
 	const handleSave = useMutableCallback(async () => {
 		const { joinCodeRequired, hideSysMes, ...data } = saveData.current;
 		delete data.archived;
-		const save = () =>
+		const save = (): void =>
 			saveAction({
 				rid: room._id,
 				...data,
@@ -265,7 +266,7 @@ function EditChannel({ room, onClickClose, onClickBack }) {
 				}),
 			});
 
-		const archive = () => archiveAction({ rid: room._id, action: archiveSelector });
+		const archive = (): void => archiveAction({ rid: room._id, action: archiveSelector });
 
 		await Promise.all(
 			[hasUnsavedChanges && save(), changeArchivation && archive()].filter(Boolean),
@@ -277,8 +278,8 @@ function EditChannel({ room, onClickClose, onClickBack }) {
 	const deleteRoom = useMethod('eraseRoom');
 
 	const handleDelete = useMutableCallback(() => {
-		const onCancel = () => setModal(undefined);
-		const onConfirm = async () => {
+		const onCancel = (): void => setModal(undefined);
+		const onConfirm = async (): Promise<void> => {
 			await deleteRoom(room._id);
 			onCancel();
 		};

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table, Icon, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import { useSetModal } from '../../../contexts/ModalContext';
@@ -9,7 +9,7 @@ import { useMethod } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function RemoveCustomFieldButton({ _id, reload }) {
+function RemoveCustomFieldButton({ _id, reload }): ReactElement {
 	const removeCustomField = useMethod('livechat:removeCustomField');
 	const setModal = useSetModal();
 	const dispatchToastMessage = useToastMessageDispatch();
@@ -26,7 +26,7 @@ function RemoveCustomFieldButton({ _id, reload }) {
 
 	const handleDelete = useMutableCallback((e) => {
 		e.stopPropagation();
-		const onDeleteAgent = async () => {
+		const onDeleteAgent = async (): Promise<void> => {
 			try {
 				await handleRemoveClick();
 				dispatchToastMessage({ type: 'success', message: t('Custom_Field_Removed') });
@@ -40,7 +40,7 @@ function RemoveCustomFieldButton({ _id, reload }) {
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteAgent}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			/>,
 		);

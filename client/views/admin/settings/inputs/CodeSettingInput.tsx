@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, Field, Flex } from '@rocket.chat/fuselage';
 import { useToggle } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import ResetSettingButton from '../ResetSettingButton';
@@ -19,12 +19,12 @@ function CodeSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 
 	const [fullScreen, toggleFullScreen] = useToggle(false);
 
-	const handleChange = (value) => {
+	const handleChange = (value): void => {
 		onChangeValue(value);
 	};
 
@@ -61,7 +61,7 @@ function CodeSettingInput({
 					onChange={handleChange}
 				/>
 				<div className='buttons'>
-					<Button primary onClick={() => toggleFullScreen()}>
+					<Button primary onClick={(): void => toggleFullScreen()}>
 						{fullScreen ? t('Exit_Full_Screen') : t('Full_Screen')}
 					</Button>
 				</div>

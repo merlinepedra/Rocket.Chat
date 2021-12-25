@@ -1,12 +1,21 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
 import Page from '../../../components/Page';
 import AddManager from './AddManager';
 
-function ManagersPage({ data, reload, header, setParams, params, title, renderRow, children }) {
+function ManagersPage({
+	data,
+	reload,
+	header,
+	setParams,
+	params,
+	title,
+	renderRow,
+	children,
+}): ReactElement {
 	return (
 		<Page flexDirection='row'>
 			<Page>
@@ -20,7 +29,7 @@ function ManagersPage({ data, reload, header, setParams, params, title, renderRo
 						total={data?.total}
 						setParams={setParams}
 						params={params}
-						renderFilter={({ onChange, ...props }) => (
+						renderFilter={({ onChange, ...props }): ReactElement => (
 							<FilterByText onChange={onChange} {...props} />
 						)}
 					/>

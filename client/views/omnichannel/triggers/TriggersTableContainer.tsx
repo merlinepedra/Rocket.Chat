@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Callout } from '@rocket.chat/fuselage';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import TriggersTable from './TriggersTable';
 
-const TriggersTableContainer = ({ reloadRef }) => {
+const TriggersTableContainer = ({ reloadRef }): ReactElement => {
 	const t = useTranslation();
 	const [params, setParams] = useState(() => ({ current: 0, itemsPerPage: 25 }));
 

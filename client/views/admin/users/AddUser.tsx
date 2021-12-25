@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Field, Box, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import { useRoute } from '../../../contexts/RouterContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import { useEndpointData } from '../../../hooks/useEndpointData';
 import { useForm } from '../../../hooks/useForm';
 import UserForm from './UserForm';
 
-export function AddUser({ roles, onReload, ...props }) {
+export function AddUser({ roles: _roles, onReload, ...props }): ReactElement {
 	const t = useTranslation();
 
 	const router = useRoute('admin-users');
@@ -19,30 +19,30 @@ export function AddUser({ roles, onReload, ...props }) {
 	const [errors, setErrors] = useState({});
 
 	const validationKeys = {
-		name: (name) =>
+		name: (name): void =>
 			setErrors((errors) => ({
 				...errors,
 				name: !name.trim().length ? t('The_field_is_required', t('name')) : undefined,
 			})),
-		username: (username) =>
+		username: (username): void =>
 			setErrors((errors) => ({
 				...errors,
 				username: !username.trim().length ? t('The_field_is_required', t('username')) : undefined,
 			})),
-		email: (email) =>
+		email: (email): void =>
 			setErrors((errors) => ({
 				...errors,
 				email: !email.trim().length ? t('The_field_is_required', t('email')) : undefined,
 			})),
-		password: (password) =>
+		password: (password): void =>
 			setErrors((errors) => ({
 				...errors,
 				password: !password.trim().length ? t('The_field_is_required', t('password')) : undefined,
 			})),
 	};
 
-	const validateForm = ({ key, value }) => {
-		validationKeys[key] && validationKeys[key](value);
+	const validateForm = ({ key, value }): void => {
+		validationKeys[key]?.(value);
 	};
 
 	const { values, handlers, reset, hasUnsavedChanges } = useForm(

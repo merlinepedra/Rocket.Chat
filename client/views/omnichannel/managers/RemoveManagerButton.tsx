@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table, Icon, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import { useSetModal } from '../../../contexts/ModalContext';
@@ -9,7 +9,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointAction } from '../../../hooks/useEndpointAction';
 
-function RemoveManagerButton({ _id, reload }) {
+function RemoveManagerButton({ _id, reload }): ReactElement {
 	const t = useTranslation();
 	const deleteAction = useEndpointAction('DELETE', `livechat/users/manager/${_id}`);
 	const setModal = useSetModal();
@@ -23,7 +23,7 @@ function RemoveManagerButton({ _id, reload }) {
 	});
 	const handleDelete = useMutableCallback((e) => {
 		e.stopPropagation();
-		const onDeleteManager = async () => {
+		const onDeleteManager = async (): Promise<void> => {
 			try {
 				await handleRemoveClick();
 				dispatchToastMessage({ type: 'success', message: t('Manager_removed') });
@@ -37,7 +37,7 @@ function RemoveManagerButton({ _id, reload }) {
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteManager}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			/>,
 		);

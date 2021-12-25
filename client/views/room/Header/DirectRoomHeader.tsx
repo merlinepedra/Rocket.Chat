@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useUserId } from '../../../contexts/UserContext';
 import { usePresence } from '../../../hooks/usePresence';
 import RoomHeader from './RoomHeader';
 
-const DirectRoomHeader = ({ room, slots }) => {
+const DirectRoomHeader = ({ room, slots }): ReactElement => {
 	const userId = useUserId();
 	const directUserId = room.uids.filter((uid) => uid !== userId).shift();
 	const directUserData = usePresence(directUserId);

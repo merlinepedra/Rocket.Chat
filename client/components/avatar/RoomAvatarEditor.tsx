@@ -2,20 +2,25 @@
 import { css } from '@rocket.chat/css-in-js';
 import { Box, Button, ButtonGroup, Icon } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 
 import { getAvatarURL } from '../../../app/utils/lib/getAvatarURL';
 import { useTranslation } from '../../contexts/TranslationContext';
 import { useFileInput } from '../../hooks/useFileInput';
 import RoomAvatar from './RoomAvatar';
 
-const RoomAvatarEditor = ({ room, roomAvatar, onChangeAvatar = () => {}, ...props }) => {
+const RoomAvatarEditor = ({
+	room,
+	roomAvatar,
+	onChangeAvatar = (): void => undefined,
+	...props
+}): ReactElement => {
 	const t = useTranslation();
 
 	const handleChangeAvatar = useMutableCallback((file) => {
 		const reader = new FileReader();
 		reader.readAsDataURL(file);
-		reader.onloadend = () => {
+		reader.onloadend = (): void => {
 			onChangeAvatar(reader.result);
 		};
 	});

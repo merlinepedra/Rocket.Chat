@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Field, Flex, UrlInput } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useAbsoluteUrl } from '../../../../contexts/ServerContext';
 import ResetSettingButton from '../ResetSettingButton';
@@ -16,10 +16,10 @@ function RelativeUrlSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
+}): ReactElement {
 	const getAbsoluteUrl = useAbsoluteUrl();
 
-	const handleChange = (event) => {
+	const handleChange = (event): void => {
 		onChangeValue?.(event.currentTarget.value);
 	};
 

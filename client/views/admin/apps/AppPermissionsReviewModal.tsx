@@ -1,21 +1,26 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon, Modal } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const AppPermissionsReviewModal = ({ appPermissions, cancel, confirm, modalProps = {} }) => {
+const AppPermissionsReviewModal = ({
+	appPermissions,
+	cancel,
+	confirm,
+	modalProps = {},
+}): ReactElement => {
 	const t = useTranslation();
 
-	const handleCloseButtonClick = () => {
+	const handleCloseButtonClick = (): void => {
 		cancel();
 	};
 
-	const handleCancelButtonClick = () => {
+	const handleCancelButtonClick = (): void => {
 		cancel();
 	};
 
-	const handleConfirmButtonClick = () => {
+	const handleConfirmButtonClick = (): void => {
 		confirm(appPermissions);
 	};
 

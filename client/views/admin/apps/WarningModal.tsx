@@ -1,10 +1,18 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon, Modal } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const WarningModal = ({ text, confirmText, close, cancel, cancelText, confirm, ...props }) => {
+const WarningModal = ({
+	text,
+	confirmText,
+	close,
+	cancel,
+	cancelText,
+	confirm,
+	...props
+}): ReactElement => {
 	const t = useTranslation();
 	return (
 		<Modal {...props}>

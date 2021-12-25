@@ -2,12 +2,12 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
 import { messageParser, modalParser } from '@rocket.chat/fuselage-ui-kit';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { renderMessageBody } from '../../lib/utils/renderMessageBody';
 
 // TODO: move this to fuselage-ui-kit itself
-messageParser.text = ({ text, type } = {}) => {
+messageParser.text = ({ text, type } = {}): ReactNode => {
 	if (type !== 'mrkdwn') {
 		return text;
 	}
@@ -16,9 +16,9 @@ messageParser.text = ({ text, type } = {}) => {
 };
 
 // TODO: move this to fuselage-ui-kit itself
-modalParser.plainText = ({ text } = {}) => text;
+modalParser.plainText = ({ text } = {}): ReactNode => text;
 
 // TODO: move this to fuselage-ui-kit itself
-modalParser.mrkdwn = ({ text }) => (
+modalParser.mrkdwn = ({ text }): ReactNode => (
 	<span dangerouslySetInnerHTML={{ __html: renderMessageBody({ msg: text }) }} />
 );

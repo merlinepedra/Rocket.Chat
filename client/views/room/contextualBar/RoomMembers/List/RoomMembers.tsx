@@ -11,7 +11,7 @@ import {
 	Callout,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../../components/ScrollableContentWrapper';
@@ -38,7 +38,7 @@ const RoomMembers = ({
 	isTeam,
 	isDirect,
 	reload,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 	const inputRef = useAutoFocus(true);
 
@@ -125,7 +125,7 @@ const RoomMembers = ({
 							overscan={50}
 							data={members}
 							components={{ Scroller: ScrollableContentWrapper }}
-							itemContent={(index, data) => (
+							itemContent={(index, data): ReactElement => (
 								<Row data={itemData} user={data} index={index} reload={reload} />
 							)}
 						/>

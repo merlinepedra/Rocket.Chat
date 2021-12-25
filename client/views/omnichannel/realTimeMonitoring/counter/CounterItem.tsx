@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const CounterItem = ({ title = '', count = '-', ...props }) => (
+const CounterItem = ({ title = '', count = '-', ...props }): ReactElement => (
 	<Box
 		display='flex'
 		flexDirection='column'

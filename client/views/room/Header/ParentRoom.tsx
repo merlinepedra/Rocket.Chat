@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { roomTypes } from '../../../../app/utils/client';
 import Header from '../../../components/Header';
 import { useRoomIcon } from '../../../hooks/useRoomIcon';
 
-const ParentRoom = ({ room }) => {
+const ParentRoom = ({ room }): ReactElement => {
 	const href = roomTypes.getRouteLink(room.t, room);
 	const icon = useRoomIcon(room);
 

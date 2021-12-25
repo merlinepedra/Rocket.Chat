@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon, Box, Throbber } from '@rocket.chat/fuselage';
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, ReactElement } from 'react';
 
 import { Apps } from '../../../../app/apps/client/orchestrator';
 import Page from '../../../components/Page';
@@ -13,7 +13,7 @@ import SettingsDisplay from './SettingsDisplay';
 import { handleAPIError } from './helpers';
 import { useAppInfo } from './hooks/useAppInfo';
 
-function AppDetailsPage({ id }) {
+function AppDetailsPage({ id }): ReactElement {
 	const t = useTranslation();
 
 	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -24,7 +24,7 @@ function AppDetailsPage({ id }) {
 
 	const [currentRouteName] = useCurrentRoute();
 	const router = useRoute(currentRouteName);
-	const handleReturn = () => router.push({});
+	const handleReturn = (): void => router.push({});
 
 	const isLoading = Object.values(data).length === 0;
 

@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Box, Menu, Icon } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { getURL } from '../../../../../../app/utils/client';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import { download } from '../../../../../lib/download';
 
-const MenuItem = ({ _id, name, url, onClickDelete }) => {
+const MenuItem = ({ _id, name, url, onClickDelete }): ReactElement => {
 	const t = useTranslation();
 	const menuOptions = {
 		downLoad: {
@@ -16,7 +16,7 @@ const MenuItem = ({ _id, name, url, onClickDelete }) => {
 					{t('Download')}
 				</Box>
 			),
-			action: () => {
+			action: (): void => {
 				const URL = window.webkitURL ?? window.URL;
 				const href = getURL(url);
 				download(href, name);
@@ -31,7 +31,7 @@ const MenuItem = ({ _id, name, url, onClickDelete }) => {
 						{t('Delete')}
 					</Box>
 				),
-				action: () => onClickDelete(_id),
+				action: (): void => onClickDelete(_id),
 			},
 		}),
 	};

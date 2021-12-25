@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { useCustomSound } from '../../../../contexts/CustomSoundContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import { useForm } from '../../../../hooks/useForm';
 import { useTabBarClose } from '../../providers/ToolboxProvider';
 import NotificationPreferences from './NotificationPreferences';
 
-const NotificationPreferencesWithData = ({ rid }) => {
+const NotificationPreferencesWithData = ({ rid }): ReactElement => {
 	const t = useTranslation();
 
 	const subscription = useUserSubscription(rid);
@@ -57,7 +57,7 @@ const NotificationPreferencesWithData = ({ rid }) => {
 		sound: [['none None', t('None')], ['default', t('Default')], ...customSoundAsset],
 	};
 
-	const handlePlaySound = () => customSound.play(values.desktopSound);
+	const handlePlaySound = (): void => customSound.play(values.desktopSound);
 
 	const handleSaveButton = useMutableCallback(() => {
 		const notifications = {};

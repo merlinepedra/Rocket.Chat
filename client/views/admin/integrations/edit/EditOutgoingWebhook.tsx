@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, Box, Margins, Button } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import GenericModal from '../../../../components/GenericModal';
 import { useSetModal } from '../../../../contexts/ModalContext';
@@ -13,7 +13,7 @@ import { useForm } from '../../../../hooks/useForm';
 import OutgoingWebhookForm from '../OutgoiongWebhookForm';
 import { triggerWordsToArray, triggerWordsToString } from '../helpers/triggerWords';
 
-const getInitialValue = (data) => {
+const getInitialValue = (data): unknown => {
 	const initialValue = {
 		enabled: data.enabled ?? true,
 		impersonateUser: data.impersonateUser,
@@ -39,7 +39,12 @@ const getInitialValue = (data) => {
 	return initialValue;
 };
 
-function EditOutgoingWebhook({ data, onChange, setSaveAction, ...props }) {
+function EditOutgoingWebhook({
+	data,
+	onChange,
+	setSaveAction: _setSaveAction,
+	...props
+}): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -57,14 +62,14 @@ function EditOutgoingWebhook({ data, onChange, setSaveAction, ...props }) {
 	const deleteIntegration = useEndpointAction('POST', 'integrations.remove', deleteQuery);
 
 	const handleDeleteIntegration = useCallback(() => {
-		const closeModal = () => setModal();
+		const closeModal = (): void => setModal();
 
-		const handleClose = () => {
+		const handleClose = (): void => {
 			closeModal();
 			router.push({});
 		};
 
-		const onDelete = async () => {
+		const onDelete = async (): Promise<void> => {
 			const result = await deleteIntegration();
 			if (result.success) {
 				setModal(

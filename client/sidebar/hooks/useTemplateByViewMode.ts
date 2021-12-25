@@ -1,12 +1,12 @@
 // @ts-nocheck
-import { useMemo } from 'react';
+import { ComponentType, useMemo } from 'react';
 
 import { useUserPreference } from '../../contexts/UserContext';
 import Condensed from '../Item/Condensed';
 import Extended from '../Item/Extended';
 import Medium from '../Item/Medium';
 
-export const useTemplateByViewMode = () => {
+export const useTemplateByViewMode = (): ComponentType => {
 	const sidebarViewMode = useUserPreference('sidebarViewMode');
 	return useMemo(() => {
 		switch (sidebarViewMode) {

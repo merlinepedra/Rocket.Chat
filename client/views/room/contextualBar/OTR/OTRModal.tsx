@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Button, Box, ButtonGroup, Icon, Modal } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 
-const OTRModal = ({ onCancel, onConfirm, confirmLabel = 'Ok', ...props }) => {
+const OTRModal = ({ onCancel, onConfirm, confirmLabel = 'Ok', ...props }): ReactElement => {
 	const t = useTranslation();
 	return (
 		<Modal {...props}>

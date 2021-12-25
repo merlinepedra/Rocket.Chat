@@ -16,9 +16,9 @@ const handleOn = {
 };
 
 const handleSwitch = {
-	turnOn: () => {},
-	muteGroupMentions: () => {},
-	showCounter: () => {},
+	turnOn: () => undefined,
+	muteGroupMentions: () => undefined,
+	showCounter: () => undefined,
 };
 
 const defaultOption = [
@@ -55,11 +55,11 @@ export const Default = () => (
 			handleOptions={handleOptions}
 			handleSelect={handleSelect}
 			handleChangeOption={{
-				desktopAlert: () => {},
-				mobileAlert: () => {},
-				emailAlert: () => {},
+				desktopAlert: () => undefined,
+				mobileAlert: () => undefined,
+				emailAlert: () => undefined,
 			}}
-			handleSoundChange={{ desktopSound: () => {} }}
+			handleSoundChange={{ desktopSound: () => undefined }}
 		/>
 	</VerticalBar>
 );

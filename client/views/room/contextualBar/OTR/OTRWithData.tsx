@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback, ReactElement } from 'react';
 
 import { OTR as ORTInstance } from '../../../../../app/otr/client/rocketchat.otr';
 import { useSetModal } from '../../../../contexts/ModalContext';
@@ -9,7 +9,7 @@ import { useReactiveValue } from '../../../../hooks/useReactiveValue';
 import OTR from './OTR';
 import OTRModal from './OTRModal';
 
-const OTRWithData = ({ rid, tabBar }) => {
+const OTRWithData = ({ rid, tabBar }): ReactElement => {
 	const onClickClose = useMutableCallback(() => tabBar?.close());
 
 	const setModal = useSetModal();
@@ -27,13 +27,13 @@ const OTRWithData = ({ rid, tabBar }) => {
 
 	const isOnline = !['offline', 'loading'].includes(userStatus);
 
-	const handleStart = () => {
+	const handleStart = (): void => {
 		otr.handshake();
 	};
 
-	const handleEnd = () => otr?.end();
+	const handleEnd = (): void => otr?.end();
 
-	const handleReset = () => {
+	const handleReset = (): void => {
 		otr.reset();
 		otr.handshake(true);
 	};
@@ -52,7 +52,7 @@ const OTRWithData = ({ rid, tabBar }) => {
 			setModal(<OTRModal onConfirm={closeModal} onCancel={closeModal} />);
 		}, 10000);
 
-		return () => clearTimeout(timeout);
+		return (): void => clearTimeout(timeout);
 	}, [closeModal, isEstablished, isEstablishing, setModal, otr]);
 
 	return (

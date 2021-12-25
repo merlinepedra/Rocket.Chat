@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { PaginatedSelectFiltered } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, ReactElement, useMemo, useState } from 'react';
 
 import { useRecordList } from '../hooks/lists/useRecordList';
 import { AsyncStatePhase } from '../lib/asyncState';
 import { useAgentsList } from './Omnichannel/hooks/useAgentsList';
 
-const AutoCompleteAgent = (props) => {
-	const { value, onChange = () => {}, haveAll = false } = props;
+const AutoCompleteAgent = (props): ReactElement => {
+	const { value, onChange = (): void => undefined, haveAll = false } = props;
 	const [agentsFilter, setAgentsFilter] = useState('');
 
 	const debouncedAgentsFilter = useDebouncedValue(agentsFilter, 500);
@@ -48,8 +48,8 @@ const AutoCompleteAgent = (props) => {
 			options={sortedByName}
 			endReached={
 				agentsPhase === AsyncStatePhase.LOADING
-					? () => {}
-					: (start) => loadMoreAgents(start, Math.min(50, agentsTotal))
+					? (): void => undefined
+					: (start): void => loadMoreAgents(start, Math.min(50, agentsTotal))
 			}
 		/>
 	);

@@ -11,7 +11,7 @@ import {
 	Select,
 	Accordion,
 } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import { integrations as eventList } from '../../../../app/integrations/lib/rocketchat';
 import Page from '../../../components/Page';
@@ -21,7 +21,12 @@ import { useExampleData } from './exampleIncomingData';
 
 const { outgoingEvents } = eventList;
 
-export default function OutgoingWebhookForm({ formValues, formHandlers, append, ...props }) {
+export default function OutgoingWebhookForm({
+	formValues,
+	formHandlers,
+	append,
+	...props
+}): ReactElement {
 	const t = useTranslation();
 
 	const {

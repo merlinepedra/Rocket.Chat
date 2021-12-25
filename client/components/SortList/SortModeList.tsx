@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { RadioButton, OptionTitle } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useMethod } from '../../contexts/ServerContext';
 import { useTranslation } from '../../contexts/TranslationContext';
@@ -16,12 +16,12 @@ const checkBoxStyle = {
 	paddingInlineStart: '24px',
 };
 
-function SortModeList() {
+function SortModeList(): ReactElement {
 	const t = useTranslation();
 	const saveUserPreferences = useMethod('saveUserPreferences');
 	const sidebarSortBy = useUserPreference('sidebarSortby', 'activity');
 
-	const useHandleChange = (value) =>
+	const useHandleChange = (value): (() => void) =>
 		useCallback(() => saveUserPreferences({ sidebarSortby: value }), [value]);
 
 	const setToAlphabetical = useHandleChange('alphabetical');

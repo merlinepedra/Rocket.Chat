@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Skeleton } from '@rocket.chat/fuselage';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../../hooks/useAsyncState';
 import CounterItem from './CounterItem';
 import CounterRow from './CounterRow';
 
-const CounterContainer = ({ data, state, initialData, ...props }) => {
+const CounterContainer = ({ data, state, initialData, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const [displayData, setDisplayData] = useState(initialData);

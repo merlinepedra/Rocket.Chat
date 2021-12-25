@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ActionButton, Box, Icon, Option, Tag } from '@rocket.chat/fuselage';
 import { usePrefersReducedMotion } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { roomTypes } from '../../../../../app/utils/client';
 import RoomAvatar from '../../../../components/avatar/RoomAvatar';
@@ -10,7 +10,7 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import { usePreventProgation } from '../../../../hooks/usePreventProgation';
 import RoomActions from './RoomActions';
 
-const TeamsChannelItem = ({ room, onClickView, reload }) => {
+const TeamsChannelItem = ({ room, onClickView, reload }): ReactElement => {
 	const t = useTranslation();
 	const rid = room._id;
 	const type = room.t;

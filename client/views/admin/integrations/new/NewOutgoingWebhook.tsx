@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Field, Button } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import { useRoute } from '../../../../contexts/RouterContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -35,10 +35,10 @@ const defaultData = {
 
 export default function NewOutgoingWebhook({
 	data = defaultData,
-	onChange,
-	setSaveAction,
+	onChange: _onChange,
+	setSaveAction: _setSaveAction,
 	...props
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const router = useRoute('admin-integrations');
 

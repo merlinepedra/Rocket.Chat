@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import UserCard from '../../../../../components/UserCard';
 import { UserStatus } from '../../../../../components/UserStatus';
@@ -13,7 +13,7 @@ import Info from '../../../components/Info';
 import Label from '../../../components/Label';
 import { FormSkeleton } from '../../Skeleton';
 
-const AgentField = ({ agent }) => {
+const AgentField = ({ agent }): ReactElement => {
 	const t = useTranslation();
 	const { username } = agent;
 	const { value, phase: state } = useEndpointData(`users.info?username=${username}`);

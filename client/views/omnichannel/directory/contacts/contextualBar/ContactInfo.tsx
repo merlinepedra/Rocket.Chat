@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Margins, ButtonGroup, Button, Icon } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { hasPermission } from '../../../../../../app/authorization/client';
 import ContactManagerInfo from '../../../../../../ee/client/omnichannel/ContactManagerInfo';
@@ -21,7 +21,7 @@ import Info from '../../../components/Info';
 import Label from '../../../components/Label';
 import { FormSkeleton } from '../../Skeleton';
 
-const ContactInfo = ({ id, rid, route }) => {
+const ContactInfo = ({ id, rid, route }): ReactElement => {
 	const t = useTranslation();
 	const routePath = useRoute(route || 'omnichannel-directory');
 
@@ -34,7 +34,7 @@ const ContactInfo = ({ id, rid, route }) => {
 
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	const canViewCustomFields = () => hasPermission('view-livechat-room-customfields');
+	const canViewCustomFields = (): boolean => hasPermission('view-livechat-room-customfields');
 
 	const onEditButtonClick = useMutableCallback(() => {
 		if (!hasPermission('edit-omnichannel-contact')) {
@@ -88,7 +88,7 @@ const ContactInfo = ({ id, rid, route }) => {
 		contact: { name, username, visitorEmails, phone, livechatData, ts, lastChat, contactManager },
 	} = data;
 
-	const checkIsVisibleAndScopeVisitor = (key) => {
+	const checkIsVisibleAndScopeVisitor = (key): boolean => {
 		const field = customFields.find(({ _id }) => _id === key);
 		if (field && field.visibility === 'visible' && field.scope === 'visitor') {
 			return true;
@@ -96,7 +96,7 @@ const ContactInfo = ({ id, rid, route }) => {
 		return false;
 	};
 
-	const onChatHistory = () => {
+	const onChatHistory = (): void => {
 		const { _id } = lastChat;
 		liveRoute.push({ id: _id, tab: 'contact-chat-history' });
 	};

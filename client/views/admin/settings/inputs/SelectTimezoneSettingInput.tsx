@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Field, Flex, Select } from '@rocket.chat/fuselage';
 import moment from 'moment-timezone';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import ResetSettingButton from '../ResetSettingButton';
 
@@ -16,8 +16,8 @@ function SelectTimezoneSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
-	const handleChange = (value) => {
+}): ReactElement {
+	const handleChange = (value): void => {
 		onChangeValue?.(value);
 	};
 

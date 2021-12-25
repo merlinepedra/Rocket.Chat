@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, ReactElement } from 'react';
 
 import { drawDoughnutChart } from '../../../../../app/livechat/client/lib/chartHandler';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -17,7 +17,7 @@ const initialData = {
 	closed: 0,
 };
 
-const init = (canvas, context, t) =>
+const init = (canvas, context, t): Promise<unknown> =>
 	drawDoughnutChart(
 		canvas,
 		t('Chats'),
@@ -26,7 +26,7 @@ const init = (canvas, context, t) =>
 		Object.values(initialData),
 	);
 
-const ChatsChart = ({ params, reloadRef, ...props }) => {
+const ChatsChart = ({ params, reloadRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const canvas = useRef();
@@ -50,7 +50,7 @@ const ChatsChart = ({ params, reloadRef, ...props }) => {
 	const { open, queued, closed, onhold } = data ?? initialData;
 
 	useEffect(() => {
-		const initChart = async () => {
+		const initChart = async (): Promise<void> => {
 			context.current = await init(canvas.current, context.current, t);
 		};
 		initChart();

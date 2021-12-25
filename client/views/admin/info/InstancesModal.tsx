@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Modal, ButtonGroup, Button, Accordion } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFormatDateAndTime } from '../../../hooks/useFormatDateAndTime';
 import DescriptionList from './DescriptionList';
 
-const InstancesModal = ({ instances = [], onClose }) => {
+const InstancesModal = ({ instances = [], onClose }): ReactElement => {
 	const t = useTranslation();
 
 	const formatDateAndTime = useFormatDateAndTime();

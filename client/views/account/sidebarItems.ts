@@ -19,14 +19,14 @@ export const {
 		pathGroup: 'profile',
 		i18nLabel: 'Profile',
 		icon: 'user',
-		permissionGranted: () => settings.get('Accounts_AllowUserProfileChange'),
+		permissionGranted: (): boolean => settings.get('Accounts_AllowUserProfileChange'),
 	},
 	{
 		pathSection: 'account',
 		pathGroup: 'security',
 		i18nLabel: 'Security',
 		icon: 'lock',
-		permissionGranted: () =>
+		permissionGranted: (): boolean =>
 			settings.get('Accounts_TwoFactorAuthentication_Enabled') || settings.get('E2E_Enable'),
 	},
 	{
@@ -34,13 +34,13 @@ export const {
 		pathGroup: 'integrations',
 		i18nLabel: 'Integrations',
 		icon: 'code',
-		permissionGranted: () => settings.get('Webdav_Integration_Enabled'),
+		permissionGranted: (): boolean => settings.get('Webdav_Integration_Enabled'),
 	},
 	{
 		pathSection: 'account',
 		pathGroup: 'tokens',
 		i18nLabel: 'Personal_Access_Tokens',
 		icon: 'key',
-		permissionGranted: () => hasPermission('create-personal-access-tokens'),
+		permissionGranted: (): boolean => hasPermission('create-personal-access-tokens'),
 	},
 ]);

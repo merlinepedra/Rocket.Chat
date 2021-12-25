@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Callout } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import PageSkeleton from '../../../components/PageSkeleton';
@@ -10,7 +10,7 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import EditCustomFieldsPage from './EditCustomFieldsPage';
 
-const EditCustomFieldsPageContainer = ({ reload }) => {
+const EditCustomFieldsPageContainer = ({ reload }): ReactElement => {
 	const t = useTranslation();
 	const id = useRouteParameter('id');
 

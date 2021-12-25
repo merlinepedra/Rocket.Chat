@@ -1,12 +1,12 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useTabBarClose } from '../providers/ToolboxProvider';
 import BlazeTemplate from './BlazeTemplate';
 
-const VerticalBarOldActions = ({ name, icon, tabBar, title, ...props }) => {
+const VerticalBarOldActions = ({ name, icon, tabBar, title, ...props }): ReactElement => {
 	const close = useTabBarClose();
 	const t = useTranslation();
 

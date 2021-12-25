@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import GenericTable from '../../../components/GenericTable';
@@ -10,17 +10,26 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import UserRow from './UserRow';
 
-function UsersInRoleTable({ data, reload, roleName, description, total, params, setParams, rid }) {
+function UsersInRoleTable({
+	data,
+	reload,
+	roleName,
+	description,
+	total,
+	params,
+	setParams,
+	rid,
+}): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
 	const setModal = useSetModal();
-	const closeModal = () => setModal();
+	const closeModal = (): void => setModal();
 
 	const removeUser = useEndpoint('POST', 'roles.removeUserFromRole');
 
 	const onRemove = useMutableCallback((username) => {
-		const remove = async () => {
+		const remove = async (): Promise<void> => {
 			try {
 				await removeUser({ roleName, username, rid });
 				dispatchToastMessage({ type: 'success', message: t('User_removed') });
@@ -57,7 +66,7 @@ function UsersInRoleTable({ data, reload, roleName, description, total, params, 
 			setParams={setParams}
 			total={total}
 		>
-			{(props) => <UserRow onRemove={onRemove} key={props._id} {...props} />}
+			{(props): ReactElement => <UserRow onRemove={onRemove} key={props._id} {...props} />}
 		</GenericTable>
 	);
 }

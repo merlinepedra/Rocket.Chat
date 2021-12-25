@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, CheckBox } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericTable from '../../../../../components/GenericTable';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -13,7 +13,7 @@ const ChannelDeletionTable = ({
 	onChangeRoomSelection,
 	selectedRooms,
 	onToggleAllRooms,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	const selectedRoomsLength = Object.values(selectedRooms).filter(Boolean).length;
@@ -47,7 +47,7 @@ const ChannelDeletionTable = ({
 				fixed={false}
 				pagination={false}
 			>
-				{({ key, ...room }) => (
+				{({ key, ...room }): ReactElement => (
 					<ChannelRow
 						room={room}
 						key={key}

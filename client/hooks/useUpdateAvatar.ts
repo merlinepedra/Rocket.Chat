@@ -7,7 +7,7 @@ import { useTranslation } from '../contexts/TranslationContext';
 import { useEndpointAction } from './useEndpointAction';
 import { useEndpointUpload } from './useEndpointUpload';
 
-export const useUpdateAvatar = (avatarObj, userId) => {
+export const useUpdateAvatar = (avatarObj, userId): unknown => {
 	const t = useTranslation();
 	const avatarUrl = avatarObj?.avatarUrl;
 

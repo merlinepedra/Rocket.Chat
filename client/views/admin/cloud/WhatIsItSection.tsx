@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Subtitle from '../../../components/Subtitle';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function WhatIsItSection(props) {
+function WhatIsItSection(props): ReactElement {
 	const t = useTranslation();
 
 	return (

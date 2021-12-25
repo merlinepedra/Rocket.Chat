@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Icon, Modal } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../../../contexts/TranslationContext';
 
-export const CallModal = ({ handleYes, handleCancel }) => {
+export const CallModal = ({ handleYes, handleCancel }): ReactElement => {
 	const t = useTranslation();
 
 	return (

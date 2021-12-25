@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Accordion, Box, Button, ButtonGroup, Skeleton } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import Page from '../../../components/Page';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import Section from './Section';
 
-function GroupPageSkeleton() {
+function GroupPageSkeleton(): ReactElement {
 	const t = useTranslation();
 
 	return (

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, ButtonGroup, Button, Margins } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import VerticalBar from '../../../components/VerticalBar';
@@ -13,7 +13,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useForm } from '../../../hooks/useForm';
 import RoleForm from './RoleForm';
 
-const EditRolePage = ({ data }) => {
+const EditRolePage = ({ data }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setModal = useSetModal();
@@ -49,7 +49,7 @@ const EditRolePage = ({ data }) => {
 	});
 
 	const handleDelete = useMutableCallback(async () => {
-		const deleteRoleAction = async () => {
+		const deleteRoleAction = async (): Promise<void> => {
 			try {
 				await deleteRole({ roleId: data._id });
 				dispatchToastMessage({ type: 'success', message: t('Role_removed') });
@@ -65,8 +65,8 @@ const EditRolePage = ({ data }) => {
 			<GenericModal
 				variant='danger'
 				onConfirm={deleteRoleAction}
-				onClose={() => setModal()}
-				onCancel={() => setModal()}
+				onClose={(): void => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			>
 				{t('Delete_Role_Warning')}

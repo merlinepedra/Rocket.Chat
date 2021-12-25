@@ -55,15 +55,15 @@ export const Menu = () => (
 			menuOptions={{
 				hide: {
 					label: { label: 'Hide', icon: 'eye-off' },
-					action: () => {},
+					action: () => undefined,
 				},
 				read: {
 					label: { label: 'Mark_read', icon: 'flag' },
-					action: () => {},
+					action: () => undefined,
 				},
 				favorite: {
 					label: { label: 'Favorite', icon: 'star' },
-					action: () => {},
+					action: () => undefined,
 				},
 			}}
 		/>

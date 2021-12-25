@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { FieldGroup, Box } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { businessHourManager } from '../../../../app/livechat/client/views/app/business-hours/BusinessHours';
@@ -10,12 +10,12 @@ import { useReactiveValue } from '../../../hooks/useReactiveValue';
 import { formsSubscription } from '../additionalForms';
 import BusinessHourForm from './BusinessHoursForm';
 
-const useChangeHandler = (name, ref) =>
+const useChangeHandler = (name, ref): unknown =>
 	useMutableCallback((val) => {
 		ref.current[name] = { ...ref.current[name], ...val };
 	});
 
-const getInitalData = ({ workHours }) => ({
+const getInitalData = ({ workHours }): unknown => ({
 	daysOpen: workHours.filter(({ open }) => !!open).map(({ day }) => day),
 	daysTime: workHours.reduce((acc, { day, start: { time: start }, finish: { time: finish } }) => {
 		acc = { ...acc, [day]: { start, finish } };
@@ -23,9 +23,13 @@ const getInitalData = ({ workHours }) => ({
 	}, {}),
 });
 
-const cleanFunc = () => {};
+const cleanFunc = (): void => undefined;
 
-const BusinessHoursFormContainer = ({ data, saveRef, onChange = () => {} }) => {
+const BusinessHoursFormContainer = ({
+	data,
+	saveRef,
+	onChange = (): void => undefined,
+}): ReactElement => {
 	const forms = useSubscription(formsSubscription);
 
 	const [hasChangesMultiple, setHasChangesMultiple] = useState(false);

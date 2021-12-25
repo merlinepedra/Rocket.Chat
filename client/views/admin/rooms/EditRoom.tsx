@@ -11,7 +11,7 @@ import {
 	TextAreaInput,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 
 import { roomTypes, RoomSettingsEnum } from '../../../../app/utils/client';
 import GenericModal from '../../../components/GenericModal';
@@ -24,7 +24,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointActionExperimental } from '../../../hooks/useEndpointActionExperimental';
 import { useForm } from '../../../hooks/useForm';
 
-const getInitialValues = (room) => ({
+const getInitialValues = (room): unknown => ({
 	roomName:
 		room.t === 'd'
 			? room.usernames.join(' x ')
@@ -41,7 +41,7 @@ const getInitialValues = (room) => ({
 	roomAvatar: undefined,
 });
 
-function EditRoom({ room, onChange }) {
+function EditRoom({ room, onChange }): ReactElement {
 	const t = useTranslation();
 
 	const [deleted, setDeleted] = useState(false);
@@ -118,7 +118,7 @@ function EditRoom({ room, onChange }) {
 	);
 
 	const handleSave = useMutableCallback(async () => {
-		const save = () =>
+		const save = (): void =>
 			saveAction({
 				rid: room._id,
 				roomName: roomType === 'd' ? undefined : roomName,
@@ -133,7 +133,7 @@ function EditRoom({ room, onChange }) {
 				roomAvatar,
 			});
 
-		const archive = () => archiveAction({ rid: room._id, action: archiveSelector });
+		const archive = (): void => archiveAction({ rid: room._id, action: archiveSelector });
 
 		await Promise.all(
 			[hasUnsavedChanges && save(), changeArchivation && archive()].filter(Boolean),
@@ -148,8 +148,8 @@ function EditRoom({ room, onChange }) {
 	const deleteRoom = useMethod('eraseRoom');
 
 	const handleDelete = useMutableCallback(() => {
-		const onCancel = () => setModal(undefined);
-		const onConfirm = async () => {
+		const onCancel = (): void => setModal(undefined);
+		const onConfirm = async (): Promise<void> => {
 			await deleteRoom(room._id);
 			onCancel();
 			setDeleted(true);

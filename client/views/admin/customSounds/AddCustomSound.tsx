@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, TextInput, Box, Icon, Margins, Button, ButtonGroup } from '@rocket.chat/fuselage';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -9,7 +9,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFileInput } from '../../../hooks/useFileInput';
 import { validate, createSoundData } from './lib';
 
-function AddCustomSound({ goToNew, close, onChange, ...props }) {
+function AddCustomSound({ goToNew, close, onChange, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -46,7 +46,7 @@ function AddCustomSound({ goToNew, close, onChange, ...props }) {
 
 					const reader = new FileReader();
 					reader.readAsBinaryString(soundFile);
-					reader.onloadend = () => {
+					reader.onloadend = (): void => {
 						try {
 							uploadCustomSound(reader.result, soundFile.type, soundData);
 							dispatchToastMessage({ type: 'success', message: t('File_uploaded') });
@@ -85,7 +85,7 @@ function AddCustomSound({ goToNew, close, onChange, ...props }) {
 				<Field.Row>
 					<TextInput
 						value={name}
-						onChange={(e) => setName(e.currentTarget.value)}
+						onChange={(e): void => setName(e.currentTarget.value)}
 						placeholder={t('Name')}
 					/>
 				</Field.Row>

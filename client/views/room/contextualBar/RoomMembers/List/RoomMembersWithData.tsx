@@ -4,7 +4,7 @@ import {
 	useDebouncedValue,
 	useLocalStorage,
 } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { ReactElement, useCallback, useMemo, useState } from 'react';
 
 import { useAtLeastOnePermission } from '../../../../../contexts/AuthorizationContext';
 import { useUserRoom } from '../../../../../contexts/UserContext';
@@ -17,7 +17,7 @@ import AddUsers from '../AddUsers';
 import InviteUsers from '../InviteUsers';
 import RoomMembers from './RoomMembers';
 
-const RoomMembersWithData = ({ rid }) => {
+const RoomMembersWithData = ({ rid }): ReactElement => {
 	const [state, setState] = useState({});
 	const onClickClose = useTabBarClose();
 	const room = useUserRoom(rid);

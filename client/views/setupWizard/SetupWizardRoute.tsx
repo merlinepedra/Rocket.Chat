@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { useRole } from '../../contexts/AuthorizationContext';
 import { useRoute } from '../../contexts/RouterContext';
@@ -8,7 +8,7 @@ import { useSetting } from '../../contexts/SettingsContext';
 import { useUserId, useUser } from '../../contexts/UserContext';
 import SetupWizardState from './SetupWizardState';
 
-const useRouteLock = () => {
+const useRouteLock = (): boolean => {
 	const [locked, setLocked] = useState(true);
 	const setupWizardState = useSetting('Show_Setup_Wizard');
 	const userId = useUserId();
@@ -42,7 +42,7 @@ const useRouteLock = () => {
 	return locked;
 };
 
-export function SetupWizardRoute() {
+export function SetupWizardRoute(): ReactElement {
 	const locked = useRouteLock();
 
 	if (locked) {

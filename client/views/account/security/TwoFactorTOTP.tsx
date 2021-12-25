@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, TextInput, Margins } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, ReactElement } from 'react';
 import qrcode from 'yaqrcode';
 
 import TextCopy from '../../../components/TextCopy';
@@ -14,7 +14,7 @@ import { useUser } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 import BackupCodesModal from './BackupCodesModal';
 
-const TwoFactorTOTP = (props) => {
+const TwoFactorTOTP = (props): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const user = useUser();
@@ -41,7 +41,7 @@ const TwoFactorTOTP = (props) => {
 	const closeModal = useCallback(() => setModal(null), [setModal]);
 
 	useEffect(() => {
-		const updateCodesRemaining = async () => {
+		const updateCodesRemaining = async (): Promise<void> => {
 			if (!totpEnabled) {
 				return false;
 			}
@@ -65,7 +65,7 @@ const TwoFactorTOTP = (props) => {
 	}, [dispatchToastMessage, enableTotpFn, setQrCode, setRegisteringTotp, setTotpSecret]);
 
 	const handleDisableTotp = useCallback(async () => {
-		const onDisable = async (authCode) => {
+		const onDisable = async (authCode): Promise<void> => {
 			try {
 				const result = await disableTotpFn(authCode);
 
@@ -97,7 +97,7 @@ const TwoFactorTOTP = (props) => {
 	}, [authCode, closeModal, dispatchToastMessage, setModal, t, verifyCodeFn]);
 
 	const handleRegenerateCodes = useCallback(() => {
-		const onRegenerate = async (authCode) => {
+		const onRegenerate = async (authCode): Promise<void> => {
 			try {
 				const result = await regenerateCodesFn(authCode);
 

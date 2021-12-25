@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { ComponentType, ReactElement, useCallback, useMemo, useState } from 'react';
 
 import { useUserId, useUserSubscription } from '../../../../contexts/UserContext';
 import { useRecordList } from '../../../../hooks/lists/useRecordList';
@@ -12,8 +12,8 @@ import { useDiscussionsList } from './useDiscussionsList';
 const subscriptionFields = { tunread: 1, tunreadUser: 1, tunreadGroup: 1 };
 const roomFields = { t: 1, name: 1 };
 
-export function withData(Component) {
-	const WrappedComponent = ({ rid, ...props }) => {
+export function withData(Component): ComponentType {
+	const WrappedComponent = ({ rid, ...props }): ReactElement => {
 		const room = useUserRoom(rid, roomFields);
 		const subscription = useUserSubscription(rid, subscriptionFields);
 		const userId = useUserId();

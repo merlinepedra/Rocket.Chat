@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Table } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import DescriptionListEntry from './DescriptionListEntry';
 
-const DescriptionList = ({ children, title, ...props }) => (
+const DescriptionList = ({ children, title, ...props }): ReactElement => (
 	<>
 		{title && (
 			<Box display='flex' justifyContent='flex-end' width='30%' paddingInline='x8'>

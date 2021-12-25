@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 
 import { StepOne, StepTwo } from '.';
 
 const STEPS = { LIST_ROOMS: 'LIST_ROOMS', CONFIRM_DELETE: 'CONFIRM_DELETE' };
 
-export const DeleteTeamModal = ({ onCancel, onConfirm, rooms }) => {
+export const DeleteTeamModal = ({ onCancel, onConfirm, rooms }): ReactElement => {
 	const hasRooms = rooms?.length > 0;
 
 	const [step, setStep] = useState(hasRooms ? STEPS.LIST_ROOMS : STEPS.CONFIRM_DELETE);
@@ -66,7 +66,7 @@ export const DeleteTeamModal = ({ onCancel, onConfirm, rooms }) => {
 			params={{}}
 			selectedRooms={deletedRooms}
 			onToggleAllRooms={onToggleAllRooms}
-			onChangeParams={(...args) => console.log(args)}
+			onChangeParams={(...args): void => console.log(args)}
 			onConfirm={onSelectRooms}
 			onChangeRoomSelection={onChangeRoomSelection}
 		/>

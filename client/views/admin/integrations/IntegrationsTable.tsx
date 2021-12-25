@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedValue, useResizeObserver } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, Ref, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -9,7 +9,7 @@ import { useEndpointData } from '../../../hooks/useEndpointData';
 import FilterByTypeAndText from './FilterByTypeAndText';
 import IntegrationRow from './IntegrationRow';
 
-const useQuery = ({ text, type, itemsPerPage, current }, [column, direction]) =>
+const useQuery = ({ text, type, itemsPerPage, current }, [column, direction]): unknown =>
 	useMemo(
 		() => ({
 			query: JSON.stringify({ name: { $regex: text || '', $options: 'i' }, type }),
@@ -20,7 +20,10 @@ const useQuery = ({ text, type, itemsPerPage, current }, [column, direction]) =>
 		[column, current, direction, itemsPerPage, text, type],
 	);
 
-const useResizeInlineBreakpoint = (sizes = [], debounceDelay = 0) => {
+const useResizeInlineBreakpoint = (
+	sizes = [],
+	debounceDelay = 0,
+): [ref: Ref, ...sizes: unknown[]] => {
 	const { ref, borderBoxSize } = useResizeObserver({ debounceDelay });
 	const inlineSize = borderBoxSize ? borderBoxSize.inlineSize : 0;
 	sizes = useMemo(
@@ -30,7 +33,7 @@ const useResizeInlineBreakpoint = (sizes = [], debounceDelay = 0) => {
 	return [ref, ...sizes];
 };
 
-function IntegrationsTable({ type }) {
+function IntegrationsTable({ type }): ReactElement {
 	const t = useTranslation();
 	const [ref, isBig] = useResizeInlineBreakpoint([700], 200);
 
@@ -46,7 +49,7 @@ function IntegrationsTable({ type }) {
 	const router = useRoute('admin-integrations');
 
 	const onClick = useCallback(
-		(_id, type) => () =>
+		(_id, type) => (): void =>
 			router.push({
 				context: 'edit',
 				type: type === 'webhook-incoming' ? 'incoming' : 'outgoing',
@@ -137,7 +140,7 @@ function IntegrationsTable({ type }) {
 			total={data?.total}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByTypeAndText setFilter={onChange} {...props} />
 			)}
 		/>

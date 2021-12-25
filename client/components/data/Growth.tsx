@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NegativeGrowthSymbol from './NegativeGrowthSymbol';
 import PositiveGrowthSymbol from './PositiveGrowthSymbol';
 
-function Growth({ children, ...props }) {
+function Growth({ children, ...props }): ReactElement | null {
 	if (children === 0) {
 		return null;
 	}

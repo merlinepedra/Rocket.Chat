@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Box, Button, Margins } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUser } from '../../../contexts/UserContext';
 import { useEndpointAction } from '../../../hooks/useEndpointAction';
 
-const TwoFactorEmail = (props) => {
+const TwoFactorEmail = (props): ReactElement => {
 	const t = useTranslation();
 	const user = useUser();
 

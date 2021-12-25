@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { TextInput } from '@rocket.chat/fuselage';
 import { useMutableCallback, useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const FilterComponent = ({ onChange }) => {
+const FilterComponent = ({ onChange }): ReactElement => {
 	const t = useTranslation();
 	const [filter, setFilter] = useState('');
 

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 
 import { SideNav } from '../../../app/ui-utils/client';
 import NotAuthorizedPage from '../../components/NotAuthorizedPage';
@@ -13,7 +13,7 @@ import AccountSecurityPage from './security/AccountSecurityPage';
 import AccountTokensPage from './tokens/AccountTokensPage';
 import './sidebarItems';
 
-const AccountRoute = () => {
+const AccountRoute = (): ReactElement => {
 	const [routeName] = useCurrentRoute();
 	const page = useRouteParameter('group');
 	const router = useRoute('account');

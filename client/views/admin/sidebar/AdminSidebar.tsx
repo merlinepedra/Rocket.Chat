@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useCallback, useMemo, useEffect, memo } from 'react';
+import React, { useCallback, useMemo, useEffect, memo, ReactElement } from 'react';
 
 import { menu, SideNav } from '../../../../app/ui-utils/client';
 import PlanTag from '../../../components/PlanTag';
@@ -12,7 +12,7 @@ import SettingsProvider from '../../../providers/SettingsProvider';
 import AdminSidebarPages from './AdminSidebarPages';
 import AdminSidebarSettings from './AdminSidebarSettings';
 
-function AdminSidebar() {
+function AdminSidebar(): ReactElement {
 	const t = useTranslation();
 
 	const canViewSettings = useAtLeastOnePermission(

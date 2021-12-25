@@ -8,7 +8,7 @@ import {
 	Icon,
 	Box,
 } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useSetModal } from '../../../contexts/ModalContext';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -16,7 +16,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import MyDataModal from './MyDataModal';
 
-const PreferencesMyDataSection = ({ onChange, ...props }) => {
+const PreferencesMyDataSection = ({ onChange: _onChange, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const setModal = useSetModal();
@@ -33,6 +33,7 @@ const PreferencesMyDataSection = ({ onChange, ...props }) => {
 				const result = await requestDataDownload({ fullExport });
 				if (result.requested) {
 					const text = t('UserDataDownload_Requested_Text', {
+						// eslint-disable-next-line @typescript-eslint/camelcase
 						pending_operations: result.pendingOperationsBeforeMyRequest,
 					});
 					setModal(
@@ -49,6 +50,7 @@ const PreferencesMyDataSection = ({ onChange, ...props }) => {
 					if (result.exportOperation.status === 'completed') {
 						const text = result.url
 							? t('UserDataDownload_CompletedRequestExistedWithLink_Text', {
+									// eslint-disable-next-line @typescript-eslint/camelcase
 									download_link: result.url,
 							  })
 							: t('UserDataDownload_CompletedRequestExisted_Text');
@@ -65,6 +67,7 @@ const PreferencesMyDataSection = ({ onChange, ...props }) => {
 					}
 
 					const text = t('UserDataDownload_RequestExisted_Text', {
+						// eslint-disable-next-line @typescript-eslint/camelcase
 						pending_operations: result.pendingOperationsBeforeMyRequest,
 					});
 					setModal(

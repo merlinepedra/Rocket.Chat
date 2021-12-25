@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -15,7 +15,7 @@ export const StepTwo = ({
 	onConfirm,
 	onCancel,
 	selectedRooms,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (
@@ -40,7 +40,7 @@ export const StepTwo = ({
 				onToggleAllRooms={onToggleAllRooms}
 				rooms={rooms}
 				params={{}}
-				onChangeParams={() => {}}
+				onChangeParams={(): void => undefined}
 				onChangeRoomSelection={onChangeRoomSelection}
 				selectedRooms={selectedRooms}
 			/>

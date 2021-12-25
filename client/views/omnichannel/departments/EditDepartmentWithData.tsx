@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { FormSkeleton } from '../../../components/Skeleton';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import EditDepartment from './EditDepartment';
 import EditDepartmentWithAllowedForwardData from './EditDepartmentWithAllowedForwardData';
 
 const param = { onlyMyDepartments: true };
-function EditDepartmentWithData({ id, reload, title }) {
+function EditDepartmentWithData({ id, reload, title }): ReactElement {
 	const t = useTranslation();
 	const { value: data, phase: state, error } = useEndpointData(`livechat/department/${id}`, param);
 

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, CheckBox, Field, Margins } from '@rocket.chat/fuselage';
 import { useAutoFocus, useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useMethod } from '../../../contexts/ServerContext';
 import { useSettingsDispatch } from '../../../contexts/SettingsContext';
@@ -15,7 +15,7 @@ import Item from './Item';
 import Items from './Items';
 import Option from './Option';
 
-function RegisterServerStep({ step, title, active }) {
+function RegisterServerStep({ step, title, active }): ReactElement {
 	const { canDeclineServerRegistration, goToPreviousStep, goToFinalStep } = useSetupWizardContext();
 
 	const [registerServer, setRegisterServer] = useState(true);
@@ -32,11 +32,11 @@ function RegisterServerStep({ step, title, active }) {
 
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	const handleBackClick = () => {
+	const handleBackClick = (): void => {
 		goToPreviousStep();
 	};
 
-	const handleSubmit = async (event) => {
+	const handleSubmit = async (event): Promise<void> => {
 		event.preventDefault();
 
 		setComitting(true);
@@ -104,7 +104,7 @@ function RegisterServerStep({ step, title, active }) {
 							name='registerServer'
 							value='true'
 							selected={registerServer}
-							onChange={({ currentTarget: { checked } }) => {
+							onChange={({ currentTarget: { checked } }): void => {
 								setRegisterServer(checked);
 								setOptInMarketingEmails(checked);
 							}}
@@ -123,7 +123,7 @@ function RegisterServerStep({ step, title, active }) {
 										value='true'
 										disabled={!registerServer}
 										checked={optInMarketingEmails}
-										onChange={({ currentTarget: { checked } }) => {
+										onChange={({ currentTarget: { checked } }): void => {
 											setOptInMarketingEmails(checked);
 										}}
 									/>
@@ -140,7 +140,7 @@ function RegisterServerStep({ step, title, active }) {
 							value='false'
 							disabled={!canDeclineServerRegistration}
 							selected={!registerServer}
-							onChange={({ currentTarget: { checked } }) => {
+							onChange={({ currentTarget: { checked } }): void => {
 								setRegisterServer(!checked);
 								setOptInMarketingEmails(!checked);
 								setAgreeTermsAndPrivacy(!checked);
@@ -162,7 +162,7 @@ function RegisterServerStep({ step, title, active }) {
 										data-qa='agree-terms-and-privacy'
 										disabled={!registerServer}
 										checked={agreeTermsAndPrivacy}
-										onChange={({ currentTarget: { checked } }) => {
+										onChange={({ currentTarget: { checked } }): void => {
 											setAgreeTermsAndPrivacy(checked);
 										}}
 									/>

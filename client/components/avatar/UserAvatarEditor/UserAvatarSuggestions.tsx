@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Button, Margins, Avatar } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 function UserAvatarSuggestions({
 	suggestions,
@@ -8,9 +8,9 @@ function UserAvatarSuggestions({
 	setNewAvatarSource,
 	disabled,
 	...props
-}) {
+}): ReactElement {
 	const handleClick = useCallback(
-		(suggestion) => () => {
+		(suggestion) => (): void => {
 			setAvatarObj(suggestion);
 			setNewAvatarSource(suggestion.blob);
 		},

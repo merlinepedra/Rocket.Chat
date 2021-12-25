@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Box, Margins } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import TeamAutocomplete from '../../../../teams/contextualBar/TeamAutocomplete';
 
-const StepOne = ({ teamId = '', onChange, onClose, onCancel, onConfirm }) => {
+const StepOne = ({ teamId = '', onChange, onClose, onCancel, onConfirm }): ReactElement => {
 	const t = useTranslation();
 
 	return (

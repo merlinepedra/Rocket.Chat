@@ -4,19 +4,19 @@
 // fuselage release is OoS of this regression
 import { PaginatedSelectFiltered } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, ReactElement, useMemo, useState } from 'react';
 
 import { useTranslation } from '../contexts/TranslationContext';
 import { useRecordList } from '../hooks/lists/useRecordList';
 import { AsyncStatePhase } from '../hooks/useAsyncState';
 import { useDepartmentsList } from './Omnichannel/hooks/useDepartmentsList';
 
-const AutoCompleteDepartment = (props) => {
+const AutoCompleteDepartment = (props): ReactElement => {
 	const {
 		value,
 		excludeDepartmentId,
 		onlyMyDepartments = false,
-		onChange = () => {},
+		onChange = (): void => undefined,
 		haveAll = false,
 		haveNone = false,
 	} = props;
@@ -76,8 +76,8 @@ const AutoCompleteDepartment = (props) => {
 			placeholder={t('Select_an_option')}
 			endReached={
 				departmentsPhase === AsyncStatePhase.LOADING
-					? () => {}
-					: (start) => loadMoreDepartments(start, Math.min(50, departmentsTotal))
+					? (): void => undefined
+					: (start): void => loadMoreDepartments(start, Math.min(50, departmentsTotal))
 			}
 		/>
 	);

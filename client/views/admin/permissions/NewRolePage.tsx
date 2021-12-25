@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, ButtonGroup, Button, Margins } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -11,7 +11,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useForm } from '../../../hooks/useForm';
 import RoleForm from './RoleForm';
 
-const NewRolePage = () => {
+const NewRolePage = (): ReactElement => {
 	const t = useTranslation();
 	const router = useRoute('admin-permissions');
 	const dispatchToastMessage = useToastMessageDispatch();

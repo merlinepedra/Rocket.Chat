@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box, NumberInput } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function Order({ agentId, setAgentList, agentList }) {
+function Order({ agentId, setAgentList, agentList }): ReactElement {
 	const t = useTranslation();
 	const [agentOrder, setAgentOrder] = useState(
 		agentList.find((agent) => agent.agentId === agentId).order || 0,

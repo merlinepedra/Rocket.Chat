@@ -1,11 +1,15 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { formatPricingPlan, formatPrice } from './helpers';
 
-const formatPriceAndPurchaseType = (purchaseType, pricingPlans, price) => {
+const formatPriceAndPurchaseType = (
+	purchaseType,
+	pricingPlans,
+	price,
+): { type: string; price: string } => {
 	if (purchaseType === 'subscription') {
 		const type = 'Subscription';
 		if (!pricingPlans || !Array.isArray(pricingPlans) || pricingPlans.length === 0) {
@@ -21,7 +25,13 @@ const formatPriceAndPurchaseType = (purchaseType, pricingPlans, price) => {
 	return { type: 'Free', price: '-' };
 };
 
-function PriceDisplay({ purchaseType, pricingPlans, price, showType = true, ...props }) {
+function PriceDisplay({
+	purchaseType,
+	pricingPlans,
+	price,
+	showType = true,
+	...props
+}): ReactElement {
 	const t = useTranslation();
 
 	const { type, price: formatedPrice } = useMemo(

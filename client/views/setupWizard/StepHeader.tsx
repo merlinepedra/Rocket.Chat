@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../contexts/TranslationContext';
 
-export function StepHeader({ number, title }) {
+export function StepHeader({ number, title }): ReactElement {
 	const t = useTranslation();
 
 	return (

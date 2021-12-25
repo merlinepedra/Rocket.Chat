@@ -7,13 +7,13 @@ import {
 	ToggleSwitch,
 	Callout,
 } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
-const PreferencesGlobalSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesGlobalSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const userDontAskAgainList = useUserPreference('dontAskAgainList');

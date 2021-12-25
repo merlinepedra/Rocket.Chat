@@ -1,7 +1,7 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-function Footer({ children }) {
+function Footer({ children }): ReactElement {
 	return <>{children}</>;
 }
 

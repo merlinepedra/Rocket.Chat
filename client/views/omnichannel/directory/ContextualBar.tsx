@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useRouteParameter } from '../../../contexts/RouterContext';
 import ChatsContextualBar from './ChatsContextualBar';
 import ContactContextualBar from './ContactContextualBar';
 
-const ContextualBar = ({ contactReload, chatReload }) => {
+const ContextualBar = ({ contactReload, chatReload }): ReactElement => {
 	const page = useRouteParameter('page');
 	const bar = useRouteParameter('bar');
 

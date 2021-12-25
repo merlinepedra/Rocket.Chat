@@ -5,7 +5,7 @@ import React from 'react';
 
 import { useRoomIcon } from '../../../hooks/useRoomIcon';
 
-const ChannelRow = ({ onChange, selected, room, lastOwnerWarning, formatDate }) => {
+const ChannelRow = ({ onChange, selected, room, lastOwnerWarning, formatDate }): ReactElement => {
 	const { name, fname, ts, isLastOwner } = room;
 
 	const handleChange = useMutableCallback(() => onChange(room));

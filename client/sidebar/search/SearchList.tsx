@@ -10,10 +10,11 @@ import {
 } from '@rocket.chat/fuselage-hooks';
 import { escapeRegExp } from '@rocket.chat/string-helpers';
 import { Meteor } from 'meteor/meteor';
-import React, { forwardRef, useState, useMemo, useEffect, useRef } from 'react';
+import React, { forwardRef, useState, useMemo, useEffect, useRef, ReactElement } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import tinykeys from 'tinykeys';
 
+import { IUser } from '../../../definition/IUser';
 import { useSetting } from '../../contexts/SettingsContext';
 import { useTranslation } from '../../contexts/TranslationContext';
 import { useUserPreference, useUserSubscriptions } from '../../contexts/UserContext';
@@ -24,7 +25,7 @@ import { useTemplateByViewMode } from '../hooks/useTemplateByViewMode';
 import Row from './Row';
 import ScrollerWithCustomProps from './ScrollerWithCustomProps';
 
-const shortcut = (() => {
+const shortcut = ((): string => {
 	if (!Meteor.Device.isDesktop()) {
 		return '';
 	}
@@ -34,7 +35,7 @@ const shortcut = (() => {
 	return '(\u2303+K)';
 })();
 
-const useSpotlight = (filterText = '', usernames) => {
+const useSpotlight = (filterText = '', usernames): { data: unknown; status: unknown } => {
 	const expression = /(@|#)?(.*)/i;
 	const [, mention, name] = filterText.match(expression);
 
@@ -72,7 +73,7 @@ const options = {
 	},
 };
 
-const useSearchItems = (filterText) => {
+const useSearchItems = (filterText): { data: unknown; status: unknown } => {
 	const expression = /(@|#)?(.*)/i;
 	const teste = filterText.match(expression);
 
@@ -99,20 +100,20 @@ const useSearchItems = (filterText) => {
 	return useMemo(() => {
 		const resultsFromServer = [];
 
-		const filterUsersUnique = ({ _id }, index, arr) =>
+		const filterUsersUnique = ({ _id }, index, arr): boolean =>
 			index === arr.findIndex((user) => _id === user._id);
-		const roomFilter = (room) =>
+		const roomFilter = (room): boolean =>
 			!localRooms.find(
 				(item) =>
 					(room.t === 'd' && room.uids?.length > 1 && room.uids.includes(item._id)) ||
 					[item.rid, item._id].includes(room._id),
 			);
-		const usersfilter = (user) =>
+		const usersfilter = (user): boolean =>
 			!localRooms.find(
 				(room) => room.t === 'd' && room.uids?.length === 2 && room.uids.includes(user._id),
 			);
 
-		const userMap = (user) => ({
+		const userMap = (user): Pick<IUser, '_id' | 't' | 'name' | 'fname' | 'avatarETag'> => ({
 			_id: user._id,
 			t: 'd',
 			name: user.username,
@@ -134,7 +135,7 @@ const useSearchItems = (filterText) => {
 	}, [localRooms, name, spotlight]);
 };
 
-const useInput = (initial) => {
+const useInput = (initial): { value: unknown; onChange: unknown; setValue: unknown } => {
 	const [value, setValue] = useState(initial);
 	const onChange = useMutableCallback((e) => {
 		setValue(e.currentTarget.value);
@@ -142,7 +143,7 @@ const useInput = (initial) => {
 	return { value, onChange, setValue };
 };
 
-const toggleSelectionState = (next, current, input) => {
+const toggleSelectionState = (next, current, input): void => {
 	input.setAttribute('aria-activedescendant', next.id);
 	next.setAttribute('aria-selected', true);
 	next.classList.add('rcx-sidebar-item--selected');
@@ -262,7 +263,7 @@ const SearchList = forwardRef(function SearchList({ onClose }, ref) {
 				}
 			},
 		});
-		return () => {
+		return (): void => {
 			unsubscribe();
 		};
 	}, [autofocus, changeSelection, items.length, onClose, resetCursor, setFilterValue]);
@@ -310,7 +311,7 @@ const SearchList = forwardRef(function SearchList({ onClose }, ref) {
 					totalCount={items?.length}
 					data={items}
 					components={{ Scroller: ScrollerWithCustomProps }}
-					itemContent={(index, data) => <Row data={itemData} item={data} />}
+					itemContent={(index, data): ReactElement => <Row data={itemData} item={data} />}
 					ref={listRef}
 				/>
 			</Box>

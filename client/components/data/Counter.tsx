@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Flex, Margins } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Growth from './Growth';
 
-function Counter({ count, variation = 0, description }) {
+function Counter({ count, variation = 0, description }): ReactElement {
 	return (
 		<>
 			<Flex.Container alignItems='end'>

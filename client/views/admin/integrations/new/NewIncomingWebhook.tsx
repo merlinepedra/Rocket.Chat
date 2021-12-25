@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, Box, Margins, Button } from '@rocket.chat/fuselage';
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 
 import { useRoute } from '../../../../contexts/RouterContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -20,7 +20,7 @@ const initialState = {
 	script: '',
 };
 
-export default function NewIncomingWebhook(props) {
+export default function NewIncomingWebhook(props): ReactElement {
 	const t = useTranslation();
 
 	const router = useRoute('admin-integrations');

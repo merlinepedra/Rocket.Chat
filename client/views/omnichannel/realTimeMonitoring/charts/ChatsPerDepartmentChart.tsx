@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, ReactElement } from 'react';
 
 import { drawLineChart } from '../../../../../app/livechat/client/lib/chartHandler';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -12,14 +12,14 @@ const initialData = {
 	departments: {},
 };
 
-const init = (canvas, context, t) =>
+const init = (canvas, context, t): Promise<unknown> =>
 	drawLineChart(canvas, context, [t('Open'), t('Closed')], [], [[], []], {
 		legends: true,
 		anim: true,
 		smallTicks: true,
 	});
 
-const ChatsPerDepartmentChart = ({ params, reloadRef, ...props }) => {
+const ChatsPerDepartmentChart = ({ params, reloadRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const canvas = useRef();
@@ -43,7 +43,7 @@ const ChatsPerDepartmentChart = ({ params, reloadRef, ...props }) => {
 	const chartData = data ?? initialData;
 
 	useEffect(() => {
-		const initChart = async () => {
+		const initChart = async (): Promise<void> => {
 			context.current = await init(canvas.current, context.current, t);
 		};
 		initChart();

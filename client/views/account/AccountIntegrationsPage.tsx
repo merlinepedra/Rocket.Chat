@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Select, Field, Button } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import { WebdavAccounts } from '../../../app/models/client';
 import Page from '../../components/Page';
@@ -10,12 +10,12 @@ import { useTranslation } from '../../contexts/TranslationContext';
 import { useForm } from '../../hooks/useForm';
 import { useReactiveValue } from '../../hooks/useReactiveValue';
 
-const getWebdavAccounts = () => WebdavAccounts.find().fetch();
+const getWebdavAccounts = (): unknown => WebdavAccounts.find().fetch();
 
-const getServerName = ({ name, server_url, username }) =>
-	name || `${username}@${server_url.replace(/^https?\:\/\//i, '')}`;
+const getServerName = ({ name, server_url: serverUrl, username }): string =>
+	name || `${username}@${serverUrl.replace(/^https?\:\/\//i, '')}`;
 
-const AccountIntegrationsPage = () => {
+const AccountIntegrationsPage = (): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

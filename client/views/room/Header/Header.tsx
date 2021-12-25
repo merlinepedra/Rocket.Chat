@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { memo, useMemo } from 'react';
+import React, { memo, ReactElement, useMemo } from 'react';
 
 import BurgerMenu from '../../../components/BurgerMenu';
 import TemplateHeader from '../../../components/Header';
@@ -8,7 +8,7 @@ import DirectRoomHeader from './DirectRoomHeader';
 import OmnichannelRoomHeader from './Omnichannel/OmnichannelRoomHeader';
 import RoomHeader from './RoomHeader';
 
-const Header = ({ room }) => {
+const Header = ({ room }): ReactElement => {
 	const { isMobile, isEmbedded, showTopNavbarEmbeddedLayout } = useLayout();
 
 	const slots = useMemo(

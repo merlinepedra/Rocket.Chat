@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Tabs, Button, ButtonGroup, Icon } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import Page from '../../../../components/Page';
 import { useRouteParameter, useRoute } from '../../../../contexts/RouterContext';
@@ -8,13 +8,13 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import NewIncomingWebhook from './NewIncomingWebhook';
 import NewOutgoingWebhook from './NewOutgoingWebhook';
 
-export default function NewIntegrationsPage({ ...props }) {
+export default function NewIntegrationsPage({ ...props }): ReactElement {
 	const t = useTranslation();
 
 	const router = useRoute('admin-integrations');
 
 	const handleClickTab = useCallback(
-		(type) => () => {
+		(type) => (): void => {
 			router.push({ context: 'new', type });
 		},
 		[router],

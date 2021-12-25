@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
 // used to open the menu option by keyboard
-export const useShortcutOpenMenu = (ref) => {
+export const useShortcutOpenMenu = (ref): void => {
 	useEffect(() => {
 		const unsubscribe = tinykeys(ref.current, {
 			Alt: (event) => {
@@ -14,7 +14,7 @@ export const useShortcutOpenMenu = (ref) => {
 				event.target.querySelector('button')?.click();
 			},
 		});
-		return () => {
+		return (): void => {
 			unsubscribe();
 		};
 	}, [ref]);

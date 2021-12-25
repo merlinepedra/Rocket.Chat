@@ -9,7 +9,7 @@ import {
 	FieldGroup,
 	Margins,
 } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import { useAbsoluteUrl } from '../../../contexts/ServerContext';
@@ -23,7 +23,7 @@ export default function IncomingWebhookForm({
 	extraData = {},
 	append,
 	...props
-}) {
+}): ReactElement {
 	const t = useTranslation();
 
 	const absoluteUrl = useAbsoluteUrl();

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { css } from '@rocket.chat/css-in-js';
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { isIterable } from './isIterable';
 
@@ -13,7 +13,7 @@ const style = css`
 	word-break: break-word;
 `;
 
-function BodyClamp({ className, ...props }) {
+function BodyClamp({ className, ...props }): ReactElement {
 	return (
 		<Box
 			rcx-message__body

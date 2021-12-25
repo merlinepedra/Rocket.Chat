@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Accordion } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import Page from '../../../components/Page';
@@ -10,7 +10,7 @@ import EndToEnd from './EndToEnd';
 import TwoFactorEmail from './TwoFactorEmail';
 import TwoFactorTOTP from './TwoFactorTOTP';
 
-const AccountSecurityPage = () => {
+const AccountSecurityPage = (): ReactElement => {
 	const t = useTranslation();
 
 	const twoFactorEnabled = useSetting('Accounts_TwoFactorAuthentication_Enabled');

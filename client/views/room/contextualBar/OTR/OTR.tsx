@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Throbber } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -13,7 +13,7 @@ const OTR = ({
 	onClickStart,
 	onClickEnd,
 	onClickRefresh,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (

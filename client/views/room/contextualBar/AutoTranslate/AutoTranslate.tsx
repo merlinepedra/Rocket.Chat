@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { FieldGroup, Field, ToggleSwitch, Select } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -12,7 +12,7 @@ const AutoTranslate = ({
 	translateEnable,
 	handleChangeLanguage,
 	handleClose,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (

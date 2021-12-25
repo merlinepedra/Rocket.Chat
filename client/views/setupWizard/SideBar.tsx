@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { Box, Margins } from '@rocket.chat/fuselage';
 import { useMediaQuery } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Logo from '../../components/Logo';
 import ScrollableContentWrapper from '../../components/ScrollableContentWrapper';
 import { useTranslation } from '../../contexts/TranslationContext';
 import './SideBar.css';
 
-function SideBar({ logoSrc = 'images/logo/logo.svg', currentStep = 1, steps = [] }) {
+function SideBar({ logoSrc = 'images/logo/logo.svg', currentStep = 1, steps = [] }): ReactElement {
 	const t = useTranslation();
 	const small = useMediaQuery('(max-width: 760px)');
 

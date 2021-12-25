@@ -6,7 +6,7 @@ export function useQuery(
 	[column, direction],
 	type,
 	workspace = 'local',
-) {
+): unknown {
 	return useMemo(
 		() => ({
 			query: JSON.stringify({

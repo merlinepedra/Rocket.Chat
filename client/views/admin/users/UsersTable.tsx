@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMediaQuery } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
@@ -8,13 +8,13 @@ import { useRoute } from '../../../contexts/RouterContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import UserRow from './UserRow';
 
-function UsersTable({ params, onChangeParams, sort, onChangeSort, ...props }) {
+function UsersTable({ params, onChangeParams, sort, onChangeSort, ...props }): ReactElement {
 	const t = useTranslation();
 
 	const usersRoute = useRoute('admin-users');
 
 	const onClick = useCallback(
-		(username) => () =>
+		(username) => (): void =>
 			usersRoute.push({
 				context: 'info',
 				id: username,
@@ -118,11 +118,13 @@ function UsersTable({ params, onChangeParams, sort, onChangeSort, ...props }) {
 			total={props.total}
 			setParams={onChangeParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText placeholder={t('Search_Users')} onChange={onChange} {...props} />
 			)}
 		>
-			{(props) => <UserRow key={props._id} onClick={onClick} mediaQuery={mediaQuery} {...props} />}
+			{(props): ReactElement => (
+				<UserRow key={props._id} onClick={onClick} mediaQuery={mediaQuery} {...props} />
+			)}
 		</GenericTable>
 	);
 }

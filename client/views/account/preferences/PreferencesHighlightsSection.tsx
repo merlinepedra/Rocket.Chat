@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Accordion, Field, FieldGroup, TextAreaInput } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
-const PreferencesHighlightsSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesHighlightsSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const userHighlights = useUserPreference('highlights')?.join(',\n') ?? '';

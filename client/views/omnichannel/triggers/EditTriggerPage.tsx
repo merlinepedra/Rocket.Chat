@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Margins, FieldGroup, Box, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useRoute } from '../../../contexts/RouterContext';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -22,7 +22,7 @@ const getInitialValues = ({
 			params: { sender: actSender, msg: actMsg, name: actSenderName },
 		},
 	],
-}) => ({
+}): unknown => ({
 	name: name ?? '',
 	description: description ?? '',
 	enabled: !!enabled,
@@ -41,7 +41,7 @@ const getInitialValues = ({
 	},
 });
 
-const EditTriggerPage = ({ data, onSave }) => {
+const EditTriggerPage = ({ data, onSave }): ReactElement => {
 	const dispatchToastMessage = useToastMessageDispatch();
 	const t = useTranslation();
 

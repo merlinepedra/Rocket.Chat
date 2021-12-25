@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, Flex, Box, MultiSelectFiltered, MultiSelect } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import ResetSettingButton from '../ResetSettingButton';
@@ -17,10 +17,10 @@ function MultiSelectSettingInput({
 	onChangeValue,
 	onResetButtonClick,
 	autocomplete,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 
-	const handleChange = (value) => {
+	const handleChange = (value): void => {
 		onChangeValue?.(value);
 		// onChangeValue && onChangeValue([...event.currentTarget.querySelectorAll('option')].filter((e) => e.selected).map((el) => el.value));
 	};

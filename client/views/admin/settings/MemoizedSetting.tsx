@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Callout, Field, Margins } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import ActionSettingInput from './inputs/ActionSettingInput';
 import AssetSettingInput from './inputs/AssetSettingInput';
@@ -25,12 +25,12 @@ const MemoizedSetting = ({
 	callout,
 	value,
 	editor,
-	onChangeValue = () => {},
-	onChangeEditor = () => {},
+	onChangeValue = (): void => undefined,
+	onChangeEditor = (): void => undefined,
 	className,
 	invisible,
 	...inputProps
-}) => {
+}): ReactElement => {
 	if (invisible) {
 		return null;
 	}

@@ -10,7 +10,7 @@ import {
 	PaginatedSelectFiltered,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback, useAutoFocus, useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { useEndpoint } from '../../../contexts/ServerContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -21,7 +21,7 @@ import UserAutoComplete from '../../UserAutoComplete';
 import { useDepartmentsList } from '../hooks/useDepartmentsList';
 import ModalSeparator from './ModalSeparator';
 
-const ForwardChatModal = ({ onForward, onCancel, room, ...props }) => {
+const ForwardChatModal = ({ onForward, onCancel, room, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const inputRef = useAutoFocus(true);
@@ -63,7 +63,7 @@ const ForwardChatModal = ({ onForward, onCancel, room, ...props }) => {
 		if (!username) {
 			return;
 		}
-		const fetchData = async () => {
+		const fetchData = async (): Promise<void> => {
 			const { user } = await getUserData();
 			setUserId(user._id);
 		};
@@ -106,8 +106,8 @@ const ForwardChatModal = ({ onForward, onCancel, room, ...props }) => {
 							flexGrow={1}
 							endReached={
 								departmentsPhase === AsyncStatePhase.LOADING
-									? () => {}
-									: (start) => loadMoreDepartments(start, Math.min(50, departmentsTotal))
+									? (): void => undefined
+									: (start): void => loadMoreDepartments(start, Math.min(50, departmentsTotal))
 							}
 						/>
 					</Field.Row>

@@ -11,7 +11,7 @@ import {
 	FieldGroup,
 } from '@rocket.chat/fuselage';
 import { useDebouncedCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import UserAutoCompleteMultiple from '../../components/UserAutoCompleteMultiple';
 import { useMethod } from '../../contexts/ServerContext';
@@ -29,7 +29,7 @@ const CreateChannel = ({
 	e2eEnabledForPrivateByDefault,
 	onCreate,
 	onClose,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 	const e2eEnabled = useSetting('E2E_Enable');
 	const namesValidation = useSetting('UTF8_Channel_Names_Validation');

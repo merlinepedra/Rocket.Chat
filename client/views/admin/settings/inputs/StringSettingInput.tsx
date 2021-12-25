@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Field, Flex, TextAreaInput, TextInput } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import ResetSettingButton from '../ResetSettingButton';
 
@@ -16,8 +16,8 @@ function StringSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
-	const handleChange = (event) => {
+}): ReactElement {
+	const handleChange = (event): void => {
 		onChangeValue(event.currentTarget.value);
 	};
 

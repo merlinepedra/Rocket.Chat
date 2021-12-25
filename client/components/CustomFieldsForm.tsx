@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { TextInput, Select, Field } from '@rocket.chat/fuselage';
 import { capitalize } from '@rocket.chat/string-helpers';
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, ReactElement, ReactNode } from 'react';
 
 import { useSetting } from '../contexts/SettingsContext';
 import { useTranslation } from '../contexts/TranslationContext';
@@ -17,8 +17,8 @@ const CustomTextInput = ({
 	setState,
 	state,
 	className,
-	setCustomFieldsError = () => [],
-}) => {
+	setCustomFieldsError = (): unknown[] => [],
+}): ReactElement => {
 	const t = useTranslation();
 
 	const [inputError, setInputError] = useState('');
@@ -60,7 +60,7 @@ const CustomTextInput = ({
 						maxLength={maxLength}
 						flexGrow={1}
 						value={state}
-						onChange={(e) => setState(e.currentTarget.value)}
+						onChange={(e): void => setState(e.currentTarget.value)}
 					/>
 				</Field.Row>
 				<Field.Error>{inputError}</Field.Error>
@@ -78,8 +78,8 @@ const CustomSelect = ({
 	setState,
 	state,
 	className,
-	setCustomFieldsError = () => [],
-}) => {
+	setCustomFieldsError = (): unknown[] => [],
+}): ReactElement => {
 	const t = useTranslation();
 	const [selectError, setSelectError] = useState('');
 
@@ -116,7 +116,7 @@ const CustomSelect = ({
 						flexGrow={1}
 						value={state}
 						options={mappedOptions}
-						onChange={(val) => setState(val)}
+						onChange={(val): void => setState(val)}
 					/>
 				</Field.Row>
 				<Field.Error>{selectError}</Field.Error>
@@ -126,7 +126,7 @@ const CustomSelect = ({
 	);
 };
 
-const CustomFieldsAssembler = ({ formValues, formHandlers, customFields, ...props }) =>
+const CustomFieldsAssembler = ({ formValues, formHandlers, customFields, ...props }): ReactNode[] =>
 	Object.entries(customFields).map(([key, value]) => {
 		const extraProps = {
 			key,
@@ -151,9 +151,9 @@ export default function CustomFieldsForm({
 	jsonCustomFields,
 	customFieldsData,
 	setCustomFieldsData,
-	onLoadFields = () => {},
+	onLoadFields = (): void => undefined,
 	...props
-}) {
+}): ReactElement {
 	const accountsCustomFieldsJson = useSetting('Accounts_CustomFields');
 
 	const [customFields] = useState(() => {

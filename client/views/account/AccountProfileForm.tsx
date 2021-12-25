@@ -13,7 +13,7 @@ import {
 	Margins,
 } from '@rocket.chat/fuselage';
 import { useDebouncedCallback, useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useEffect, useState, ReactElement } from 'react';
 
 import { getUserEmailAddress } from '../../../lib/getUserEmailAddress';
 import { isEmail } from '../../../lib/utils/isEmail';
@@ -25,7 +25,14 @@ import { useMethod } from '../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../contexts/TranslationContext';
 
-function AccountProfileForm({ values, handlers, user, settings, onSaveStateChange, ...props }) {
+function AccountProfileForm({
+	values,
+	handlers,
+	user,
+	settings,
+	onSaveStateChange,
+	...props
+}): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -118,7 +125,7 @@ function AccountProfileForm({ values, handlers, user, settings, onSaveStateChang
 	);
 
 	useEffect(() => {
-		const getSuggestions = async () => {
+		const getSuggestions = async (): Promise<void> => {
 			const suggestions = await getAvatarSuggestions();
 			setAvatarSuggestions(suggestions);
 		};

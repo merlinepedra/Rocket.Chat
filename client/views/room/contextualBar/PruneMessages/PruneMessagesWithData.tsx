@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 
 import GenericModal from '../../../../components/GenericModal';
 import { useSetModal } from '../../../../contexts/ModalContext';
@@ -12,7 +12,7 @@ import { useUserRoom } from '../../../../contexts/UserContext';
 import { useForm } from '../../../../hooks/useForm';
 import PruneMessages from './PruneMessages';
 
-const getTimeZoneOffset = function () {
+const getTimeZoneOffset = function (): string {
 	const offset = new Date().getTimezoneOffset();
 	const absOffset = Math.abs(offset);
 	return `${offset < 0 ? '+' : '-'}${`00${Math.floor(absOffset / 60)}`.slice(-2)}:${`00${
@@ -33,7 +33,7 @@ const initialValues = {
 	attached: false,
 };
 
-const PruneMessagesWithData = ({ rid, tabBar }) => {
+const PruneMessagesWithData = ({ rid, tabBar }): ReactElement => {
 	const t = useTranslation();
 	const room = useUserRoom(rid);
 	room.type = room.t;
@@ -125,7 +125,7 @@ const PruneMessagesWithData = ({ rid, tabBar }) => {
 		}
 	});
 
-	const handleModal = () => {
+	const handleModal = (): void => {
 		setModal(
 			<GenericModal
 				variant='danger'

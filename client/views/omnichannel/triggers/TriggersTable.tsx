@@ -1,12 +1,18 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useResizeInlineBreakpoint } from '../../../hooks/useResizeInlineBreakpoint';
 import TriggersRow from './TriggersRow';
 
-function TriggersTable({ triggers, totalTriggers, params, onChangeParams, onDelete }) {
+function TriggersTable({
+	triggers,
+	totalTriggers,
+	params,
+	onChangeParams,
+	onDelete,
+}): ReactElement {
 	const t = useTranslation();
 
 	const [ref, onMediumBreakpoint] = useResizeInlineBreakpoint([600], 200);
@@ -27,7 +33,7 @@ function TriggersTable({ triggers, totalTriggers, params, onChangeParams, onDele
 			params={params}
 			setParams={onChangeParams}
 		>
-			{(props) => (
+			{(props): ReactElement => (
 				<TriggersRow key={props._id} onDelete={onDelete} medium={onMediumBreakpoint} {...props} />
 			)}
 		</GenericTable>

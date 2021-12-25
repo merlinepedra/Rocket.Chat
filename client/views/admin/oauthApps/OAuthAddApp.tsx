@@ -8,7 +8,7 @@ import {
 	ToggleSwitch,
 	FieldGroup,
 } from '@rocket.chat/fuselage';
-import React, { useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -16,7 +16,7 @@ import { useMethod } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-export default function OAuthAddApp(props) {
+export default function OAuthAddApp(props): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -43,8 +43,8 @@ export default function OAuthAddApp(props) {
 	}, [close, dispatchToastMessage, newData, saveApp, t]);
 
 	const handleChange =
-		(field, getValue = (e) => e.currentTarget.value) =>
-		(e) =>
+		(field, getValue = (e): void => e.currentTarget.value) =>
+		(e): void =>
 			setNewData({ ...newData, [field]: getValue(e) });
 
 	const { active, name, redirectUri } = newData;

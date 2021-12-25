@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Modal } from '@rocket.chat/fuselage';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import CopyStep from './CopyStep';
@@ -11,16 +11,16 @@ const Steps = {
 	PASTE: 'paste',
 };
 
-function ManualWorkspaceRegistrationModal({ onClose, props }) {
+function ManualWorkspaceRegistrationModal({ onClose, props }): ReactElement {
 	const t = useTranslation();
 
 	const [step, setStep] = useState(Steps.COPY);
 
-	const handleNextButtonClick = () => {
+	const handleNextButtonClick = (): void => {
 		setStep(Steps.PASTE);
 	};
 
-	const handleBackButtonClick = () => {
+	const handleBackButtonClick = (): void => {
 		setStep(Steps.COPY);
 	};
 

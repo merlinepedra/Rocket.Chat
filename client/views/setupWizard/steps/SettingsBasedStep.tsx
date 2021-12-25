@@ -10,7 +10,7 @@ import {
 	TextInput,
 } from '@rocket.chat/fuselage';
 import { useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useReducer, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useReducer, useState, useCallback, useMemo, ReactElement } from 'react';
 
 import { useSettingsDispatch } from '../../../contexts/SettingsContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
@@ -20,7 +20,7 @@ import { useSetupWizardContext } from '../SetupWizardState';
 import { Step } from '../Step';
 import { StepHeader } from '../StepHeader';
 
-const useFields = () => {
+const useFields = (): unknown => {
 	const reset = 'RESET';
 	const setValue = 'SET_VALUE';
 
@@ -46,7 +46,7 @@ const useFields = () => {
 	return { fields, resetFields, setFieldValue };
 };
 
-function SettingsBasedStep({ step, title, active }) {
+function SettingsBasedStep({ step, title, active }): ReactElement {
 	const { settings, currentStep, goToPreviousStep, goToNextStep } = useSetupWizardContext();
 	const { fields, resetFields, setFieldValue } = useFields();
 	const [commiting, setCommiting] = useState(false);
@@ -71,11 +71,11 @@ function SettingsBasedStep({ step, title, active }) {
 
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	const handleBackClick = () => {
+	const handleBackClick = (): void => {
 		goToPreviousStep();
 	};
 
-	const handleSubmit = async (event) => {
+	const handleSubmit = async (event): Promise<void> => {
 		event.preventDefault();
 
 		setCommiting(true);
@@ -136,7 +136,7 @@ function SettingsBasedStep({ step, title, active }) {
 										name={_id}
 										ref={i === 0 ? autoFocusRef : undefined}
 										value={value}
-										onChange={({ currentTarget: { value } }) => setFieldValue(_id, value)}
+										onChange={({ currentTarget: { value } }): void => setFieldValue(_id, value)}
 									/>
 								)}
 
@@ -147,7 +147,7 @@ function SettingsBasedStep({ step, title, active }) {
 										name={_id}
 										placeholder={t('Select_an_option')}
 										value={value}
-										onChange={(value) => setFieldValue(_id, value)}
+										onChange={(value): void => setFieldValue(_id, value)}
 										options={values.map(({ i18nLabel, key }) => [key, t(i18nLabel)])}
 									/>
 								)}
@@ -159,7 +159,7 @@ function SettingsBasedStep({ step, title, active }) {
 										name={_id}
 										ref={i === 0 ? autoFocusRef : undefined}
 										value={String(value)}
-										onChange={(value) => setFieldValue(_id, value === 'true')}
+										onChange={(value): void => setFieldValue(_id, value === 'true')}
 										options={[
 											['true', t('Yes')],
 											['false', t('No')],
@@ -174,7 +174,7 @@ function SettingsBasedStep({ step, title, active }) {
 										name={_id}
 										placeholder={t('Default')}
 										value={value}
-										onChange={(value) => setFieldValue(_id, value)}
+										onChange={(value): void => setFieldValue(_id, value)}
 										options={languages.map(({ key, name }) => [key, name])}
 									/>
 								)}

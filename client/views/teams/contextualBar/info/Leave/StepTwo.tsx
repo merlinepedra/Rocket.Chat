@@ -5,7 +5,7 @@ import React from 'react';
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 
-export const StepTwo = ({ onConfirm, onCancel, onClose }) => {
+export const StepTwo = ({ onConfirm, onCancel, onClose }): ReactElement => {
 	const t = useTranslation();
 
 	return (

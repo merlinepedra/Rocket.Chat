@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import UserCard from '../../../../components/UserCard';
 
-const Username = ({ username, status, ...props }) => (
+const Username = ({ username, status, ...props }): ReactElement => (
 	<UserCard.Username name={username} status={status} {...props} />
 );
 

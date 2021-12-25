@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box, Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const Item = ({ children, icon, ...props }) => (
+const Item = ({ children, icon, ...props }): ReactElement => (
 	<Box is='li' marginBlockEnd='x8' display='flex' alignItems='center' color='default' {...props}>
 		{icon === 'check' && <Icon name='check' size='x20' marginInlineEnd='x8' color='primary' />}
 		{icon === 'circle' && (

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import {
 	ImportWaitingStates,
@@ -28,7 +28,7 @@ function ImportOperationSummary({
 		total: null,
 	},
 	valid,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const formatDateAndTime = useFormatDateAndTime();
 
@@ -68,7 +68,7 @@ function ImportOperationSummary({
 	const prepareImportRoute = useRoute('admin-import-prepare');
 	const importProgressRoute = useRoute('admin-import-progress');
 
-	const handleClick = () => {
+	const handleClick = (): void => {
 		if (canContinue) {
 			prepareImportRoute.push();
 			return;

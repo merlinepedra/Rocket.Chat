@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Icon, TextInput, Callout, Throbber } from '@rocket.chat/fuselage';
 import { useResizeObserver, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../components/ScrollableContentWrapper';
@@ -22,7 +22,7 @@ function DiscussionList({
 	userId,
 	text,
 	setText,
-}) {
+}): ReactElement {
 	const showRealNames = useSetting('UI_Use_Real_Name');
 
 	const t = useTranslation();
@@ -91,12 +91,14 @@ function DiscussionList({
 							}}
 							totalCount={total}
 							endReached={
-								loading ? () => {} : (start) => loadMoreItems(start, Math.min(50, total - start))
+								loading
+									? (): void => undefined
+									: (start): void => loadMoreItems(start, Math.min(50, total - start))
 							}
 							overscan={25}
 							data={discussions}
 							components={{ Scroller: ScrollableContentWrapper }}
-							itemContent={(index, data) => (
+							itemContent={(index, data): ReactElement => (
 								<Row
 									discussion={data}
 									showRealNames={showRealNames}

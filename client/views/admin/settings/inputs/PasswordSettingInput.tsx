@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Field, Flex, PasswordInput } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import ResetSettingButton from '../ResetSettingButton';
 
@@ -15,8 +15,8 @@ function PasswordSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
-	const handleChange = (event) => {
+}): ReactElement {
+	const handleChange = (event): void => {
 		onChangeValue?.(event.currentTarget.value);
 	};
 

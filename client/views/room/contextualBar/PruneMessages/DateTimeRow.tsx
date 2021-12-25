@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Field, InputBox, Box, Margins } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const DateTimeRow = ({ label, dateTime, handleDateTime }) => (
+const DateTimeRow = ({ label, dateTime, handleDateTime }): ReactElement => (
 	<Field>
 		<Field.Label flexGrow={0}>{label}</Field.Label>
 		<Box display='flex' mi='neg-x4'>

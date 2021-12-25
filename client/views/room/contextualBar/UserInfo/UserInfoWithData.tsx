@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { getUserEmailAddress } from '../../../../../lib/getUserEmailAddress';
 import { FormSkeleton } from '../../../../components/Skeleton';
@@ -22,14 +22,14 @@ import UserActions from './actions/UserActions';
 function UserInfoWithData({
 	uid,
 	username,
-	tabBar,
+	tabBar: _tabBar,
 	rid,
 	onClickClose,
 	onClose = onClickClose,
-	video,
+	video: _video,
 	onClickBack,
 	...props
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const showRealNames = useSetting('UI_Use_Real_Name');
 	const getRoles = useRolesDescription();

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, ReactElement, useCallback, useMemo } from 'react';
 
 import { usePermission } from '../../contexts/AuthorizationContext';
 import { useSetting } from '../../contexts/SettingsContext';
@@ -9,7 +9,7 @@ import { useForm } from '../../hooks/useForm';
 import { goToRoomById } from '../../lib/utils/goToRoomById';
 import CreateChannel from './CreateChannel';
 
-const CreateChannelWithData = ({ onClose, teamId = '', reload }) => {
+const CreateChannelWithData = ({ onClose, teamId = '', reload }): ReactElement => {
 	const createChannel = useEndpointActionExperimental('POST', 'channels.create');
 	const createPrivateChannel = useEndpointActionExperimental('POST', 'groups.create');
 	const canCreateChannel = usePermission('create-c');
@@ -61,7 +61,7 @@ const CreateChannelWithData = ({ onClose, teamId = '', reload }) => {
 	});
 
 	const onCreate = useCallback(async () => {
-		const goToRoom = (rid) => {
+		const goToRoom = (rid): void => {
 			goToRoomById(rid);
 		};
 

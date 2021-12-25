@@ -1,18 +1,18 @@
 // @ts-nocheck
 import { Button, Field } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useMethod } from '../../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 
-function ActionSettingInput({ _id, actionText, value, disabled, sectionChanged }) {
+function ActionSettingInput({ _id, actionText, value, disabled, sectionChanged }): ReactElement {
 	const t = useTranslation();
 
 	const dispatchToastMessage = useToastMessageDispatch();
 	const actionMethod = useMethod(value);
 
-	const handleClick = async () => {
+	const handleClick = async (): Promise<void> => {
 		try {
 			const data = await actionMethod();
 			const args = [data.message].concat(data.params);

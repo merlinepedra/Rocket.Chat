@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useFormatDateAndTime } from '../../../hooks/useFormatDateAndTime';
 
@@ -16,7 +16,7 @@ function IntegrationRow({
 	channel = [],
 	onClick,
 	isBig,
-}) {
+}): ReactElement {
 	const formatDateAndTime = useFormatDateAndTime();
 
 	const handler = useMemo(() => onClick(_id, type), [onClick, _id, type]);

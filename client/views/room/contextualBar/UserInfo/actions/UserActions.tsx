@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { ButtonGroup, Menu, Option } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import UserInfo from '..';
 import { useActionSpread } from '../../../../hooks/useActionSpread';
 import { useUserInfoActions } from '../../../hooks/useUserInfoActions';
 
-const UserActions = ({ user, rid, backToList }) => {
+const UserActions = ({ user, rid, backToList }): ReactElement => {
 	const { actions: actionsDefinition, menu: menuOptions } = useActionSpread(
 		useUserInfoActions(user, rid, backToList),
 	);
@@ -22,7 +22,7 @@ const UserActions = ({ user, rid, backToList }) => {
 				mi='x4'
 				ghost={false}
 				small={false}
-				renderItem={({ label: { label, icon }, ...props }) => (
+				renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 					<Option {...props} label={label} icon={icon} />
 				)}
 				flexShrink={0}
@@ -32,7 +32,7 @@ const UserActions = ({ user, rid, backToList }) => {
 	}, [menuOptions]);
 
 	const actions = useMemo(() => {
-		const mapAction = ([key, { label, icon, action }]) => (
+		const mapAction = ([key, { label, icon, action }]): ReactElement => (
 			<UserInfo.Action key={key} title={label} label={label} onClick={action} icon={icon} />
 		);
 

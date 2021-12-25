@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 
 import { useEndpoint } from '../../../../../contexts/ServerContext';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -9,7 +9,7 @@ import { useTabBarClose } from '../../../providers/ToolboxProvider';
 import EditInvite from '../EditInvite';
 import InviteUsers from './InviteUsers';
 
-const WrappedInviteUsers = ({ rid, tabBar, onClickBack }) => {
+const WrappedInviteUsers = ({ rid, tabBar, onClickBack }): ReactElement => {
 	const [editing, setEditing] = useState(false);
 	const format = useFormatDateAndTime();
 	const t = useTranslation();
@@ -60,7 +60,7 @@ const WrappedInviteUsers = ({ rid, tabBar, onClickBack }) => {
 		if (editing) {
 			return;
 		}
-		(async () => {
+		(async (): Promise<void> => {
 			try {
 				const data = await findOrCreateInvite({ rid, days, maxUses });
 				setState({

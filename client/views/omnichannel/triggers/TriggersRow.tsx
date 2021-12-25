@@ -39,7 +39,7 @@ const TriggersRow = memo(function TriggersRow(props) {
 
 	const handleDelete = useMutableCallback((e) => {
 		e.stopPropagation();
-		const onDeleteTrigger = async () => {
+		const onDeleteTrigger = async (): Promise<void> => {
 			try {
 				await deleteTrigger(_id);
 				dispatchToastMessage({ type: 'success', message: t('Trigger_removed') });
@@ -54,7 +54,7 @@ const TriggersRow = memo(function TriggersRow(props) {
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteTrigger}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			/>,
 		);

@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotificationStatus from './NotificationStatus';
 
-function All(props) {
+function All(props): ReactElement {
 	return <NotificationStatus label='mention-all' bg='#F38C39' {...props} />;
 }
 

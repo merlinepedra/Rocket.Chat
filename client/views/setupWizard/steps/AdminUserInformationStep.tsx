@@ -9,7 +9,7 @@ import {
 	TextInput,
 } from '@rocket.chat/fuselage';
 import { useAutoFocus, useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, ReactElement } from 'react';
 
 import { callbacks } from '../../../../app/callbacks/lib/callbacks';
 import { validateEmail as emailValidator } from '../../../../lib/emailValidator';
@@ -23,7 +23,7 @@ import { Pager } from '../Pager';
 import { Step } from '../Step';
 import { StepHeader } from '../StepHeader';
 
-function AdminUserInformationStep({ step, title, active }) {
+function AdminUserInformationStep({ step, title, active }): ReactElement {
 	const loginWithPassword = useLoginWithPassword();
 	const registerUser = useMethod('registerUser');
 	const defineUsername = useMethod('setUsername');
@@ -37,7 +37,7 @@ function AdminUserInformationStep({ step, title, active }) {
 		email,
 		password,
 		onRegistrationEmailSent,
-	}) => {
+	}): Promise<void> => {
 		await registerUser({ name, username, email, pass: password });
 		callbacks.run('userRegistered');
 
@@ -91,7 +91,7 @@ function AdminUserInformationStep({ step, title, active }) {
 
 	const autoFocusRef = useAutoFocus(active);
 
-	const handleSubmit = async (event) => {
+	const handleSubmit = async (event): Promise<void> => {
 		event.preventDefault();
 
 		if (!name || !username || !email || !password) {
@@ -139,7 +139,7 @@ function AdminUserInformationStep({ step, title, active }) {
 								addon={<Icon name='user' size='x20' />}
 								placeholder={t('Type_your_name')}
 								value={name}
-								onChange={({ currentTarget: { value } }) => setName(value)}
+								onChange={({ currentTarget: { value } }): void => setName(value)}
 							/>
 						</Field.Row>
 					</Field>
@@ -153,7 +153,7 @@ function AdminUserInformationStep({ step, title, active }) {
 								addon={<Icon name='at' size='x20' />}
 								placeholder={t('Type_your_username')}
 								value={username}
-								onChange={({ currentTarget: { value } }) => setUsername(value)}
+								onChange={({ currentTarget: { value } }): void => setUsername(value)}
 								error={username && !usernameRegExp.test(username) ? 'error' : ''}
 							/>
 						</Field.Row>
@@ -169,7 +169,7 @@ function AdminUserInformationStep({ step, title, active }) {
 								addon={<Icon name='mail' size='x20' />}
 								placeholder={t('Type_your_email')}
 								value={email}
-								onChange={({ currentTarget: { value } }) => setEmail(value)}
+								onChange={({ currentTarget: { value } }): void => setEmail(value)}
 								error={!isEmailValid ? 'error' : ''}
 							/>
 						</Field.Row>
@@ -185,7 +185,7 @@ function AdminUserInformationStep({ step, title, active }) {
 								addon={<Icon name='key' size='x20' />}
 								placeholder={t('Type_your_password')}
 								value={password}
-								onChange={({ currentTarget: { value } }) => setPassword(value)}
+								onChange={({ currentTarget: { value } }): void => setPassword(value)}
 							/>
 						</Field.Row>
 					</Field>

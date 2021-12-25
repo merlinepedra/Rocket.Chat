@@ -2,7 +2,7 @@
 import { Button, ButtonGroup, Icon, Modal, Box } from '@rocket.chat/fuselage';
 import { useAutoFocus, useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { escapeHTML } from '@rocket.chat/string-helpers';
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 
 import { RoomRoles } from '../../../../app/models/client';
 import { roomTypes, RoomMemberActions } from '../../../../app/utils/client';
@@ -23,7 +23,7 @@ import RemoveUsersModal from '../../teams/contextualBar/members/RemoveUsersModal
 import { useUserRoom } from './useUserRoom';
 import { useWebRTC } from './useWebRTC';
 
-const useUserHasRoomRole = (uid, rid, role) =>
+const useUserHasRoomRole = (uid, rid, role): boolean =>
 	useReactiveValue(
 		useCallback(() => !!RoomRoles.findOne({ rid, 'u._id': uid, 'roles': role }), [uid, rid, role]),
 	);
@@ -33,14 +33,14 @@ const getShouldOpenDirectMessage = (
 	usernameSubscription,
 	canOpenDirectMessage,
 	username,
-) => {
+): ReactElement => {
 	const canOpenDm = canOpenDirectMessage || usernameSubscription;
 	const directMessageIsNotAlreadyOpen =
 		currentSubscription && currentSubscription.name !== username;
 	return canOpenDm && directMessageIsNotAlreadyOpen;
 };
 
-const getUserIsMuted = (room, user, userCanPostReadonly) => {
+const getUserIsMuted = (room, user, userCanPostReadonly): boolean => {
 	if (room?.ro) {
 		if (Array.isArray(room.unmuted) && room.unmuted.indexOf(user?.username) !== -1) {
 			return false;
@@ -56,7 +56,7 @@ const getUserIsMuted = (room, user, userCanPostReadonly) => {
 	return room && Array.isArray(room.muted) && room.muted.indexOf(user?.username) > -1;
 };
 
-const WarningModal = ({ text, confirmText, close, confirm, ...props }) => {
+const WarningModal = ({ text, confirmText, close, confirm, ...props }): ReactElement => {
 	const refAutoFocus = useAutoFocus(true);
 	const t = useTranslation();
 	return (
@@ -81,7 +81,7 @@ const WarningModal = ({ text, confirmText, close, confirm, ...props }) => {
 	);
 };
 
-export const useUserInfoActions = (user = {}, rid, reload) => {
+export const useUserInfoActions = (user = {}, rid, reload): unknown => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const directRoute = useRoute('direct');
@@ -164,10 +164,10 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 	);
 
 	const videoCallOption = useMemo(() => {
-		const handleJoinCall = () => {
+		const handleJoinCall = (): void => {
 			joinCall({ audio: true, video: true });
 		};
-		const handleStartCall = () => {
+		const handleStartCall = (): void => {
 			startCall({ audio: true, video: true });
 		};
 		const action = callInProgress ? handleJoinCall : handleStartCall;
@@ -182,10 +182,10 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 	}, [callInProgress, shouldAllowCalls, t, joinCall, startCall]);
 
 	const audioCallOption = useMemo(() => {
-		const handleJoinCall = () => {
+		const handleJoinCall = (): void => {
 			joinCall({ audio: true, video: false });
 		};
-		const handleStartCall = () => {
+		const handleStartCall = (): void => {
 			startCall({ audio: true, video: false });
 		};
 		const action = callInProgress ? handleJoinCall : handleStartCall;
@@ -206,6 +206,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 	const changeOwner = useEndpointActionExperimental(
 		'POST',
 		`${endpointPrefix}.${changeOwnerEndpoint}`,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		t(changeOwnerMessage, { username: user.username, room_name: roomName }),
 	);
 	const changeOwnerAction = useMutableCallback(async () =>
@@ -229,6 +230,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 	const changeLeader = useEndpointActionExperimental(
 		'POST',
 		`${endpointPrefix}.${changeLeaderEndpoint}`,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		t(changeLeaderMessage, { username: user.username, room_name: roomName }),
 	);
 	const changeLeaderAction = useMutableCallback(() => changeLeader({ roomId: rid, userId: uid }));
@@ -250,6 +252,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 	const changeModerator = useEndpointActionExperimental(
 		'POST',
 		`${endpointPrefix}.${changeModeratorEndpoint}`,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		t(changeModeratorMessage, { username: user.username, room_name: roomName }),
 	);
 	const changeModeratorAction = useMutableCallback(() =>
@@ -316,8 +319,8 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 
 	const muteFn = useMethod(isMuted ? 'unmuteUserInRoom' : 'muteUserInRoom');
 	const muteUserOption = useMemo(() => {
-		const action = () => {
-			const onConfirm = async () => {
+		const action = (): unknown => {
+			const onConfirm = async (): Promise<void> => {
 				try {
 					await muteFn({ rid, username: user.username });
 					closeModal();
@@ -390,7 +393,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 					userId={uid}
 					onClose={closeModal}
 					onCancel={closeModal}
-					onConfirm={async (rooms) => {
+					onConfirm={async (rooms): Promise<void> => {
 						const roomKeys = Object.keys(rooms);
 						await removeFromTeam({
 							teamId: room.teamId,
@@ -409,7 +412,7 @@ export const useUserInfoActions = (user = {}, rid, reload) => {
 				text={t('The_user_will_be_removed_from_s', roomName)}
 				close={closeModal}
 				confirmText={t('Yes_remove_user')}
-				confirm={async () => {
+				confirm={async (): Promise<void> => {
 					await removeUserAction({ roomId: rid, userId: uid });
 					closeModal();
 					reload?.();

@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { lazy, useMemo } from 'react';
+import React, { lazy, ReactElement, useMemo } from 'react';
 
 import Page from '../../../components/Page';
 import { useRoute } from '../../../contexts/RouterContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const BusinessHoursPage = () => {
+const BusinessHoursPage = (): ReactElement => {
 	const t = useTranslation();
 
 	const router = useRoute('omnichannel-businessHours');

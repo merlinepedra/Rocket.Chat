@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { useTranslation } from '../contexts/TranslationContext';
 
-export const useFormatDuration = () => {
+export const useFormatDuration = (): ((duration: number) => string) => {
 	const t = useTranslation();
 
 	return useCallback(

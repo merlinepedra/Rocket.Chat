@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, Icon, ButtonGroup, FieldGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import Page from '../../../components/Page';
@@ -13,7 +13,7 @@ import { useForm } from '../../../hooks/useForm';
 import { formsSubscription } from '../additionalForms';
 import CustomFieldsForm from './CustomFieldsForm';
 
-const getInitialValues = (cf) => ({
+const getInitialValues = (cf): unknown => ({
 	id: cf._id,
 	field: cf._id,
 	label: cf.label,
@@ -22,13 +22,14 @@ const getInitialValues = (cf) => ({
 	regexp: cf.regexp,
 });
 
-const EditCustomFieldsPage = ({ customField, id, reload }) => {
+const EditCustomFieldsPage = ({ customField, id, reload }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
 	const [additionalValues, setAdditionalValues] = useState({});
 
-	const { useCustomFieldsAdditionalForm = () => {} } = useSubscription(formsSubscription);
+	const { useCustomFieldsAdditionalForm = (): unknown => undefined } =
+		useSubscription(formsSubscription);
 	const AdditionalForm = useCustomFieldsAdditionalForm();
 
 	const router = useRoute('omnichannel-customfields');

@@ -1,5 +1,8 @@
 // @ts-nocheck
-export const mapBusinessHoursForm = (formData, data) => {
+export const mapBusinessHoursForm = (
+	formData,
+	data,
+): { day: unknown; start: unknown; finish: unknown; open?: unknown } => {
 	const { daysOpen, daysTime } = formData;
 
 	return data.workHours?.map((day) => {

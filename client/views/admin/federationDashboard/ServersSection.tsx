@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box, Throbber } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { usePolledMethodData } from '../../../hooks/usePolledMethodData';
 
-function ServersSection() {
+function ServersSection(): ReactElement {
 	const { value: serversData, phase: serversStatus } = usePolledMethodData(
 		'federation:getServers',
 		useMemo(() => [], []),

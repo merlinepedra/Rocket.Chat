@@ -1,17 +1,17 @@
 // @ts-nocheck
 import { Icon } from '@rocket.chat/fuselage';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 
 import { useConnectionStatus } from '../../contexts/ConnectionStatusContext';
 import { useTranslation } from '../../contexts/TranslationContext';
 import './ConnectionStatusBar.css';
 
-const getReconnectCountdown = (retryTime) => {
+const getReconnectCountdown = (retryTime): number => {
 	const timeDiff = retryTime - Date.now();
 	return (timeDiff > 0 && Math.round(timeDiff / 1000)) || 0;
 };
 
-const useReconnectCountdown = (retryTime, status) => {
+const useReconnectCountdown = (retryTime, status): number => {
 	const reconnectionTimerRef = useRef();
 	const [reconnectCountdown, setReconnectCountdown] = useState(() =>
 		getReconnectCountdown(retryTime),
@@ -34,7 +34,7 @@ const useReconnectCountdown = (retryTime, status) => {
 	}, [retryTime, status]);
 
 	useEffect(
-		() => () => {
+		() => (): void => {
 			clearInterval(reconnectionTimerRef.current);
 		},
 		[],
@@ -43,7 +43,7 @@ const useReconnectCountdown = (retryTime, status) => {
 	return reconnectCountdown;
 };
 
-function ConnectionStatusBar() {
+function ConnectionStatusBar(): ReactElement {
 	const { connected, retryTime, status, reconnect } = useConnectionStatus();
 	const reconnectCountdown = useReconnectCountdown(retryTime, status);
 	const t = useTranslation();
@@ -52,7 +52,7 @@ function ConnectionStatusBar() {
 		return null;
 	}
 
-	const handleRetryClick = (event) => {
+	const handleRetryClick = (event): void => {
 		event.preventDefault();
 		reconnect?.();
 	};

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Table } from '@rocket.chat/fuselage';
 import { capitalize } from '@rocket.chat/string-helpers';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import UserAvatar from '../../../components/avatar/UserAvatar';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -23,7 +23,7 @@ const UserRow = ({
 	onClick,
 	mediaQuery,
 	active,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	const statusText = active ? t(capitalize(status)) : t('Disabled');

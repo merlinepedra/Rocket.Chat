@@ -15,7 +15,7 @@ import {
 	UrlInput,
 } from '@rocket.chat/fuselage';
 import { useUniqueId, useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, ReactElement } from 'react';
 
 import { Importers } from '../../../../app/importer/client/index';
 import Page from '../../../components/Page';
@@ -27,7 +27,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFormatMemorySize } from '../../../hooks/useFormatMemorySize';
 import { useErrorHandler } from './useErrorHandler';
 
-function NewImportPage() {
+function NewImportPage(): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const handleError = useErrorHandler();
@@ -54,21 +54,21 @@ function NewImportPage() {
 
 	const formatMemorySize = useFormatMemorySize();
 
-	const handleBackToImportsButtonClick = () => {
+	const handleBackToImportsButtonClick = (): void => {
 		importHistoryRoute.push();
 	};
 
-	const handleImporterKeyChange = (importerKey) => {
+	const handleImporterKeyChange = (importerKey): void => {
 		newImportRoute.replace({ importerKey });
 	};
 
-	const handleFileTypeChange = (fileType) => {
+	const handleFileTypeChange = (fileType): void => {
 		setFileType(fileType);
 	};
 
 	const [files, setFiles] = useState([]);
 
-	const handleImportFileChange = async (event) => {
+	const handleImportFileChange = async (event): Promise<void> => {
 		event = event.originalEvent || event;
 
 		let { files } = event.target;
@@ -79,11 +79,11 @@ function NewImportPage() {
 		setFiles(Array.from(files));
 	};
 
-	const handleFileUploadChipClick = (file) => () => {
+	const handleFileUploadChipClick = (file) => (): void => {
 		setFiles((files) => files.filter((_file) => _file !== file));
 	};
 
-	const handleFileUploadImportButtonClick = async () => {
+	const handleFileUploadImportButtonClick = async (): Promise<void> => {
 		setLoading(true);
 
 		try {
@@ -94,7 +94,7 @@ function NewImportPage() {
 						new Promise((resolve) => {
 							const reader = new FileReader();
 							reader.readAsDataURL(file);
-							reader.onloadend = async () => {
+							reader.onloadend = async (): Promise<void> => {
 								try {
 									await uploadImportFile({
 										binaryContent: reader.result.split(';base64,')[1],
@@ -112,7 +112,7 @@ function NewImportPage() {
 									resolve();
 								}
 							};
-							reader.onerror = () => resolve();
+							reader.onerror = (): void => resolve();
 						}),
 				),
 			);
@@ -124,11 +124,11 @@ function NewImportPage() {
 
 	const [fileUrl, setFileUrl] = useSafely(useState(''));
 
-	const handleFileUrlChange = (event) => {
+	const handleFileUrlChange = (event): void => {
 		setFileUrl(event.currentTarget.value);
 	};
 
-	const handleFileUrlImportButtonClick = async () => {
+	const handleFileUrlImportButtonClick = async (): Promise<void> => {
 		setLoading(true);
 
 		try {
@@ -144,11 +144,11 @@ function NewImportPage() {
 
 	const [filePath, setFilePath] = useSafely(useState(''));
 
-	const handleFilePathChange = (event) => {
+	const handleFilePathChange = (event): void => {
 		setFilePath(event.currentTarget.value);
 	};
 
-	const handleFilePathImportButtonClick = async () => {
+	const handleFilePathImportButtonClick = async (): Promise<void> => {
 		setLoading(true);
 
 		try {

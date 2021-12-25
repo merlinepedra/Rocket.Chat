@@ -8,14 +8,14 @@ import { useSetModal } from '../../../contexts/ModalContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function RemoveAgentButton({ agentId, setAgentList, agentList, setAgentsRemoved }) {
+function RemoveAgentButton({ agentId, setAgentList, agentList, setAgentsRemoved }): ReactElement {
 	const setModal = useSetModal();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const t = useTranslation();
 
 	const handleDelete = useMutableCallback((e) => {
 		e.stopPropagation();
-		const onDeleteAgent = async () => {
+		const onDeleteAgent = async (): Promise<void> => {
 			const newList = agentList.filter((listItem) => listItem.agentId !== agentId);
 			setAgentList(newList);
 			dispatchToastMessage({ type: 'success', message: t('Agent_removed') });
@@ -27,7 +27,7 @@ function RemoveAgentButton({ agentId, setAgentList, agentList, setAgentsRemoved 
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteAgent}
-				onCancel={() => setModal()}
+				onCancel={(): void => setModal()}
 				confirmText={t('Delete')}
 			/>,
 		);

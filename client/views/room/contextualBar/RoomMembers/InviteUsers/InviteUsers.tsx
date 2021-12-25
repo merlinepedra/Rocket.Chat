@@ -1,12 +1,19 @@
 // @ts-nocheck
 import { Box, Field, UrlInput, Icon, Button, InputBox, Callout } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../../../components/VerticalBar';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import useClipboardWithToast from '../../../../../hooks/useClipboardWithToast';
 
-const InviteUsers = ({ onClickBack, onClickClose, onClickEdit, captionText, linkText, error }) => {
+const InviteUsers = ({
+	onClickBack,
+	onClickClose,
+	onClickEdit,
+	captionText,
+	linkText,
+	error,
+}): ReactElement => {
 	const t = useTranslation();
 
 	const { copy } = useClipboardWithToast(linkText);

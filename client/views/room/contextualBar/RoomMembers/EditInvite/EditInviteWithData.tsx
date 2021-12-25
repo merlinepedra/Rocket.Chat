@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useTabBarClose } from '../../../providers/ToolboxProvider';
 import EditInvite from './EditInvite';
@@ -12,7 +12,7 @@ const EditInviteWithData = ({
 	captionText,
 	days: _days,
 	maxUses: _maxUses,
-}) => {
+}): ReactElement => {
 	const onClickClose = useTabBarClose();
 
 	const [days, setDays] = useState(_days);

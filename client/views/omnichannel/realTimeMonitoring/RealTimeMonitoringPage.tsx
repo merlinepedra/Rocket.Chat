@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Select, Margins } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React, { useRef, useState, useMemo, useEffect, ReactElement } from 'react';
 
 import AutoCompleteDepartment from '../../../components/AutoCompleteDepartment';
 import Page from '../../../components/Page';
@@ -21,7 +21,7 @@ import ProductivityOverview from './overviews/ProductivityOverview';
 
 const dateRange = getDateRange();
 
-const RealTimeMonitoringPage = () => {
+const RealTimeMonitoringPage = (): ReactElement => {
 	const t = useTranslation();
 
 	const [reloadFrequency, setReloadFrequency] = useState(5);
@@ -52,7 +52,7 @@ const RealTimeMonitoringPage = () => {
 
 	useEffect(() => {
 		const interval = setInterval(reloadCharts, reloadFrequency * 1000);
-		return () => {
+		return (): void => {
 			clearInterval(interval);
 		};
 	}, [reloadCharts, reloadFrequency]);

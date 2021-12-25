@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useUserId } from '../../contexts/UserContext';
 import { useRoom } from './contexts/RoomContext';
@@ -7,7 +7,7 @@ import RoomMembers from './contextualBar/RoomMembers';
 import UserInfo from './contextualBar/UserInfo';
 import { useTab, useTabBarClose, useTabContext } from './providers/ToolboxProvider';
 
-const getUid = (room, ownUserId) => {
+const getUid = (room, ownUserId): unknown => {
 	if (room.uids?.length === 1) {
 		return room.uids[0];
 	}
@@ -19,7 +19,7 @@ const getUid = (room, ownUserId) => {
 	return uid || room.uids[0];
 };
 
-const MemberListRouter = ({ rid }) => {
+const MemberListRouter = ({ rid }): ReactElement => {
 	const username = useTabContext();
 	const room = useRoom();
 	const onClickClose = useTabBarClose();

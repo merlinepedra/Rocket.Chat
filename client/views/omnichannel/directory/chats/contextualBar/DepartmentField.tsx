@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../../../hooks/useAsyncState';
@@ -9,7 +9,7 @@ import Info from '../../../components/Info';
 import Label from '../../../components/Label';
 import { FormSkeleton } from '../../Skeleton';
 
-const DepartmentField = ({ departmentId }) => {
+const DepartmentField = ({ departmentId }): ReactElement => {
 	const t = useTranslation();
 	const { value: data, phase: state } = useEndpointData(`livechat/department/${departmentId}`);
 	if (state === AsyncStatePhase.LOADING) {

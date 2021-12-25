@@ -1,15 +1,15 @@
 // @ts-nocheck
 import { PaginatedMultiSelectFiltered } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, ReactElement, useMemo, useState } from 'react';
 
 import { useTranslation } from '../contexts/TranslationContext';
 import { useRecordList } from '../hooks/lists/useRecordList';
 import { AsyncStatePhase } from '../hooks/useAsyncState';
 import { useDepartmentsList } from './Omnichannel/hooks/useDepartmentsList';
 
-const AutoCompleteDepartmentMultiple = (props) => {
-	const { value, onlyMyDepartments = false, onChange = () => {} } = props;
+const AutoCompleteDepartmentMultiple = (props): ReactElement => {
+	const { value, onlyMyDepartments = false, onChange = (): void => undefined } = props;
 
 	const t = useTranslation();
 	const [departmentsFilter, setDepartmentsFilter] = useState('');
@@ -54,8 +54,8 @@ const AutoCompleteDepartmentMultiple = (props) => {
 			placeholder={t('Select_an_option')}
 			endReached={
 				departmentsPhase === AsyncStatePhase.LOADING
-					? () => {}
-					: (start) => loadMoreDepartments(start, Math.min(50, departmentsTotal))
+					? (): void => undefined
+					: (start): void => loadMoreDepartments(start, Math.min(50, departmentsTotal))
 			}
 		/>
 	);

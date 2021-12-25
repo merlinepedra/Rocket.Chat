@@ -10,7 +10,7 @@ import {
 	Select,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { ReactElement, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
@@ -23,7 +23,14 @@ import { useForm } from '../../../hooks/useForm';
 import UserInfo from '../../room/contextualBar/UserInfo';
 import { formsSubscription } from '../additionalForms';
 
-function AgentEdit({ data, userDepartments, availableDepartments, uid, reset, ...props }) {
+function AgentEdit({
+	data,
+	userDepartments,
+	availableDepartments,
+	uid,
+	reset,
+	...props
+}): ReactElement {
 	const t = useTranslation();
 	const agentsRoute = useRoute('omnichannel-agents');
 	const [maxChatUnsaved, setMaxChatUnsaved] = useState();
@@ -58,7 +65,7 @@ function AgentEdit({ data, userDepartments, availableDepartments, uid, reset, ..
 		}
 	});
 
-	const { useMaxChatsPerAgent = () => {} } = eeForms;
+	const { useMaxChatsPerAgent = (): void => undefined } = eeForms;
 
 	const { values, handlers, hasUnsavedChanges, commit } = useForm({
 		departments: initialDepartmentValue,

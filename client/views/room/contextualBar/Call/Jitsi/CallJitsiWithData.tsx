@@ -2,7 +2,15 @@
 import { Skeleton } from '@rocket.chat/fuselage';
 import { useMutableCallback, useSafely } from '@rocket.chat/fuselage-hooks';
 import { clear } from '@rocket.chat/memo';
-import React, { useRef, useEffect, useState, useMemo, useLayoutEffect, memo } from 'react';
+import React, {
+	useRef,
+	useEffect,
+	useState,
+	useMemo,
+	useLayoutEffect,
+	memo,
+	ReactElement,
+} from 'react';
 
 import { HEARTBEAT, TIMEOUT, DEBOUNCE } from '../../../../../../app/videobridge/constants';
 import { useConnectionStatus } from '../../../../../contexts/ConnectionStatusContext';
@@ -34,7 +42,7 @@ const querySettings = {
 	],
 };
 
-const CallJitsiWithData = ({ rid }) => {
+const CallJitsiWithData = ({ rid }): ReactElement => {
 	const user = useUser();
 	const { connected } = useConnectionStatus();
 	const [accessToken, setAccessToken] = useSafely(useState());
@@ -73,11 +81,11 @@ const CallJitsiWithData = ({ rid }) => {
 			setAccessToken();
 			return;
 		}
-		(async () => {
+		(async (): Promise<void> => {
 			const accessToken = await generateAccessToken(rid);
 			!ignore && setAccessToken(accessToken);
 		})();
-		return () => {
+		return (): void => {
 			ignore = true;
 		};
 	}, [generateAccessToken, isEnabledTokenAuth, rid, setAccessToken]);
@@ -160,7 +168,7 @@ const CallJitsiWithData = ({ rid }) => {
 			return;
 		}
 
-		const clear = () => {
+		const clear = (): void => {
 			jitsi.off('HEARTBEAT', testAndHandleTimeout);
 			jitsi.dispose();
 		};
@@ -179,7 +187,7 @@ const CallJitsiWithData = ({ rid }) => {
 		}
 		jitsi.on('HEARTBEAT', testAndHandleTimeout);
 
-		return () => {
+		return (): void => {
 			if (!jitsi.openNewWindow) clear();
 		};
 	}, [

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -13,7 +13,7 @@ const RemoveUsersSecondStep = ({
 	username,
 	rooms = [],
 	...props
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (
@@ -25,7 +25,7 @@ const RemoveUsersSecondStep = ({
 			title={t('Confirmation')}
 			onClose={onClose}
 			onCancel={onCancel}
-			onConfirm={() => onConfirm(deletedRooms)}
+			onConfirm={(): void => onConfirm(deletedRooms)}
 			{...props}
 		>
 			{t('Teams_removing__username__from_team', { username })}

@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-function Subtitle(props) {
+function Subtitle(props): ReactElement {
 	return (
 		<Box
 			color='default'

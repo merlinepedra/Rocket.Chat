@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Callout } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import EditRolePage from './EditRolePage';
 import { useRole } from './useRole';
 
-const EditRolePageContainer = ({ _id }) => {
+const EditRolePageContainer = ({ _id }): ReactElement => {
 	const t = useTranslation();
 	const role = useRole(_id);
 

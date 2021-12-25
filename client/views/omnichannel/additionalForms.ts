@@ -1,22 +1,22 @@
 // @ts-nocheck
-const createFormSubscription = () => {
+const createFormSubscription = (): unknown => {
 	let forms = {};
-	let updateCb = () => {};
+	let updateCb = (): void => undefined;
 
 	const formsSubscription = {
-		subscribe: (cb) => {
+		subscribe: (cb): (() => void) => {
 			updateCb = cb;
-			return () => {
-				updateCb = () => {};
+			return (): void => {
+				updateCb = (): void => undefined;
 			};
 		},
-		getCurrentValue: () => forms,
+		getCurrentValue: (): unknown => forms,
 	};
-	const registerForm = (newForm) => {
+	const registerForm = (newForm): void => {
 		forms = { ...forms, ...newForm };
 		updateCb();
 	};
-	const unregisterForm = (form) => {
+	const unregisterForm = (form): void => {
 		delete forms[form];
 		updateCb();
 	};

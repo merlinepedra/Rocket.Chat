@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Callout } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo, useState, ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import PageSkeleton from '../../../components/PageSkeleton';
@@ -15,7 +15,7 @@ import BusinessHoursFormContainer from './BusinessHoursFormContainer';
 import { useIsSingleBusinessHours } from './BusinessHoursRouter';
 import { mapBusinessHoursForm } from './mapBusinessHoursForm';
 
-const EditBusinessHoursPage = ({ id, type }) => {
+const EditBusinessHoursPage = ({ id, type }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const isSingleBH = useIsSingleBusinessHours();

@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../components/NotAuthorizedPage';
 import { usePermission } from '../../contexts/AuthorizationContext';
 import ChannelsTable from './ChannelsTable';
 
-function ChannelsTab(props) {
+function ChannelsTab(props): ReactElement {
 	const canViewPublicRooms = usePermission('view-c-room');
 
 	if (canViewPublicRooms) {

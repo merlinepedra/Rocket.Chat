@@ -1,11 +1,17 @@
 // @ts-nocheck
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import UsersInRoleTable from './UsersInRoleTable';
 
-const UsersInRoleTableContainer = ({ rid, roleId, roleName, description, reloadRef }) => {
+const UsersInRoleTableContainer = ({
+	rid,
+	roleId,
+	roleName,
+	description,
+	reloadRef,
+}): ReactElement => {
 	const [params, setParams] = useState({ current: 0, itemsPerPage: 25 });
 
 	const debouncedParams = useDebouncedValue(params, 500);

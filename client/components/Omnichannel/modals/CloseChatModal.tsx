@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Field, Button, TextInput, Icon, ButtonGroup, Modal, Box } from '@rocket.chat/fuselage';
 import { useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useMemo, useEffect, ReactElement } from 'react';
 
 import { useSetting } from '../../../contexts/SettingsContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import { useForm } from '../../../hooks/useForm';
 import GenericModal from '../../GenericModal';
 import Tags from '../Tags';
 
-const CloseChatModal = ({ department = {}, onCancel, onConfirm }) => {
+const CloseChatModal = ({ department = {}, onCancel, onConfirm }): ReactElement => {
 	const t = useTranslation();
 
 	const inputRef = useAutoFocus(true);

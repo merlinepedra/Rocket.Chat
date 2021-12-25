@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { Box, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import AutoCompleteAgent from '../../../components/AutoCompleteAgent';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointAction } from '../../../hooks/useEndpointAction';
 
-function AddAgent({ agentList, setAgentsAdded, setAgentList, ...props }) {
+function AddAgent({ agentList, setAgentsAdded, setAgentList, ...props }): ReactElement {
 	const t = useTranslation();
 	const [userId, setUserId] = useState();
 	const getAgent = useEndpointAction('GET', `livechat/users/agent/${userId}`);

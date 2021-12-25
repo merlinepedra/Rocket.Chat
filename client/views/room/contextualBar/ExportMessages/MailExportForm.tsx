@@ -11,7 +11,7 @@ import {
 	FieldGroup,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 
 import { roomTypes } from '../../../../../app/utils/client';
 import { isEmail } from '../../../../../lib/utils/isEmail';
@@ -26,7 +26,7 @@ const clickable = css`
 	cursor: pointer;
 `;
 
-const MailExportForm = ({ onCancel, rid }) => {
+const MailExportForm = ({ onCancel, rid }): ReactElement => {
 	const t = useTranslation();
 
 	const room = useUserRoom(rid);
@@ -57,7 +57,7 @@ const MailExportForm = ({ onCancel, rid }) => {
 		const $root = $(`#chat-window-${rid}`);
 		$('.messages-box', $root).addClass('selectable');
 
-		const handler = function () {
+		const handler = function (): void {
 			const { id } = this;
 
 			if (this.classList.contains('selected')) {
@@ -70,7 +70,7 @@ const MailExportForm = ({ onCancel, rid }) => {
 		};
 		$('.messages-box .message', $root).on('click', handler);
 
-		return () => {
+		return (): void => {
 			$('.messages-box', $root).removeClass('selectable');
 			$('.messages-box .message', $root)
 				.off('click', handler)
@@ -93,7 +93,7 @@ const MailExportForm = ({ onCancel, rid }) => {
 
 	const roomsExport = useEndpoint('POST', 'rooms.export');
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (): Promise<void> => {
 		if (toUsers.length === 0 && additionalEmails === '') {
 			setErrorMessage(t('Mail_Message_Missing_to'));
 			return;
@@ -181,7 +181,7 @@ const MailExportForm = ({ onCancel, rid }) => {
 
 			<ButtonGroup stretch mb='x12'>
 				<Button onClick={onCancel}>{t('Cancel')}</Button>
-				<Button primary onClick={() => handleSubmit()}>
+				<Button primary onClick={(): void => handleSubmit()}>
 					{t('Send')}
 				</Button>
 			</ButtonGroup>

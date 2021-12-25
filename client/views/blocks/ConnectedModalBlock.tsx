@@ -2,19 +2,19 @@
 import { UIKitIncomingInteractionContainerType } from '@rocket.chat/apps-engine/definition/uikit/UIKitIncomingInteractionContainer';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { kitContext } from '@rocket.chat/fuselage-ui-kit';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 
 import * as ActionManager from '../../../app/ui-message/client/ActionManager';
 import ModalBlock from './ModalBlock';
 import './textParsers';
 
-const useActionManagerState = (initialState) => {
+const useActionManagerState = (initialState): unknown => {
 	const [state, setState] = useState(initialState);
 
 	const { viewId } = state;
 
 	useEffect(() => {
-		const handleUpdate = ({ type, ...data }) => {
+		const handleUpdate = ({ type, ...data }): void => {
 			if (type === 'errors') {
 				const { errors } = data;
 				setState((state) => ({ ...state, errors }));
@@ -26,7 +26,7 @@ const useActionManagerState = (initialState) => {
 
 		ActionManager.on(viewId, handleUpdate);
 
-		return () => {
+		return (): void => {
 			ActionManager.off(viewId, handleUpdate);
 		};
 	}, [viewId]);
@@ -34,14 +34,14 @@ const useActionManagerState = (initialState) => {
 	return state;
 };
 
-const useValues = (view) => {
+const useValues = (view): unknown => {
 	const reducer = useMutableCallback((values, { actionId, payload }) => ({
 		...values,
 		[actionId]: payload,
 	}));
 
 	const initializer = useMutableCallback(() => {
-		const filterInputFields = ({ element, elements = [] }) => {
+		const filterInputFields = ({ element, elements = [] }): boolean | undefined => {
 			if (element?.initialValue) {
 				return true;
 			}
@@ -54,7 +54,7 @@ const useValues = (view) => {
 			}
 		};
 
-		const mapElementToState = ({ element, blockId, elements = [] }) => {
+		const mapElementToState = ({ element, blockId, elements = [] }): unknown => {
 			if (elements.length) {
 				return elements
 					.map((element) => ({ element, blockId }))
@@ -80,21 +80,21 @@ const useValues = (view) => {
 	return useReducer(reducer, null, initializer);
 };
 
-function ConnectedModalBlock(props) {
+function ConnectedModalBlock(props): ReactElement {
 	const state = useActionManagerState(props);
 
 	const { appId, viewId, mid: _mid, errors, view } = state;
 
 	const [values, updateValues] = useValues(view);
 
-	const groupStateByBlockId = (obj) =>
+	const groupStateByBlockId = (obj): unknown =>
 		Object.entries(obj).reduce((obj, [key, { blockId, value }]) => {
 			obj[blockId] = obj[blockId] || {};
 			obj[blockId][key] = value;
 			return obj;
 		}, {});
 
-	const prevent = (e) => {
+	const prevent = (e): void => {
 		if (e) {
 			(e.nativeEvent || e).stopImmediatePropagation();
 			e.stopPropagation();
@@ -103,7 +103,7 @@ function ConnectedModalBlock(props) {
 	};
 
 	const context = {
-		action: ({ actionId, appId, value, blockId, mid = _mid }) =>
+		action: ({ actionId, appId, value, blockId, mid = _mid }): void =>
 			ActionManager.triggerBlockAction({
 				container: {
 					type: UIKitIncomingInteractionContainerType.VIEW,
@@ -115,7 +115,7 @@ function ConnectedModalBlock(props) {
 				blockId,
 				mid,
 			}),
-		state: ({ actionId, value, /* ,appId, */ blockId = 'default' }) => {
+		state: ({ actionId, value, /* ,appId, */ blockId = 'default' }): void => {
 			updateValues({
 				actionId,
 				payload: {

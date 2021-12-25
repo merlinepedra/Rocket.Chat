@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, TextInput, Icon } from '@rocket.chat/fuselage';
-import React, { useCallback, useState, useEffect, memo } from 'react';
+import React, { useCallback, useState, useEffect, memo, ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const FilterByTypeAndText = ({ setFilter, ...props }) => {
+const FilterByTypeAndText = ({ setFilter, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const [text, setText] = useState('');

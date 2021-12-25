@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import Page from '../../../../components/Page';
 import { useRouteParameter, useRoute } from '../../../../contexts/RouterContext';
@@ -8,7 +8,7 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import EditIncomingWebhookWithData from './EditIncomingWebhookWithData';
 import EditOutgoingWebhookWithData from './EditOutgoingWebhookWithData';
 
-function EditIntegrationsPage({ ...props }) {
+function EditIntegrationsPage({ ...props }): ReactElement {
 	const t = useTranslation();
 
 	const router = useRoute('admin-integrations');

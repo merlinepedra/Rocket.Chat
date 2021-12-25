@@ -1,9 +1,9 @@
 // @ts-nocheck
 import { css } from '@rocket.chat/css-in-js';
 import { Box } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
-const GenericItem = ({ href, active, children, ...props }) => (
+const GenericItem = ({ href, active, children, ...props }): ReactElement => (
 	<Box
 		is='a'
 		color='default'

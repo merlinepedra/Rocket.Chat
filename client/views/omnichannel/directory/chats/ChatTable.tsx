@@ -3,7 +3,7 @@ import { Table, Tag, Box } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, ReactElement } from 'react';
 
 import FilterByText from '../../../../components/FilterByText';
 import GenericTable from '../../../../components/GenericTable';
@@ -11,7 +11,7 @@ import { useRoute } from '../../../../contexts/RouterContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 
-const useQuery = ({ text, itemsPerPage, current }, [column, direction], userIdLoggedIn) =>
+const useQuery = ({ text, itemsPerPage, current }, [column, direction], userIdLoggedIn): unknown =>
 	useMemo(
 		() => ({
 			sort: JSON.stringify({ [column]: direction === 'asc' ? 1 : -1 }),
@@ -24,7 +24,7 @@ const useQuery = ({ text, itemsPerPage, current }, [column, direction], userIdLo
 		[column, current, direction, itemsPerPage, userIdLoggedIn, text],
 	);
 
-const ChatTable = ({ setChatReload }) => {
+const ChatTable = ({ setChatReload }): ReactElement => {
 	const [params, setParams] = useState({ text: '', current: 0, itemsPerPage: 25 });
 	const [sort, setSort] = useState(['closedAt', 'desc']);
 	const t = useTranslation();
@@ -121,7 +121,7 @@ const ChatTable = ({ setChatReload }) => {
 				key={_id}
 				tabIndex={0}
 				role='link'
-				onClick={() => onRowClick(_id)}
+				onClick={(): void => onRowClick(_id)}
 				action
 				qa-user-id={_id}
 			>
@@ -167,7 +167,9 @@ const ChatTable = ({ setChatReload }) => {
 			total={data?.total}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => <FilterByText onChange={onChange} {...props} />}
+			renderFilter={({ onChange, ...props }): ReactElement => (
+				<FilterByText onChange={onChange} {...props} />
+			)}
 		/>
 	);
 };

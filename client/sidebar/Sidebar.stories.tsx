@@ -66,6 +66,7 @@ const userPreferences = {
 };
 
 const settings = {
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	UI_Use_Real_Name: true,
 };
 

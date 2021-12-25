@@ -2,15 +2,15 @@
 import { Box, InputBox, Menu, Field } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import moment from 'moment';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const formatToDateInput = (date) => date.format('YYYY-MM-DD');
+const formatToDateInput = (date): string => date.format('YYYY-MM-DD');
 
 const todayDate = formatToDateInput(moment());
 
-const getMonthRange = (monthsToSubtractFromToday) => ({
+const getMonthRange = (monthsToSubtractFromToday): { start: string; end: string } => ({
 	start: formatToDateInput(moment().subtract(monthsToSubtractFromToday, 'month').date(1)),
 	end: formatToDateInput(
 		monthsToSubtractFromToday === 0
@@ -19,12 +19,15 @@ const getMonthRange = (monthsToSubtractFromToday) => ({
 	),
 });
 
-const getWeekRange = (daysToSubtractFromStart, daysToSubtractFromEnd) => ({
+const getWeekRange = (
+	daysToSubtractFromStart,
+	daysToSubtractFromEnd,
+): { start: string; end: string } => ({
 	start: formatToDateInput(moment().subtract(daysToSubtractFromStart, 'day')),
 	end: formatToDateInput(moment().subtract(daysToSubtractFromEnd, 'day')),
 });
 
-const DateRangePicker = ({ onChange = () => {}, ...props }) => {
+const DateRangePicker = ({ onChange = (): void => undefined, ...props }): ReactElement => {
 	const t = useTranslation();
 	const [range, setRange] = useState({ start: '', end: '' });
 
@@ -65,42 +68,42 @@ const DateRangePicker = ({ onChange = () => {}, ...props }) => {
 			today: {
 				icon: 'history',
 				label: t('Today'),
-				action: () => {
+				action: (): void => {
 					handleRange(getWeekRange(0, 0));
 				},
 			},
 			yesterday: {
 				icon: 'history',
 				label: t('Yesterday'),
-				action: () => {
+				action: (): void => {
 					handleRange(getWeekRange(1, 1));
 				},
 			},
 			thisWeek: {
 				icon: 'history',
 				label: t('This_week'),
-				action: () => {
+				action: (): void => {
 					handleRange(getWeekRange(7, 0));
 				},
 			},
 			previousWeek: {
 				icon: 'history',
 				label: t('Previous_week'),
-				action: () => {
+				action: (): void => {
 					handleRange(getWeekRange(14, 7));
 				},
 			},
 			thisMonth: {
 				icon: 'history',
 				label: t('This_month'),
-				action: () => {
+				action: (): void => {
 					handleRange(getMonthRange(0));
 				},
 			},
 			lastMonth: {
 				icon: 'history',
 				label: t('Previous_month'),
-				action: () => {
+				action: (): void => {
 					handleRange(getMonthRange(1));
 				},
 			},

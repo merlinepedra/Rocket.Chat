@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import FileItem from './components/FileItem';
 
-const Row = ({ item, data, index }) => {
+const Row = ({ item, data, index }): ReactElement => {
 	const { onClickDelete, isDeletionAllowed } = data;
 
 	return (

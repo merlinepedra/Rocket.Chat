@@ -9,14 +9,15 @@ import {
 	Icon,
 	ButtonGroup,
 } from '@rocket.chat/fuselage';
-import React, { useState, useCallback } from 'react';
+import { VolumeIdStringList } from 'aws-sdk/clients/ec2';
+import React, { useState, useCallback, ReactElement } from 'react';
 
 import { isEmail } from '../../../../lib/utils/isEmail';
 import { isJSON } from '../../../../lib/utils/isJSON';
 import Page from '../../../components/Page';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-export function Mailer({ sendMail = () => {} }) {
+export function Mailer({ sendMail = (): void => undefined }): ReactElement {
 	const t = useTranslation();
 
 	const [fromEmail, setFromEmail] = useState({ value: '' });
@@ -31,7 +32,7 @@ export function Mailer({ sendMail = () => {} }) {
 				<ButtonGroup align='end'>
 					<Button
 						primary
-						onClick={() => {
+						onClick={(): void => {
 							sendMail({ fromEmail, dryRun, query, subject, emailBody });
 						}}
 					>
@@ -61,7 +62,7 @@ export function Mailer({ sendMail = () => {} }) {
 								placeholder={t('Type_your_email')}
 								value={fromEmail.value}
 								error={fromEmail.error}
-								onChange={(e) => {
+								onChange={(e): VolumeIdStringList => {
 									setFromEmail({
 										value: e.currentTarget.value,
 										error: !isEmail(e.currentTarget.value) ? t('Invalid_Email') : undefined,
@@ -72,7 +73,7 @@ export function Mailer({ sendMail = () => {} }) {
 					</Field>
 					<Field>
 						<Field.Row>
-							<CheckBox id='dryRun' checked={dryRun} onChange={() => setDryRun(!dryRun)} />
+							<CheckBox id='dryRun' checked={dryRun} onChange={(): void => setDryRun(!dryRun)} />
 							<Field.Label htmlFor='dry-run'>{t('Dry_run')}</Field.Label>
 						</Field.Row>
 						<Field.Hint>{t('Dry_run_description')}</Field.Hint>
@@ -84,7 +85,7 @@ export function Mailer({ sendMail = () => {} }) {
 								id='query'
 								value={query.value}
 								error={query.error}
-								onChange={(e) => {
+								onChange={(e): void => {
 									setQuery({
 										value: e.currentTarget.value,
 										error:
@@ -104,7 +105,7 @@ export function Mailer({ sendMail = () => {} }) {
 								id='subject'
 								value={subject.value}
 								error={subject.error}
-								onChange={(e) => {
+								onChange={(e): void => {
 									setSubject(e.currentTarget.value);
 								}}
 							/>
@@ -117,7 +118,7 @@ export function Mailer({ sendMail = () => {} }) {
 								id='emailBody'
 								rows={10}
 								value={emailBody}
-								onChange={(e) => setEmailBody(e.currentTarget.value)}
+								onChange={(e): void => setEmailBody(e.currentTarget.value)}
 							/>
 						</Field.Row>
 						<Field.Hint dangerouslySetInnerHTML={{ __html: t('Mailer_body_tags') }} />

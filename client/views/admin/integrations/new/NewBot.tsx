@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 
-export default function NewBot() {
+export default function NewBot(): ReactElement {
 	const t = useTranslation();
 	return (
 		<Box

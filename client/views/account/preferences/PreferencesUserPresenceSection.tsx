@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Accordion, Field, NumberInput, FieldGroup, ToggleSwitch } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
-const PreferencesUserPresenceSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesUserPresenceSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 	const userEnableAutoAway = useUserPreference('enableAutoAway');
 	const userIdleTimeLimit = useUserPreference('idleTimeLimit');

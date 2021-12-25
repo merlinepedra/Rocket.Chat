@@ -3,7 +3,7 @@ import { Box, Margins, Tag, Button, Icon, ButtonGroup } from '@rocket.chat/fusel
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { hasPermission } from '../../../../../../app/authorization/client';
 import VerticalBar from '../../../../../components/VerticalBar';
@@ -27,7 +27,7 @@ import SourceField from './SourceField';
 import VisitorClientInfo from './VisitorClientInfo';
 
 // TODO: Remove moment we are mixing moment and our own formatters :sadface:
-function ChatInfo({ id, route }) {
+function ChatInfo({ id, route }): ReactElement {
 	const t = useTranslation();
 
 	const formatDateAndTime = useFormatDateAndTime();
@@ -57,7 +57,7 @@ function ChatInfo({ id, route }) {
 
 	const routePath = useRoute(route || 'omnichannel-directory');
 	// TODO: use hook instead
-	const canViewCustomFields = () => hasPermission('view-livechat-room-customfields');
+	const canViewCustomFields = (): boolean => hasPermission('view-livechat-room-customfields');
 	const subscription = useUserSubscription(id);
 	// TODO: use hook instead
 	const hasGlobalEditRoomPermission = hasPermission('save-others-livechat-room-info');
@@ -73,7 +73,7 @@ function ChatInfo({ id, route }) {
 		}
 	}, [allCustomFields, stateCustomFields]);
 
-	const checkIsVisibleAndScopeRoom = (key) => {
+	const checkIsVisibleAndScopeRoom = (key): boolean => {
 		const field = customFields.find(({ _id }) => _id === key);
 		if (field && field.visibility === 'visible' && field.scope === 'room') {
 			return true;

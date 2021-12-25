@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
@@ -9,15 +9,15 @@ import { useResizeInlineBreakpoint } from '../../../hooks/useResizeInlineBreakpo
 import AppRow from './AppRow';
 import { useFilteredApps } from './hooks/useFilteredApps';
 
-const filterFunction = (text) => {
+const filterFunction = (text): (() => boolean) => {
 	if (!text) {
-		return (app) => app.installed;
+		return (app): boolean => app.installed;
 	}
 
-	return (app) => app.installed && app.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+	return (app): boolean => app.installed && app.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
 };
 
-function AppsTable() {
+function AppsTable(): ReactElement {
 	const t = useTranslation();
 
 	const [ref, onMediumBreakpoint] = useResizeInlineBreakpoint([600], 200);
@@ -37,7 +37,7 @@ function AppsTable() {
 
 	const [sortBy, sortDirection] = sort;
 
-	const handleHeaderCellClick = (id) => {
+	const handleHeaderCellClick = (id): void => {
 		setSort(([sortBy, sortDirection]) =>
 			sortBy === id ? [id, sortDirection === 'asc' ? 'desc' : 'asc'] : [id, 'asc'],
 		);
@@ -65,11 +65,11 @@ function AppsTable() {
 			total={filteredAppsCount}
 			params={params}
 			setParams={setParams}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText placeholder={t('Search_Apps')} onChange={onChange} {...props} />
 			)}
 		>
-			{(props) => <AppRow key={props.id} medium={onMediumBreakpoint} {...props} />}
+			{(props): ReactElement => <AppRow key={props.id} medium={onMediumBreakpoint} {...props} />}
 		</GenericTable>
 	);
 }

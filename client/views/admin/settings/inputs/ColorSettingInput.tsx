@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Field, Flex, InputBox, Margins, TextInput, Select } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import ResetSettingButton from '../ResetSettingButton';
@@ -19,7 +19,7 @@ function ColorSettingInput({
 	onChangeValue,
 	onChangeEditor,
 	onResetButtonClick,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 
 	const handleChange = useCallback(

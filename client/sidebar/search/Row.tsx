@@ -1,10 +1,10 @@
 // @ts-nocheck
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import SideBarItemTemplateWithData from '../RoomList/SideBarItemTemplateWithData';
 import UserItem from './UserItem';
 
-const Row = ({ item, data }) => {
+const Row = ({ item, data }): ReactElement => {
 	const { t, SideBarItemTemplate, avatarTemplate: AvatarTemplate, useRealName, extended } = data;
 
 	if (item.t === 'd' && !item.u) {

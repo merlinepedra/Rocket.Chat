@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { OptionTitle } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { popover } from '../../../../app/ui-utils/client';
 import CreateDiscussion from '../../../components/CreateDiscussion';
@@ -23,7 +23,7 @@ const style = {
 	textTransform: 'uppercase',
 };
 
-const useReactModal = (Component) => {
+const useReactModal = (Component): (() => void) => {
 	const setModal = useSetModal();
 
 	return useMutableCallback((e) => {
@@ -31,7 +31,7 @@ const useReactModal = (Component) => {
 
 		e.preventDefault();
 
-		const handleClose = () => {
+		const handleClose = (): void => {
 			setModal(null);
 		};
 
@@ -39,7 +39,7 @@ const useReactModal = (Component) => {
 	});
 };
 
-function CreateRoomList({ closeList }) {
+function CreateRoomList({ closeList }): ReactElement {
 	const t = useTranslation();
 
 	const canCreateChannel = useAtLeastOnePermission(CREATE_CHANNEL_PERMISSIONS);
@@ -64,7 +64,7 @@ function CreateRoomList({ closeList }) {
 					<ListItem
 						icon='hashtag'
 						text={t('Channel')}
-						action={(e) => {
+						action={(e): void => {
 							createChannel(e);
 							closeList();
 						}}
@@ -74,7 +74,7 @@ function CreateRoomList({ closeList }) {
 					<ListItem
 						icon='team'
 						text={t('Team')}
-						action={(e) => {
+						action={(e): void => {
 							createTeam(e);
 							closeList();
 						}}
@@ -84,7 +84,7 @@ function CreateRoomList({ closeList }) {
 					<ListItem
 						icon='balloon'
 						text={t('Direct_Messages')}
-						action={(e) => {
+						action={(e): void => {
 							createDirectMessage(e);
 							closeList();
 						}}
@@ -94,7 +94,7 @@ function CreateRoomList({ closeList }) {
 					<ListItem
 						icon='discussion'
 						text={t('Discussion')}
-						action={(e) => {
+						action={(e): void => {
 							createDiscussion(e);
 							closeList();
 						}}

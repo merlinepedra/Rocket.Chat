@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { CheckBox, Table, Icon, Margins } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useRoomIcon } from '../../../../../hooks/useRoomIcon';
 
-const ChannelRow = ({ onChange, selected, room }) => {
+const ChannelRow = ({ onChange, selected, room }): ReactElement => {
 	const { name, fname, usersCount } = room;
 
 	const handleChange = useMutableCallback(() => onChange(room));

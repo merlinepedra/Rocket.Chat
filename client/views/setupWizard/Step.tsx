@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import './Step.css';
 
-export const Step = ({ active, working = false, ...props }) => (
+export const Step = ({ active, working = false, ...props }): ReactElement => (
 	<form
 		data-qa={active ? 'active-step' : undefined}
 		className={[

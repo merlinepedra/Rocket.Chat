@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Field, Flex, Select } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import ResetSettingButton from '../ResetSettingButton';
@@ -17,10 +17,10 @@ function SelectSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 
-	const handleChange = (value) => {
+	const handleChange = (value): void => {
 		onChangeValue?.(value);
 	};
 

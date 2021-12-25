@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import UserPageHeaderContentWithSeatsCap from '../../../../ee/client/views/admin/users/UserPageHeaderContentWithSeatsCap';
 import { useSeatsCap } from '../../../../ee/client/views/admin/users/useSeatsCap';
@@ -16,9 +16,9 @@ import { UserInfoWithData } from './UserInfo';
 import UserPageHeaderContent from './UserPageHeaderContent';
 import UsersTable from './UsersTable';
 
-const sortDir = (sortDir) => (sortDir === 'asc' ? 1 : -1);
+const sortDir = (sortDir): number => (sortDir === 'asc' ? 1 : -1);
 
-const useQuery = ({ text, itemsPerPage, current }, sortFields) =>
+const useQuery = ({ text, itemsPerPage, current }, sortFields): unknown =>
 	useMemo(
 		() => ({
 			fields: JSON.stringify({
@@ -49,7 +49,7 @@ const useQuery = ({ text, itemsPerPage, current }, sortFields) =>
 		[text, itemsPerPage, current, sortFields],
 	);
 
-function UsersPage() {
+function UsersPage(): ReactElement {
 	const context = useRouteParameter('context');
 	const id = useRouteParameter('id');
 	const seatsCap = useSeatsCap();
@@ -67,7 +67,7 @@ function UsersPage() {
 
 	const t = useTranslation();
 
-	const handleVerticalBarCloseButtonClick = () => {
+	const handleVerticalBarCloseButtonClick = (): void => {
 		usersRoute.push({});
 	};
 	const [params, setParams] = useState({ text: '', current: 0, itemsPerPage: 25 });
@@ -81,7 +81,7 @@ function UsersPage() {
 	const query = useQuery(debouncedParams, debouncedSort);
 	const { value: data = {}, reload: reloadList } = useEndpointData('users.list', query);
 
-	const reload = () => {
+	const reload = (): void => {
 		seatsCap?.reload();
 		reloadList();
 	};

@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box, ActionButton } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const Header = ({ title, onClose, children = undefined, ...props }) => (
+const Header = ({ title, onClose, children = undefined, ...props }): ReactElement => (
 	<Box is='header' display='flex' flexDirection='column' pb='x16' {...props}>
 		{(title || onClose) && (
 			<Box

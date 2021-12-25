@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Table } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import UserAvatar from '../../../components/avatar/UserAvatar';
 import Count from './Count';
@@ -16,7 +16,7 @@ const AgentRow = ({
 	agentList,
 	setAgentList,
 	setAgentsRemoved,
-}) => (
+}): ReactElement => (
 	<Table.Row key={agentId} tabIndex={0} role='link' action qa-user-id={agentId}>
 		<Table.Cell withTruncatedText>
 			<Box display='flex' alignItems='center'>

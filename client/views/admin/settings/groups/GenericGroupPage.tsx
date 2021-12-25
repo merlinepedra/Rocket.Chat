@@ -1,11 +1,11 @@
 // @ts-nocheck
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { useEditableSettingsGroupSections } from '../../../../contexts/EditableSettingsContext';
 import GroupPage from '../GroupPage';
 import Section from '../Section';
 
-function GenericGroupPage({ _id, ...group }) {
+function GenericGroupPage({ _id, ...group }): ReactElement {
 	const sections = useEditableSettingsGroupSections(_id);
 	const solo = sections.length === 1;
 

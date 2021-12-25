@@ -1,7 +1,7 @@
 // @ts-nocheck
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
-const FileItemIcon = ({ type }) => {
+const FileItemIcon = ({ type }): ReactElement => {
 	let icon;
 	switch (type) {
 		case 'application/vnd.ms-excel':

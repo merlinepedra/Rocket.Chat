@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Field, Select, Button, InputBox } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import VerticalBar from '../../../../../components/VerticalBar';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -13,7 +13,7 @@ const EditInvite = ({
 	setDays,
 	maxUses,
 	setMaxUses,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	const daysOptions = useMemo(

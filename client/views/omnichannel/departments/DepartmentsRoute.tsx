@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
@@ -13,9 +13,13 @@ import DepartmentsPage from './DepartmentsPage';
 import EditDepartmentWithData from './EditDepartmentWithData';
 import RemoveDepartmentButton from './RemoveDepartmentButton';
 
-const sortDir = (sortDir) => (sortDir === 'asc' ? 1 : -1);
+const sortDir = (sortDir): number => (sortDir === 'asc' ? 1 : -1);
 
-const useQuery = ({ text, itemsPerPage, current }, [column, direction], onlyMyDepartments) =>
+const useQuery = (
+	{ text, itemsPerPage, current },
+	[column, direction],
+	onlyMyDepartments,
+): unknown =>
 	useMemo(
 		() => ({
 			fields: JSON.stringify({ name: 1, username: 1, emails: 1, avatarETag: 1 }),
@@ -31,7 +35,7 @@ const useQuery = ({ text, itemsPerPage, current }, [column, direction], onlyMyDe
 		[text, itemsPerPage, current, column, direction, onlyMyDepartments],
 	);
 
-function DepartmentsRoute() {
+function DepartmentsRoute(): ReactElement {
 	const t = useTranslation();
 	const canViewDepartments = usePermission('manage-livechat-departments');
 	const canRemoveDepartments = usePermission('remove-livechat-department');
@@ -62,7 +66,7 @@ function DepartmentsRoute() {
 	});
 
 	const onRowClick = useMutableCallback(
-		(id) => () =>
+		(id) => (): void =>
 			departmentsRoute.push({
 				context: 'edit',
 				id,

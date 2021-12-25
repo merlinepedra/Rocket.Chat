@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ButtonGroup, Button, Box, Icon } from '@rocket.chat/fuselage';
 import { SHA256 } from 'meteor/sha';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, ReactElement } from 'react';
 
 import { getUserEmailAddress } from '../../../lib/getUserEmailAddress';
 import ConfirmOwnerChangeWarningModal from '../../components/ConfirmOwnerChangeWarningModal';
@@ -17,7 +17,7 @@ import { useUpdateAvatar } from '../../hooks/useUpdateAvatar';
 import AccountProfileForm from './AccountProfileForm';
 import ActionConfirmModal from './ActionConfirmModal';
 
-const getInitialValues = (user) => ({
+const getInitialValues = (user): unknown => ({
 	realname: user.name ?? '',
 	email: getUserEmailAddress(user) ?? '',
 	username: user.username ?? '',
@@ -32,7 +32,7 @@ const getInitialValues = (user) => ({
 	nickname: user.nickname ?? '',
 });
 
-const AccountProfilePage = () => {
+const AccountProfilePage = (): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -113,7 +113,7 @@ const AccountProfilePage = () => {
 	const updateAvatar = useUpdateAvatar(avatar, user?._id);
 
 	const onSave = useCallback(async () => {
-		const save = async (typedPassword) => {
+		const save = async (typedPassword): Promise<void> => {
 			try {
 				await saveFn(
 					{
@@ -185,7 +185,7 @@ const AccountProfilePage = () => {
 
 	const handleConfirmOwnerChange = useCallback(
 		(passwordOrUsername, shouldChangeOwner, shouldBeRemoved) => {
-			const handleConfirm = async () => {
+			const handleConfirm = async (): Promise<void> => {
 				try {
 					await deleteOwnAccount(SHA256(passwordOrUsername), true);
 					dispatchToastMessage({ type: 'success', message: t('User_has_been_deleted') });
@@ -211,7 +211,7 @@ const AccountProfilePage = () => {
 	);
 
 	const handleDeleteOwnAccount = useCallback(async () => {
-		const handleConfirm = async (passwordOrUsername) => {
+		const handleConfirm = async (passwordOrUsername): Promise<void> => {
 			try {
 				await deleteOwnAccount(SHA256(passwordOrUsername));
 				dispatchToastMessage({ type: 'success', message: t('User_has_been_deleted') });

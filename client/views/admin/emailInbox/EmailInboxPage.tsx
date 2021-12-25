@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, Icon } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import { useRoute, useRouteParameter } from '../../../contexts/RouterContext';
@@ -9,7 +9,7 @@ import EmailInboxEditWithData from './EmailInboxEditWithData';
 import EmailInboxForm from './EmailInboxForm';
 import EmailInboxTable from './EmailInboxTable';
 
-export function EmailInboxPage() {
+export function EmailInboxPage(): ReactElement {
 	const t = useTranslation();
 
 	const context = useRouteParameter('context');
@@ -17,7 +17,7 @@ export function EmailInboxPage() {
 
 	const emailInboxRoute = useRoute('admin-email-inboxes');
 
-	const handleNewButtonClick = () => {
+	const handleNewButtonClick = (): void => {
 		emailInboxRoute.push({ context: 'new' });
 	};
 
@@ -26,7 +26,7 @@ export function EmailInboxPage() {
 			<Page>
 				<Page.Header title={t('Email_Inboxes')}>
 					{context && (
-						<Button alignSelf='flex-end' onClick={() => emailInboxRoute.push({})}>
+						<Button alignSelf='flex-end' onClick={(): void => emailInboxRoute.push({})}>
 							<Icon name='back' />
 							{t('Back')}
 						</Button>

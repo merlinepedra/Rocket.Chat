@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box, InputBox } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const TimeRangeInput = ({ onChange, start: startDefault, finish: finishDefault }) => {
+const TimeRangeInput = ({ onChange, start: startDefault, finish: finishDefault }): ReactElement => {
 	const t = useTranslation();
 
 	const [start, setStart] = useState(startDefault);

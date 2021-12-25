@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { useSetting } from '../contexts/SettingsContext';
 import { useUserPreference } from '../contexts/UserContext';
 
-export const useFormatDateAndTime = () => {
+export const useFormatDateAndTime = (): (() => string) => {
 	const clockMode = useUserPreference('clockMode', false);
 	const format = useSetting('Message_TimeAndDateFormat');
 

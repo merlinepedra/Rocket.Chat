@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Table } from '@rocket.chat/fuselage';
 import { useMediaQuery, useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, ReactElement } from 'react';
 
 import { ProgressStep } from '../../../../app/importer/lib/ImporterProgressStep';
 import Page from '../../../components/Page';
@@ -11,7 +11,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import ImportOperationSummary from './ImportOperationSummary';
 
-function ImportHistoryPage() {
+function ImportHistoryPage(): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -28,7 +28,7 @@ function ImportHistoryPage() {
 	const importProgressRoute = useRoute('admin-import-progress');
 
 	useEffect(() => {
-		const loadData = async () => {
+		const loadData = async (): Promise<void> => {
 			setLoading(true);
 
 			try {
@@ -64,11 +64,11 @@ function ImportHistoryPage() {
 		[latestOperations],
 	);
 
-	const handleNewImportClick = () => {
+	const handleNewImportClick = (): void => {
 		newImportRoute.push();
 	};
 
-	const handleDownloadPendingFilesClick = async () => {
+	const handleDownloadPendingFilesClick = async (): Promise<void> => {
 		try {
 			setLoading(true);
 			const { count } = await downloadPendingFiles();
@@ -88,7 +88,7 @@ function ImportHistoryPage() {
 		}
 	};
 
-	const handleDownloadPendingAvatarsClick = async () => {
+	const handleDownloadPendingAvatarsClick = async (): Promise<void> => {
 		try {
 			setLoading(true);
 			const { count } = await downloadPendingAvatars();

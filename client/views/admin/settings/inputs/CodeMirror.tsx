@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 
 const defaultGutters = ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'];
 
@@ -20,7 +20,7 @@ function CodeMirror({
 	defaultValue,
 	onChange,
 	...props
-}) {
+}): ReactElement {
 	const [value, setValue] = useState(valueProp || defaultValue);
 
 	const textAreaRef = useRef();
@@ -32,7 +32,7 @@ function CodeMirror({
 			return;
 		}
 
-		const setupCodeMirror = async () => {
+		const setupCodeMirror = async (): Promise<void> => {
 			const CodeMirror = await import('codemirror/lib/codemirror.js');
 			await import('../../../../../app/ui/client/lib/codeMirror/codeMirror');
 			await import('codemirror/lib/codemirror.css');
@@ -64,7 +64,7 @@ function CodeMirror({
 
 		setupCodeMirror();
 
-		return () => {
+		return (): void => {
 			if (!editorRef.current) {
 				return;
 			}

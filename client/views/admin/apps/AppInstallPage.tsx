@@ -8,7 +8,7 @@ import {
 	TextInput,
 	Throbber,
 } from '@rocket.chat/fuselage';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 
 import { Apps } from '../../../../app/apps/client/orchestrator';
 import Page from '../../../components/Page';
@@ -25,7 +25,7 @@ import { getManifestFromZippedApp } from './lib/getManifestFromZippedApp';
 
 const placeholderUrl = 'https://rocket.chat/apps/package.zip';
 
-function AppInstallPage() {
+function AppInstallPage(): ReactElement {
 	const t = useTranslation();
 
 	const appsRoute = useRoute('admin-apps');
@@ -58,7 +58,7 @@ function AppInstallPage() {
 
 	const [handleUploadButtonClick] = useFileInput(handleFile, 'app');
 
-	const sendFile = async (permissionsGranted, appFile, appId) => {
+	const sendFile = async (permissionsGranted, appFile, appId): Promise<void> => {
 		let app;
 		const fileData = new FormData();
 		fileData.append('app', appFile, appFile.name);
@@ -79,7 +79,7 @@ function AppInstallPage() {
 		setModal(null);
 	}, [setInstalling, setModal]);
 
-	const isAppInstalled = async (appId) => {
+	const isAppInstalled = async (appId): boolean => {
 		try {
 			const app = await Apps.getApp(appId);
 			return !!app || false;
@@ -88,7 +88,7 @@ function AppInstallPage() {
 		}
 	};
 
-	const handleAppPermissionsReview = async (permissions, appFile, appId) => {
+	const handleAppPermissionsReview = async (permissions, appFile, appId): Promise<void> => {
 		if (!permissions || permissions.length === 0) {
 			await sendFile(permissions, appFile, appId);
 		} else {
@@ -96,13 +96,13 @@ function AppInstallPage() {
 				<AppPermissionsReviewModal
 					appPermissions={permissions}
 					cancel={cancelAction}
-					confirm={(permissions) => sendFile(permissions, appFile, appId)}
+					confirm={(permissions): void => sendFile(permissions, appFile, appId)}
 				/>,
 			);
 		}
 	};
 
-	const install = async () => {
+	const install = async (): Promise<void> => {
 		setInstalling(true);
 
 		try {
@@ -126,7 +126,7 @@ function AppInstallPage() {
 				setModal(
 					<AppUpdateModal
 						cancel={cancelAction}
-						confirm={() => handleAppPermissionsReview(permissions, appFile, id)}
+						confirm={(): void => handleAppPermissionsReview(permissions, appFile, id)}
 					/>,
 				);
 			} else {
@@ -139,7 +139,7 @@ function AppInstallPage() {
 		}
 	};
 
-	const handleCancel = () => {
+	const handleCancel = (): void => {
 		appsRoute.push();
 	};
 

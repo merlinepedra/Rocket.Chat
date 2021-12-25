@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, ButtonGroup, TextInput, Field, Select, Icon } from '@rocket.chat/fuselage';
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useMemo, useEffect, ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import VerticalBar from '../../../components/VerticalBar';
@@ -9,7 +9,7 @@ import { useMethod } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-export function EditCustomUserStatus({ close, onChange, data, ...props }) {
+export function EditCustomUserStatus({ close, onChange, data, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setModal = useSetModal();
@@ -61,13 +61,13 @@ export function EditCustomUserStatus({ close, onChange, data, ...props }) {
 	]);
 
 	const handleDeleteButtonClick = useCallback(() => {
-		const handleClose = () => {
+		const handleClose = (): void => {
 			setModal(null);
 			close();
 			onChange();
 		};
 
-		const handleDelete = async () => {
+		const handleDelete = async (): Promise<void> => {
 			try {
 				await deleteStatus(_id);
 				setModal(() => (
@@ -81,7 +81,7 @@ export function EditCustomUserStatus({ close, onChange, data, ...props }) {
 			}
 		};
 
-		const handleCancel = () => {
+		const handleCancel = (): void => {
 			setModal(null);
 		};
 
@@ -111,7 +111,7 @@ export function EditCustomUserStatus({ close, onChange, data, ...props }) {
 				<Field.Row>
 					<TextInput
 						value={name}
-						onChange={(e) => setName(e.currentTarget.value)}
+						onChange={(e): void => setName(e.currentTarget.value)}
 						placeholder={t('Name')}
 					/>
 				</Field.Row>
@@ -121,7 +121,7 @@ export function EditCustomUserStatus({ close, onChange, data, ...props }) {
 				<Field.Row>
 					<Select
 						value={statusType}
-						onChange={(value) => setStatusType(value)}
+						onChange={(value): void => setStatusType(value)}
 						placeholder={t('Presence')}
 						options={presenceOptions}
 					/>

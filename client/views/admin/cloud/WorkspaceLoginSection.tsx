@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 
 import { useMethod } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function WorkspaceLoginSection({ onRegisterStatusChange, ...props }) {
+function WorkspaceLoginSection({ onRegisterStatusChange, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -19,7 +19,7 @@ function WorkspaceLoginSection({ onRegisterStatusChange, ...props }) {
 	const [isLoggedIn, setLoggedIn] = useSafely(useState(false));
 	const [isLoading, setLoading] = useSafely(useState(true));
 
-	const handleLoginButtonClick = async () => {
+	const handleLoginButtonClick = async (): Promise<void> => {
 		setLoading(true);
 
 		try {
@@ -32,7 +32,7 @@ function WorkspaceLoginSection({ onRegisterStatusChange, ...props }) {
 		}
 	};
 
-	const handleLogoutButtonClick = async () => {
+	const handleLogoutButtonClick = async (): Promise<void> => {
 		setLoading(true);
 
 		try {
@@ -46,7 +46,7 @@ function WorkspaceLoginSection({ onRegisterStatusChange, ...props }) {
 		}
 	};
 
-	const handleDisconnectButtonClick = async () => {
+	const handleDisconnectButtonClick = async (): Promise<void> => {
 		setLoading(true);
 
 		try {
@@ -66,7 +66,7 @@ function WorkspaceLoginSection({ onRegisterStatusChange, ...props }) {
 	};
 
 	useEffect(() => {
-		const checkLoginState = async () => {
+		const checkLoginState = async (): Promise<void> => {
 			setLoading(true);
 
 			try {

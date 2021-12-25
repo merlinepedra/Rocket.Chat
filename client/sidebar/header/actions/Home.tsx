@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Sidebar } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useLayout } from '../../../contexts/LayoutContext';
 import { useRoute } from '../../../contexts/RouterContext';
 import { useSetting } from '../../../contexts/SettingsContext';
 
-const Home = (props) => {
+const Home = (props): ReactElement | null => {
 	const homeRoute = useRoute('home');
 	const { sidebar } = useLayout();
 	const showHome = useSetting('Layout_Show_Home_Button');

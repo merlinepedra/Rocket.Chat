@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Icon, TextInput, Select, Throbber, Margins } from '@rocket.chat/fuselage';
 import { useUniqueId, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../components/ScrollableContentWrapper';
@@ -21,7 +21,7 @@ function RoomFiles({
 	total,
 	loadMoreItems,
 	isDeletionAllowed,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const options = useMemo(
 		() => [
@@ -98,12 +98,16 @@ function RoomFiles({
 						}}
 						totalCount={total}
 						endReached={
-							loading ? () => {} : (start) => loadMoreItems(start, Math.min(50, total - start))
+							loading
+								? (): void => undefined
+								: (start): void => loadMoreItems(start, Math.min(50, total - start))
 						}
 						overscan={50}
 						data={filesItems}
 						components={{ Scroller: ScrollableContentWrapper }}
-						itemContent={(index, data) => <Row data={itemData} index={index} item={data} />}
+						itemContent={(index, data): ReactElement => (
+							<Row data={itemData} index={index} item={data} />
+						)}
 					/>
 				</Box>
 			</VerticalBar.Content>

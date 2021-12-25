@@ -1,17 +1,17 @@
 // @ts-nocheck
 import { TAPi18n, TAPi18next } from 'meteor/rocketchat:tap-i18n';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { TranslationContext } from '../contexts/TranslationContext';
 import { useReactiveValue } from '../hooks/useReactiveValue';
 
-const createTranslateFunction = (language) => {
-	const translate = (key, ...replaces) => {
+const createTranslateFunction = (language): ((...args: unknown[]) => string) => {
+	const translate = (key, ...replaces): string => {
 		if (typeof replaces[0] === 'object') {
-			const [options, lang_tag = language] = replaces;
+			const [options, langTag = language] = replaces;
 			return TAPi18next.t(key, {
 				ns: 'project',
-				lng: lang_tag,
+				lng: langTag,
 				...options,
 			});
 		}
@@ -28,13 +28,13 @@ const createTranslateFunction = (language) => {
 		});
 	};
 
-	translate.has = (key, { lng = language, ...options } = {}) =>
+	translate.has = (key, { lng = language, ...options } = {}): boolean =>
 		!!key && TAPi18next.exists(key, { ns: 'project', lng, ...options });
 
 	return translate;
 };
 
-const getLanguages = () => {
+const getLanguages = (): unknown[] => {
 	const result = Object.entries(TAPi18n.getLanguages())
 		.map(([key, language]) => ({ ...language, key: key.toLowerCase() }))
 		.sort((a, b) => a.key - b.key);
@@ -48,11 +48,11 @@ const getLanguages = () => {
 	return result;
 };
 
-const getLanguage = () => TAPi18n.getLanguage();
+const getLanguage = (): string => TAPi18n.getLanguage();
 
-const loadLanguage = (language) => TAPi18n._loadLanguage(language);
+const loadLanguage = (language): void => TAPi18n._loadLanguage(language);
 
-function TranslationProvider({ children }) {
+function TranslationProvider({ children }): ReactElement {
 	const languages = useReactiveValue(getLanguages);
 	const language = useReactiveValue(getLanguage);
 

@@ -1,19 +1,19 @@
 // @ts-nocheck
 import { Box, Skeleton } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import EditOutgoingWebhook from './EditOutgoingWebhook';
 
-function EditOutgoingWebhookWithData({ integrationId, ...props }) {
+function EditOutgoingWebhookWithData({ integrationId, ...props }): ReactElement {
 	const t = useTranslation();
 
 	const params = useMemo(() => ({ integrationId }), [integrationId]);
 	const { value: data, phase: state, error, reload } = useEndpointData('integrations.get', params);
 
-	const onChange = () => {
+	const onChange = (): void => {
 		reload();
 	};
 

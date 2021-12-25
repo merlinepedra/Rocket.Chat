@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Callout } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import PageSkeleton from '../../../components/PageSkeleton';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -8,7 +8,7 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import EditTriggerPage from './EditTriggerPage';
 
-const EditTriggerPageContainer = ({ id, onSave }) => {
+const EditTriggerPageContainer = ({ id, onSave }): ReactElement => {
 	const t = useTranslation();
 	const { value: data, phase: state } = useEndpointData(`livechat/triggers/${id}`);
 

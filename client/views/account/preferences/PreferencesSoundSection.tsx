@@ -8,17 +8,17 @@ import {
 	Tooltip,
 	Box,
 } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import { CustomSounds } from '../../../../app/custom-sounds/client';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
-const useCustomSoundsOptions = () =>
+const useCustomSoundsOptions = (): [string, string][] | undefined =>
 	useMemo(() => CustomSounds?.getList?.().map(({ _id, name }) => [_id, name]), []);
 
-const PreferencesSoundSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesSoundSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const soundsList = useCustomSoundsOptions();

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, Icon } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import Page from '../../../components/Page';
@@ -14,7 +14,7 @@ import AddCustomSound from './AddCustomSound';
 import AdminSounds from './AdminSounds';
 import EditCustomSound from './EditCustomSound';
 
-function CustomSoundsRoute() {
+function CustomSoundsRoute(): ReactElement {
 	const route = useRoute('custom-sounds');
 	const context = useRouteParameter('context');
 	const id = useRouteParameter('id');
@@ -40,7 +40,7 @@ function CustomSoundsRoute() {
 	const { value: data, reload } = useEndpointData('custom-sounds.list', query);
 
 	const handleItemClick = useCallback(
-		(_id) => () => {
+		(_id) => (): void => {
 			route.push({
 				context: 'edit',
 				id: _id,
@@ -49,7 +49,7 @@ function CustomSoundsRoute() {
 		[route],
 	);
 
-	const handleHeaderClick = (id) => {
+	const handleHeaderClick = (id): void => {
 		setSort(([sortBy, sortDirection]) => {
 			if (sortBy === id) {
 				return [id, sortDirection === 'asc' ? 'desc' : 'asc'];

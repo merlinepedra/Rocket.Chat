@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useDebugValue, useMemo } from 'react';
+import React, { ReactElement, useDebugValue, useMemo } from 'react';
 
 import { ErrorBoundary } from '../../../components/ErrorBoundary';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -23,7 +23,7 @@ import Body from './Body';
 import Footer from './Footer';
 import LazyComponent from './LazyComponent';
 
-const Room = () => {
+const Room = (): ReactElement => {
 	const t = useTranslation();
 	const room = useRoom();
 	const tab = useTab();

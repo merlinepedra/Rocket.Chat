@@ -9,7 +9,7 @@ import {
 	ButtonGroup,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import ExternalLink from '../../../components/ExternalLink';
 import Page from '../../../components/Page';
@@ -18,7 +18,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useForm } from '../../../hooks/useForm';
 
-const reduceSendOptions = (options) =>
+const reduceSendOptions = (options): unknown[] =>
 	Object.entries(options).reduce((acc, [key, val]) => {
 		if (val) {
 			acc = [...acc, key];
@@ -29,38 +29,58 @@ const reduceSendOptions = (options) =>
 const integrationsUrl = 'https://docs.rocket.chat/guides/omnichannel/webhooks-managers-guide';
 
 const getInitialValues = ({
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhookUrl,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_secret_token,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_start,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_close,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_chat_taken,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_chat_queued,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_forward,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_offline_msg,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_visitor_message,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Livechat_webhook_on_agent_message,
-}) => {
+}): ReactElement => {
 	const sendOptions = {
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_start,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_close,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_chat_taken,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_chat_queued,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_forward,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_offline_msg,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_visitor_message,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhook_on_agent_message,
 	};
 
 	const mappedSendOptions = reduceSendOptions(sendOptions);
 
 	return {
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_webhookUrl,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		Livechat_secret_token,
 		sendOn: mappedSendOptions,
 	};
 };
 
-const WebhooksPage = ({ settings }) => {
+const WebhooksPage = ({ settings }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -71,8 +91,10 @@ const WebhooksPage = ({ settings }) => {
 	const save = useMethod('livechat:saveIntegration');
 	const test = useMethod('livechat:webhookTest');
 
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	const { Livechat_webhookUrl, Livechat_secret_token, sendOn } = values;
 
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	const { handleLivechat_webhookUrl, handleLivechat_secret_token, handleSendOn } = handlers;
 
 	const sendOptions = useMemo(
@@ -96,6 +118,7 @@ const WebhooksPage = ({ settings }) => {
 		}, {});
 
 		try {
+			// eslint-disable-next-line @typescript-eslint/camelcase
 			await save({ Livechat_webhookUrl, Livechat_secret_token, ...sendOnObj });
 			dispatchToastMessage({ type: 'success', message: t('Saved') });
 			commit();
@@ -118,8 +141,12 @@ const WebhooksPage = ({ settings }) => {
 		<Page>
 			<Page.Header title={t('Webhooks')}>
 				<ButtonGroup>
-					<Button onClick={() => reset()}>{t('Reset')}</Button>
-					<Button onClick={handleTest} disabled={!Livechat_webhookUrl || hasUnsavedChanges}>
+					<Button onClick={(): void => reset()}>{t('Reset')}</Button>
+					<Button
+						onClick={handleTest}
+						// eslint-disable-next-line @typescript-eslint/camelcase
+						disabled={!Livechat_webhookUrl || hasUnsavedChanges}
+					>
 						{t('Send_Test')}
 					</Button>
 					<Button primary onClick={handleSave} disabled={!hasUnsavedChanges}>
@@ -139,7 +166,9 @@ const WebhooksPage = ({ settings }) => {
 							<Field.Label>{t('Webhook_URL')}</Field.Label>
 							<Field.Row>
 								<TextInput
+									// eslint-disable-next-line @typescript-eslint/camelcase
 									value={Livechat_webhookUrl}
+									// eslint-disable-next-line @typescript-eslint/camelcase
 									onChange={handleLivechat_webhookUrl}
 									placeholder='https://yourdomain.com/webhook/entrypoint'
 								/>
@@ -149,7 +178,9 @@ const WebhooksPage = ({ settings }) => {
 							<Field.Label>{t('Secret_token')}</Field.Label>
 							<Field.Row>
 								<TextInput
+									// eslint-disable-next-line @typescript-eslint/camelcase
 									value={Livechat_secret_token}
+									// eslint-disable-next-line @typescript-eslint/camelcase
 									onChange={handleLivechat_secret_token}
 									placeholder={t('Secret_token')}
 								/>

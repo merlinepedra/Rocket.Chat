@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-function Username(props) {
+function Username(props): ReactElement {
 	return (
 		<Box
 			rcx-message__username

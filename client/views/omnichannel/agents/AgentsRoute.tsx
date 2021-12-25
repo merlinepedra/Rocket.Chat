@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Table } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMediaQuery, useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
@@ -17,9 +17,9 @@ import AgentInfoActions from './AgentInfoActions';
 import AgentsPage from './AgentsPage';
 import RemoveAgentButton from './RemoveAgentButton';
 
-const sortDir = (sortDir) => (sortDir === 'asc' ? 1 : -1);
+const sortDir = (sortDir): number => (sortDir === 'asc' ? 1 : -1);
 
-const useQuery = ({ text, itemsPerPage, current }, [column, direction]) =>
+const useQuery = ({ text, itemsPerPage, current }, [column, direction]): unknown =>
 	useMemo(
 		() => ({
 			fields: JSON.stringify({ name: 1, username: 1, emails: 1, avatarETag: 1 }),
@@ -34,7 +34,7 @@ const useQuery = ({ text, itemsPerPage, current }, [column, direction]) =>
 		[text, itemsPerPage, current, column, direction],
 	);
 
-function AgentsRoute() {
+function AgentsRoute(): ReactElement {
 	const t = useTranslation();
 	const canViewAgents = usePermission('manage-livechat-agents');
 
@@ -61,7 +61,7 @@ function AgentsRoute() {
 	});
 
 	const onRowClick = useMutableCallback(
-		(id) => () =>
+		(id) => (): void =>
 			agentsRoute.push({
 				context: 'info',
 				id,
@@ -173,7 +173,7 @@ function AgentsRoute() {
 		if (!context) {
 			return '';
 		}
-		const handleVerticalBarCloseButtonClick = () => {
+		const handleVerticalBarCloseButtonClick = (): void => {
 			agentsRoute.push({});
 		};
 

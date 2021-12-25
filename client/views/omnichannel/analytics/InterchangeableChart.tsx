@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, ReactElement } from 'react';
 
 import { drawLineChart } from '../../../../app/livechat/client/lib/chartHandler';
 import { secondsToHHMMSS } from '../../../../app/utils/lib/timeConverter';
@@ -9,7 +9,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import Chart from '../realTimeMonitoring/charts/Chart';
 
-const getChartTooltips = (chartName) => {
+const getChartTooltips = (chartName): unknown => {
 	switch (chartName) {
 		case 'Avg_chat_duration':
 		case 'Avg_first_response_time':
@@ -18,10 +18,10 @@ const getChartTooltips = (chartName) => {
 		case 'Avg_reaction_time':
 			return {
 				callbacks: {
-					title(tooltipItem, data) {
+					title(tooltipItem, data): string {
 						return data.labels[tooltipItem[0].index];
 					},
-					label(tooltipItem, data) {
+					label(tooltipItem, data): string {
 						return secondsToHHMMSS(data.datasets[0].data[tooltipItem.index]);
 					},
 				},
@@ -31,7 +31,7 @@ const getChartTooltips = (chartName) => {
 	}
 };
 
-const InterchangeableChart = ({ departmentId, dateRange, chartName, ...props }) => {
+const InterchangeableChart = ({ departmentId, dateRange, chartName, ...props }): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

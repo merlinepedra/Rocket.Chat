@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ToggleSwitch, RadioButton, OptionTitle } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useMethod } from '../../contexts/ServerContext';
 import { useTranslation } from '../../contexts/TranslationContext';
@@ -16,12 +16,12 @@ const checkBoxStyle = {
 	paddingInlineStart: '24px',
 };
 
-function ViewModeList() {
+function ViewModeList(): ReactElement {
 	const t = useTranslation();
 
 	const saveUserPreferences = useMethod('saveUserPreferences');
 
-	const useHandleChange = (value) =>
+	const useHandleChange = (value): (() => void) =>
 		useCallback(() => saveUserPreferences({ sidebarViewMode: value }), [value]);
 
 	const sidebarViewMode = useUserPreference('sidebarViewMode', 'extended');

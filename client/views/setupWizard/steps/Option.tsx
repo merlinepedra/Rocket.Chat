@@ -27,7 +27,7 @@ const Option = forwardRef(function Option({ children, label, selected, disabled,
 				cursor: 'pointer',
 				...(disabled && { opacity: 0.25 }),
 			}}
-			onClick={() => {
+			onClick={(): void => {
 				innerRef.current.click();
 			}}
 		>

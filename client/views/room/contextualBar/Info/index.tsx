@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import EditRoomInfoWithData from './EditRoomInfo';
 import RoomInfoWithData from './RoomInfo';
 
-const RoomInfo = ({ rid, onClickBack, onEnterRoom, resetState }) => {
+const RoomInfo = ({ rid, onClickBack, onEnterRoom, resetState }): ReactElement => {
 	const [editing, setEditing] = useState(false);
 	const backToView = useMutableCallback(() => setEditing(false));
 	return editing ? (

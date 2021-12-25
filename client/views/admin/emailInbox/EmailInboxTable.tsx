@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -9,7 +9,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import SendTestButton from './SendTestButton';
 
-const useQuery = ({ itemsPerPage, current }, [column, direction]) =>
+const useQuery = ({ itemsPerPage, current }, [column, direction]): unknown =>
 	useMemo(
 		() => ({
 			sort: JSON.stringify({ [column]: direction === 'asc' ? 1 : -1 }),
@@ -19,7 +19,7 @@ const useQuery = ({ itemsPerPage, current }, [column, direction]) =>
 		[column, current, direction, itemsPerPage],
 	);
 
-function EmailInboxTable() {
+function EmailInboxTable(): ReactElement {
 	const t = useTranslation();
 
 	const [params, setParams] = useState({ current: 0, itemsPerPage: 25 });
@@ -30,7 +30,7 @@ function EmailInboxTable() {
 	const router = useRoute('admin-email-inboxes');
 
 	const onClick = useCallback(
-		(_id) => () =>
+		(_id) => (): void =>
 			router.push({
 				context: 'edit',
 				_id,

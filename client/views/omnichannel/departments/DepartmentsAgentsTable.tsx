@@ -1,13 +1,18 @@
 // @ts-nocheck
 import { useMediaQuery } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import AddAgent from './AddAgent';
 import AgentRow from './AgentRow';
 
-function DepartmentsAgentsTable({ agents, setAgentListFinal, setAgentsAdded, setAgentsRemoved }) {
+function DepartmentsAgentsTable({
+	agents,
+	setAgentListFinal,
+	setAgentsAdded,
+	setAgentsRemoved,
+}): ReactElement {
 	const t = useTranslation();
 	const [agentList, setAgentList] = useState((agents && JSON.parse(JSON.stringify(agents))) || []);
 
@@ -39,7 +44,7 @@ function DepartmentsAgentsTable({ agents, setAgentListFinal, setAgentsAdded, set
 				total={agentList?.length}
 				pi='x24'
 			>
-				{(props) => (
+				{(props): ReactElement => (
 					<AgentRow
 						key={props._id}
 						mediaQuery={mediaQuery}

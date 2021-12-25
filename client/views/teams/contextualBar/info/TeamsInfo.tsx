@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Button, Callout, Option, Menu } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import RoomAvatar from '../../../../components/avatar/RoomAvatar';
@@ -28,7 +28,7 @@ const TeamsInfo = ({
 	onClickDelete,
 	onClickViewChannels,
 	onClickConvertToChannel,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	const { retentionPolicyEnabled, filesOnlyDefault, excludePinnedDefault, maxAgeDefault } =
@@ -89,7 +89,7 @@ const TeamsInfo = ({
 				mi='x2'
 				key='menu'
 				ghost={false}
-				renderItem={({ label: { label, icon }, ...props }) => (
+				renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 					<Option {...props} label={label} icon={icon} />
 				)}
 				options={menuOptions}
@@ -98,7 +98,7 @@ const TeamsInfo = ({
 	}, [menuOptions]);
 
 	const actions = useMemo(() => {
-		const mapAction = ([key, { label, icon, action }]) => (
+		const mapAction = ([key, { label, icon, action }]): ReactElement => (
 			<InfoPanel.Action key={key} label={label} onClick={action} icon={icon} />
 		);
 

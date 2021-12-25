@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Field, TextInput, Select, ButtonGroup, Button, FieldGroup } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useEndpoint } from '../../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useForm } from '../../../../hooks/useForm';
 
-const FileExport = ({ onCancel, rid }) => {
+const FileExport = ({ onCancel, rid }): ReactElement => {
 	const t = useTranslation();
 
 	const { values, handlers } = useForm({
@@ -32,7 +32,7 @@ const FileExport = ({ onCancel, rid }) => {
 
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (): Promise<void> => {
 		try {
 			await roomsExport({
 				rid,
@@ -81,7 +81,7 @@ const FileExport = ({ onCancel, rid }) => {
 			</Field>
 			<ButtonGroup stretch mb='x12'>
 				<Button onClick={onCancel}>{t('Cancel')}</Button>
-				<Button primary onClick={() => handleSubmit()}>
+				<Button primary onClick={(): void => handleSubmit()}>
 					{t('Export')}
 				</Button>
 			</ButtonGroup>

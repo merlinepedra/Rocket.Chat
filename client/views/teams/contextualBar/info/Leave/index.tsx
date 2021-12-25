@@ -12,7 +12,7 @@ import LeaveTeamModal from './LeaveTeamModal';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 
-const LeaveTeamModalWithRooms = ({ teamId, onCancel, onConfirm }) => {
+const LeaveTeamModalWithRooms = ({ teamId, onCancel, onConfirm }): ReactElement => {
 	const t = useTranslation();
 
 	const userId = useUserId();

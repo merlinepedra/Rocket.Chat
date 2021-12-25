@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Field, TextInput, ButtonGroup, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { hasAtLeastOnePermission } from '../../../../../../app/authorization/client';
@@ -27,7 +27,7 @@ const initialValues = {
 	username: '',
 };
 
-const getInitialValues = (data) => {
+const getInitialValues = (data): unknown => {
 	if (!data) {
 		return initialValues;
 	}
@@ -46,10 +46,10 @@ const getInitialValues = (data) => {
 	};
 };
 
-function ContactNewEdit({ id, data, close }) {
+function ContactNewEdit({ id, data, close }): ReactElement {
 	const t = useTranslation();
 
-	const canViewCustomFields = () =>
+	const canViewCustomFields = (): boolean =>
 		hasAtLeastOnePermission(['view-livechat-room-customfields', 'edit-livechat-room-customfields']);
 
 	const {
@@ -60,7 +60,7 @@ function ContactNewEdit({ id, data, close }) {
 
 	const eeForms = useSubscription(formsSubscription);
 
-	const { useContactManager = () => {} } = eeForms;
+	const { useContactManager = (): unknown => undefined } = eeForms;
 
 	const ContactManager = useContactManager();
 
@@ -85,7 +85,7 @@ function ContactNewEdit({ id, data, close }) {
 
 	const { value: allCustomFields, phase: state } = useEndpointData('livechat/custom-fields');
 
-	const jsonConverterToValidFormat = (customFields) => {
+	const jsonConverterToValidFormat = (customFields): unknown => {
 		const jsonObj = {};
 		customFields.forEach(({ _id, label, visibility, options, scope, defaultValue, required }) => {
 			(visibility === 'visible') & (scope === 'visitor') &&

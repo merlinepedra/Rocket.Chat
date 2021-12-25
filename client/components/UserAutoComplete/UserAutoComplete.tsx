@@ -1,15 +1,17 @@
 // @ts-nocheck
 import { AutoComplete, Option, Box, Chip } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, ReactElement, ReactNode, useMemo, useState } from 'react';
 
 import { useEndpointData } from '../../hooks/useEndpointData';
 import UserAvatar from '../avatar/UserAvatar';
 import Avatar from './Avatar';
 
-const query = (term = '', conditions = {}) => ({ selector: JSON.stringify({ term, conditions }) });
+const query = (term = '', conditions = {}): { selector: string } => ({
+	selector: JSON.stringify({ term, conditions }),
+});
 
-const UserAutoComplete = (props) => {
+const UserAutoComplete = (props): ReactElement => {
 	const { conditions = {} } = props;
 	const [filter, setFilter] = useState('');
 	const debouncedFilter = useDebouncedValue(filter, 1000);
@@ -29,13 +31,13 @@ const UserAutoComplete = (props) => {
 			{...props}
 			filter={filter}
 			setFilter={setFilter}
-			renderSelected={({ value, label }) => {
+			renderSelected={({ value, label }): ReactNode => {
 				if (!value) {
 					return '';
 				}
 
 				return (
-					<Chip height='x20' value={value} onClick={() => props.onChange()} mie='x4'>
+					<Chip height='x20' value={value} onClick={(): void => props.onChange()} mie='x4'>
 						<UserAvatar size='x20' username={value} />
 						<Box verticalAlign='middle' is='span' margin='none' mi='x4'>
 							{label}
@@ -43,7 +45,7 @@ const UserAutoComplete = (props) => {
 					</Chip>
 				);
 			}}
-			renderItem={({ value, ...props }) => (
+			renderItem={({ value, ...props }): ReactElement => (
 				<Option key={value} {...props} avatar={<Avatar value={value} />} />
 			)}
 			options={options}

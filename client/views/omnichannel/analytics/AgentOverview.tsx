@@ -7,7 +7,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 
 const style = { width: '100%' };
 
-const AgentOverview = ({ type, dateRange, departmentId }) => {
+const AgentOverview = ({ type, dateRange, departmentId }): ReactElement => {
 	const t = useTranslation();
 	const { start, end } = dateRange;
 
@@ -25,7 +25,7 @@ const AgentOverview = ({ type, dateRange, departmentId }) => {
 	const loadData = useMethod('livechat:getAgentOverviewData');
 
 	useEffect(() => {
-		async function fetchData() {
+		async function fetchData(): Promise<void> {
 			if (!start || !end) {
 				return;
 			}

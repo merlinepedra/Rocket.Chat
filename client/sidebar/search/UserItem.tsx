@@ -1,11 +1,19 @@
 // @ts-nocheck
 import { Sidebar } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { roomTypes } from '../../../app/utils/client';
 import { ReactiveUserStatus } from '../../components/UserStatus';
 
-const UserItem = ({ item, id, style, t, SideBarItemTemplate, AvatarTemplate, useRealName }) => {
+const UserItem = ({
+	item,
+	id,
+	style,
+	t,
+	SideBarItemTemplate,
+	AvatarTemplate,
+	useRealName,
+}): ReactElement => {
 	const title = useRealName ? item.fname || item.name : item.name || item.fname;
 	const icon = (
 		<Sidebar.Item.Icon>

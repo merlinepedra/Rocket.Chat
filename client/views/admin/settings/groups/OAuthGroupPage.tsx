@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 import s from 'underscore.string';
 
 import { useEditableSettingsGroupSections } from '../../../../contexts/EditableSettingsContext';
@@ -11,17 +11,17 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import GroupPage from '../GroupPage';
 import Section from '../Section';
 
-function OAuthGroupPage({ _id, ...group }) {
+function OAuthGroupPage({ _id, ...group }): ReactElement {
 	const sections = useEditableSettingsGroupSections(_id);
 	const solo = sections.length === 1;
 	const t = useTranslation();
 
-	const sectionIsCustomOAuth = (sectionName) =>
+	const sectionIsCustomOAuth = (sectionName): boolean =>
 		sectionName && /^Custom OAuth:\s.+/.test(sectionName);
 
 	const getAbsoluteUrl = useAbsoluteUrl();
 
-	const callbackURL = (sectionName) => {
+	const callbackURL = (sectionName): string => {
 		const id = s.strRight(sectionName, 'Custom OAuth: ').toLowerCase();
 		return getAbsoluteUrl(`_oauth/${id}`);
 	};
@@ -32,7 +32,7 @@ function OAuthGroupPage({ _id, ...group }) {
 	const removeOAuthService = useMethod('removeOAuthService');
 	const modal = useModal();
 
-	const handleRefreshOAuthServicesButtonClick = async () => {
+	const handleRefreshOAuthServicesButtonClick = async (): Promise<void> => {
 		dispatchToastMessage({ type: 'info', message: t('Refreshing') });
 		try {
 			await refreshOAuthService();
@@ -42,7 +42,7 @@ function OAuthGroupPage({ _id, ...group }) {
 		}
 	};
 
-	const handleAddCustomOAuthButtonClick = () => {
+	const handleAddCustomOAuthButtonClick = (): void => {
 		modal.open(
 			{
 				title: t('Add_custom_oauth'),
@@ -86,7 +86,7 @@ function OAuthGroupPage({ _id, ...group }) {
 				if (sectionIsCustomOAuth(sectionName)) {
 					const id = s.strRight(sectionName, 'Custom OAuth: ').toLowerCase();
 
-					const handleRemoveCustomOAuthButtonClick = () => {
+					const handleRemoveCustomOAuthButtonClick = (): void => {
 						modal.open(
 							{
 								title: t('Are_you_sure'),

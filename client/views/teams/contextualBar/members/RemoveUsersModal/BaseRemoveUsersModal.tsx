@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 
 import { usePermission } from '../../../../../contexts/AuthorizationContext';
 import RemoveUsersFirstStep from './RemoveUsersFirstStep';
@@ -18,7 +18,7 @@ const BaseRemoveUsersModal = ({
 	rooms,
 	currentStep = rooms?.length === 0 ? STEPS.CONFIRM_DELETE : STEPS.LIST_ROOMS,
 	username,
-}) => {
+}): ReactElement => {
 	const [step, setStep] = useState(currentStep);
 
 	const [selectedRooms, setSelectedRooms] = useState({});

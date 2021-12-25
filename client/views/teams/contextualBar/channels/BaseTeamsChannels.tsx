@@ -10,7 +10,7 @@ import {
 	Button,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../components/ScrollableContentWrapper';
@@ -32,7 +32,7 @@ const BaseTeamsChannels = ({
 	loadMoreItems,
 	onClickView,
 	reload,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 	const inputRef = useAutoFocus(true);
 
@@ -93,7 +93,7 @@ const BaseTeamsChannels = ({
 							endReached={lm}
 							data={channels}
 							components={{ Scroller: ScrollableContentWrapper }}
-							itemContent={(index, data) => (
+							itemContent={(index, data): ReactElement => (
 								<Row onClickView={onClickView} room={data} reload={reload} />
 							)}
 						/>

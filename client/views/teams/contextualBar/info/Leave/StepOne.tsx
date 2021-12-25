@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -8,15 +8,13 @@ import ChannelDesertionTable from '../../../ChannelDesertionTable';
 export const StepOne = ({
 	rooms,
 	lastOwnerRooms,
-	// params,
-	// onChangeParams,
 	onToggleAllRooms,
 	onChangeRoomSelection,
 	onConfirm,
 	onCancel,
 	eligibleRoomsLength,
 	selectedRooms,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (
@@ -36,7 +34,7 @@ export const StepOne = ({
 				eligibleRoomsLength={eligibleRoomsLength}
 				rooms={rooms}
 				params={{}}
-				onChangeParams={() => {}}
+				onChangeParams={(): void => undefined}
 				onChangeRoomSelection={onChangeRoomSelection}
 				selectedRooms={selectedRooms}
 			/>

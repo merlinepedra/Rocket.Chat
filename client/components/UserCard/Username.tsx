@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import * as UserStatus from '../UserStatus';
 
-const Username = ({ name, status = <UserStatus.Offline />, title, ...props }) => (
+const Username = ({ name, status = <UserStatus.Offline />, title, ...props }): ReactElement => (
 	<Box
 		{...props}
 		display='flex'

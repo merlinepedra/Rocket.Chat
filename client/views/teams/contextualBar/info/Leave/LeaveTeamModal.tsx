@@ -9,7 +9,7 @@ const STEPS = {
 	CONFIRM_LEAVE: 'CONFIRM_LEAVE',
 };
 
-export const LeaveTeamModal = ({ onCancel, onConfirm, rooms }) => {
+export const LeaveTeamModal = ({ onCancel, onConfirm, rooms }): ReactElement => {
 	const [step, setStep] = useState(() => {
 		if (rooms.length === 0) {
 			return STEPS.CONFIRM_LEAVE;
@@ -65,7 +65,7 @@ export const LeaveTeamModal = ({ onCancel, onConfirm, rooms }) => {
 			eligibleRoomsLength={rooms.length - lastOwnerRooms.length}
 			selectedRooms={selectedRooms}
 			onToggleAllRooms={onToggleAllRooms}
-			onChangeParams={(...args) => console.log(args)}
+			onChangeParams={(...args): void => console.log(args)}
 			onConfirm={onContinue}
 			onChangeRoomSelection={onChangeRoomSelection}
 		/>

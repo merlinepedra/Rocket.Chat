@@ -9,7 +9,7 @@ import {
 	ToggleSwitch,
 	FieldGroup,
 } from '@rocket.chat/fuselage';
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, ReactElement } from 'react';
 
 import GenericModal from '../../../components/GenericModal';
 import VerticalBar from '../../../components/VerticalBar';
@@ -19,7 +19,7 @@ import { useMethod, useAbsoluteUrl } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function EditOauthApp({ onChange, data, ...props }) {
+function EditOauthApp({ onChange, data, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -55,7 +55,7 @@ function EditOauthApp({ onChange, data, ...props }) {
 		try {
 			await deleteApp(data._id);
 
-			const handleClose = () => {
+			const handleClose = (): void => {
 				setModal();
 				close();
 			};
@@ -70,12 +70,12 @@ function EditOauthApp({ onChange, data, ...props }) {
 		}
 	}, [close, data._id, deleteApp, dispatchToastMessage, setModal, t]);
 
-	const openConfirmDelete = () =>
+	const openConfirmDelete = (): void =>
 		setModal(() => (
 			<GenericModal
 				variant='danger'
 				onConfirm={onDeleteConfirm}
-				onCancel={() => setModal(undefined)}
+				onCancel={(): void => setModal(undefined)}
 				confirmText={t('Delete')}
 			>
 				{t('Application_delete_warning')}
@@ -83,8 +83,8 @@ function EditOauthApp({ onChange, data, ...props }) {
 		));
 
 	const handleChange =
-		(field, getValue = (e) => e.currentTarget.value) =>
-		(e) =>
+		(field, getValue = (e): unknown => e.currentTarget.value) =>
+		(e): void =>
 			setNewData({ ...newData, [field]: getValue(e) });
 
 	const { active, name, redirectUri } = newData;

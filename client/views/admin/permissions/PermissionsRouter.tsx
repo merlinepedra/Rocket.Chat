@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import { usePermission } from '../../../contexts/AuthorizationContext';
@@ -7,7 +7,7 @@ import { useRouteParameter } from '../../../contexts/RouterContext';
 import PermissionsTable from './PermissionsTable';
 import UsersInRole from './UsersInRolePageContainer';
 
-const PermissionsRouter = () => {
+const PermissionsRouter = (): ReactElement => {
 	const canViewPermission = usePermission('access-permissions');
 	const canViewSettingPermission = usePermission('access-setting-permissions');
 	const context = useRouteParameter('context');

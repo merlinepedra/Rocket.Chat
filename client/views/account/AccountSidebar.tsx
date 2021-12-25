@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { memo, ReactElement, useCallback, useEffect } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { menu, SideNav } from '../../../app/ui-utils/client';
@@ -10,7 +10,7 @@ import { isLayoutEmbedded } from '../../lib/utils/isLayoutEmbedded';
 import SettingsProvider from '../../providers/SettingsProvider';
 import { itemsSubscription } from './sidebarItems';
 
-const AccountSidebar = () => {
+const AccountSidebar = (): ReactElement => {
 	const t = useTranslation();
 
 	const items = useSubscription(itemsSubscription);

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
 import { FormSkeleton } from '../../../components/Skeleton';
@@ -16,7 +16,7 @@ import { getUserEmailVerified } from '../../../lib/utils/getUserEmailVerified';
 import UserInfo from '../../room/contextualBar/UserInfo/UserInfo';
 import { UserInfoActions } from './UserInfoActions';
 
-export function UserInfoWithData({ uid, username, onReload, ...props }) {
+export function UserInfoWithData({ uid, username, onReload, ...props }): ReactElement {
 	const t = useTranslation();
 	const showRealNames = useSetting('UI_Use_Real_Name');
 	const getRoles = useRolesDescription();

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { FormSkeleton } from '../../../components/Skeleton';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -8,7 +8,7 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import EditDepartment from './EditDepartment';
 
-function EditDepartmentWithAllowedForwardData({ data, ...props }) {
+function EditDepartmentWithAllowedForwardData({ data, ...props }): ReactElement {
 	const t = useTranslation();
 
 	const {

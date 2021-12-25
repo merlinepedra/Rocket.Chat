@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Table, Flex } from '@rocket.chat/fuselage';
 import { useMediaQuery, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, ReactElement } from 'react';
 
 import FilterByText from '../../components/FilterByText';
 import GenericTable from '../../components/GenericTable';
@@ -14,7 +14,7 @@ import { useEndpointData } from '../../hooks/useEndpointData';
 import { useFormatDate } from '../../hooks/useFormatDate';
 import { useQuery } from './hooks';
 
-function UserTable({ workspace = 'local' }) {
+function UserTable({ workspace = 'local' }): ReactElement {
 	const [params, setParams] = useState({ current: 0, itemsPerPage: 25 });
 	const [sort, setSort] = useState(['name', 'asc']);
 	const canViewFullOtherUserInfo = usePermission('view-full-other-user-info');
@@ -96,11 +96,12 @@ function UserTable({ workspace = 'local' }) {
 	const { value: data = {} } = useEndpointData('directory', query);
 
 	const onClick = useCallback(
-		(username) => (e) => {
-			if (e.type === 'click' || e.key === 'Enter') {
-				directRoute.push({ rid: username });
-			}
-		},
+		(username) =>
+			(e): void => {
+				if (e.type === 'click' || e.key === 'Enter') {
+					directRoute.push({ rid: username });
+				}
+			},
 		[directRoute],
 	);
 
@@ -157,7 +158,7 @@ function UserTable({ workspace = 'local' }) {
 	return (
 		<GenericTable
 			header={header}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText
 					placeholder={t('Search_Users')}
 					inputRef={refAutoFocus}

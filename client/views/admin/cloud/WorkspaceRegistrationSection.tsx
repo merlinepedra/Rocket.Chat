@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Field, Margins, TextInput } from '@rocket.chat/fuselage';
 import { useSafely, useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useMethod } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
@@ -9,11 +9,11 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 
 function WorkspaceRegistrationSection({
 	token: initialToken,
-	workspaceId,
-	uniqueId,
+	workspaceId: _workspaceId,
+	uniqueId: _uniqueId,
 	onRegisterStatusChange,
 	...props
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -23,11 +23,11 @@ function WorkspaceRegistrationSection({
 	const [isProcessing, setProcessing] = useSafely(useState(false));
 	const [token, setToken] = useState(initialToken);
 
-	const handleTokenChange = ({ currentTarget: { value } }) => {
+	const handleTokenChange = ({ currentTarget: { value } }): void => {
 		setToken(value);
 	};
 
-	const handleConnectButtonClick = async () => {
+	const handleConnectButtonClick = async (): Promise<void> => {
 		setProcessing(true);
 
 		try {

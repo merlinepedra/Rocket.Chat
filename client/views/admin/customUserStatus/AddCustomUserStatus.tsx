@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Button, ButtonGroup, TextInput, Field, Select } from '@rocket.chat/fuselage';
-import React, { useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useMethod } from '../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function AddCustomUserStatus({ goToNew, close, onChange, ...props }) {
+function AddCustomUserStatus({ goToNew, close, onChange, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -46,7 +46,7 @@ function AddCustomUserStatus({ goToNew, close, onChange, ...props }) {
 				<Field.Row>
 					<TextInput
 						value={name}
-						onChange={(e) => setName(e.currentTarget.value)}
+						onChange={(e): void => setName(e.currentTarget.value)}
 						placeholder={t('Name')}
 					/>
 				</Field.Row>
@@ -56,7 +56,7 @@ function AddCustomUserStatus({ goToNew, close, onChange, ...props }) {
 				<Field.Row>
 					<Select
 						value={statusType}
-						onChange={(value) => setStatusType(value)}
+						onChange={(value): void => setStatusType(value)}
 						placeholder={t('Presence')}
 						options={presenceOptions}
 					/>

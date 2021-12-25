@@ -1,8 +1,15 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ComponentType, ReactElement } from 'react';
 
-export function mapProps(Component) {
-	const WrappedComponent = ({ msg, username, replies = [], tcount, ts, ...props }) => (
+export function mapProps(Component): ComponentType {
+	const WrappedComponent = ({
+		msg,
+		username,
+		replies = [],
+		tcount,
+		ts,
+		...props
+	}): ReactElement => (
 		<Component
 			replies={tcount}
 			participants={replies?.length}

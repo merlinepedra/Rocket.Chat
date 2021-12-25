@@ -1,6 +1,8 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const RawText = ({ children }) => <span dangerouslySetInnerHTML={{ __html: children }} />;
+const RawText = ({ children }): ReactElement => (
+	<span dangerouslySetInnerHTML={{ __html: children }} />
+);
 
 export default RawText;

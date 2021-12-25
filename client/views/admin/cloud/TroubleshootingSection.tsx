@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Throbber } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import Subtitle from '../../../components/Subtitle';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -9,7 +9,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { statusPageUrl } from './constants';
 
-function TroubleshootingSection({ onRegisterStatusChange, ...props }) {
+function TroubleshootingSection({ onRegisterStatusChange, ...props }): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -17,7 +17,7 @@ function TroubleshootingSection({ onRegisterStatusChange, ...props }) {
 
 	const syncWorkspace = useMethod('cloud:syncWorkspace');
 
-	const handleSyncButtonClick = async () => {
+	const handleSyncButtonClick = async (): Promise<void> => {
 		setSyncing(true);
 
 		try {

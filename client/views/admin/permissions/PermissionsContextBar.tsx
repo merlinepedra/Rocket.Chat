@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useRouteParameter, useRoute } from '../../../contexts/RouterContext';
@@ -8,7 +8,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import EditRolePage from './EditRolePageContainer';
 import NewRolePage from './NewRolePage';
 
-const PermissionsContextBar = () => {
+const PermissionsContextBar = (): ReactElement => {
 	const t = useTranslation();
 	const _id = useRouteParameter('_id');
 	const context = useRouteParameter('context');

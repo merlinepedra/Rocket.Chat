@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../../../components/VerticalBar';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 
-const CallJitsi = ({ handleClose, openNewWindow, refContent, children }) => {
+const CallJitsi = ({ handleClose, openNewWindow, refContent, children }): ReactElement => {
 	const t = useTranslation();
 
 	const content = openNewWindow ? (

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Icon, Accordion, Pagination } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import { useCurrentRoute, useRoute } from '../../../contexts/RouterContext';
@@ -11,7 +11,7 @@ import { useFormatDateAndTime } from '../../../hooks/useFormatDateAndTime';
 import LogItem from './LogItem';
 import LogsLoading from './LogsLoading';
 
-const useAppWithLogs = ({ id, current, itemsPerPage }) => {
+const useAppWithLogs = ({ id, current, itemsPerPage }): [unknown, unknown, unknown] => {
 	const [data, setData] = useSafely(useState({}));
 	const getAppData = useEndpoint('GET', `/apps/${id}`);
 	const getAppLogs = useEndpoint('GET', `/apps/${id}/logs`);
@@ -38,7 +38,7 @@ const useAppWithLogs = ({ id, current, itemsPerPage }) => {
 	return [filteredData, total, fetchData];
 };
 
-function AppLogsPage({ id, ...props }) {
+function AppLogsPage({ id, ...props }): ReactElement {
 	const t = useTranslation();
 	const formatDateAndTime = useFormatDateAndTime();
 	const [itemsPerPage, setItemsPerPage] = useState(25);
@@ -49,11 +49,11 @@ function AppLogsPage({ id, ...props }) {
 	const [currentRouteName] = useCurrentRoute();
 	const appLogsRoute = useRoute(currentRouteName);
 
-	const handleResetButtonClick = () => {
+	const handleResetButtonClick = (): void => {
 		fetchData();
 	};
 
-	const handleBackButtonClick = () => {
+	const handleBackButtonClick = (): void => {
 		appLogsRoute.push();
 	};
 

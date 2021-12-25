@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Sidebar } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { hasPermission } from '../../../app/authorization/client';
 import { useLayout } from '../../contexts/LayoutContext';
@@ -15,7 +15,7 @@ import { useMethod } from '../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../contexts/TranslationContext';
 
-const OmnichannelSection = (props) => {
+const OmnichannelSection = (props): ReactElement => {
 	const changeAgentStatus = useMethod('livechat:changeLivechatStatus');
 	const t = useTranslation();
 	const agentAvailable = useOmnichannelAgentAvailable();

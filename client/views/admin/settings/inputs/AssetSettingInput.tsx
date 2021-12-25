@@ -1,21 +1,21 @@
 // @ts-nocheck
 import { Button, Field, Icon } from '@rocket.chat/fuselage';
 import { Random } from 'meteor/random';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useMethod } from '../../../../contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import './AssetSettingInput.css';
 
-function AssetSettingInput({ _id, label, value = {}, asset, fileConstraints = {} }) {
+function AssetSettingInput({ _id, label, value = {}, asset, fileConstraints = {} }): ReactElement {
 	const t = useTranslation();
 
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setAsset = useMethod('setAsset');
 	const unsetAsset = useMethod('unsetAsset');
 
-	const handleUpload = (event) => {
+	const handleUpload = (event): void => {
 		event = event.originalEvent || event;
 
 		let { files } = event.target;
@@ -31,7 +31,7 @@ function AssetSettingInput({ _id, label, value = {}, asset, fileConstraints = {}
 			dispatchToastMessage({ type: 'info', message: t('Uploading_file') });
 			const reader = new FileReader();
 			reader.readAsBinaryString(blob);
-			reader.onloadend = async () => {
+			reader.onloadend = async (): Promise<void> => {
 				try {
 					await setAsset(reader.result, blob.type, asset);
 					dispatchToastMessage({ type: 'success', message: t('File_uploaded') });
@@ -42,7 +42,7 @@ function AssetSettingInput({ _id, label, value = {}, asset, fileConstraints = {}
 		});
 	};
 
-	const handleDeleteButtonClick = async () => {
+	const handleDeleteButtonClick = async (): Promise<void> => {
 		try {
 			await unsetAsset(asset);
 		} catch (error) {

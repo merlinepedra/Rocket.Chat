@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 const style = { wordBreak: 'break-word' };
 
-const DescriptionListEntry = ({ children, label, ...props }) => (
+const DescriptionListEntry = ({ children, label, ...props }): ReactElement => (
 	<Table.Row {...props}>
 		<Table.Cell
 			is='th'

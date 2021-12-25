@@ -2,7 +2,7 @@
 import { Box, Field, Flex, Icon } from '@rocket.chat/fuselage';
 import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
-import React, { useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useRef, useEffect, useLayoutEffect, ReactElement } from 'react';
 
 import ResetSettingButton from '../ResetSettingButton';
 
@@ -17,13 +17,13 @@ function RoomPickSettingInput({
 	hasResetButton,
 	onChangeValue,
 	onResetButtonClick,
-}) {
+}): ReactElement {
 	value = value || [];
 
 	const wrapperRef = useRef();
 	const valueRef = useRef(value);
 
-	const handleRemoveRoomButtonClick = (rid) => () => {
+	const handleRemoveRoomButtonClick = (rid) => (): void => {
 		onChangeValue(value.filter(({ _id }) => _id !== rid));
 	};
 
@@ -54,7 +54,7 @@ function RoomPickSettingInput({
 							template: Template.roomSearch,
 							noMatchTemplate: Template.roomSearchEmpty,
 							matchAll: true,
-							selector: (match) => ({ name: match }),
+							selector: (match): unknown => ({ name: match }),
 							sort: 'name',
 						},
 					],
@@ -70,7 +70,7 @@ function RoomPickSettingInput({
 			event.currentTarget.focus();
 		});
 
-		return () => {
+		return (): void => {
 			Blaze.remove(view);
 		};
 	}, [_id, autocomplete, disabled, onChangeValue, placeholder, readonly, valueRef]);

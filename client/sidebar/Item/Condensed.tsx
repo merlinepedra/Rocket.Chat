@@ -1,22 +1,22 @@
 // @ts-nocheck
 import { Sidebar, ActionButton } from '@rocket.chat/fuselage';
 import { useMutableCallback, usePrefersReducedMotion } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useState } from 'react';
+import React, { memo, ReactElement, useState } from 'react';
 
 const Condensed = ({
 	icon,
 	title = '',
-	titleIcon,
+	titleIcon: _titleIcon,
 	avatar,
 	actions,
 	href,
-	menuOptions,
+	menuOptions: _menuOptions,
 	unread,
 	menu,
 	badges,
-	threadUnread,
+	threadUnread: _threadUnread,
 	...props
-}) => {
+}): ReactElement => {
 	const [menuVisibility, setMenuVisibility] = useState(!!window.DISABLE_ANIMATION);
 
 	const isReduceMotionEnabled = usePrefersReducedMotion();

@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Accordion, Field, Select, FieldGroup, ToggleSwitch } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useSetting } from '../../../contexts/SettingsContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
-const PreferencesMessagesSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesMessagesSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const showRoles = useSetting('UI_DisplayRoles');

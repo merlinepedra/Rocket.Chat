@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Skeleton, Throbber, InputBox } from '@rocket.chat/fuselage';
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import EditOauthApp from './EditOauthApp';
 
-function EditOauthAppWithData({ _id, ...props }) {
+function EditOauthAppWithData({ _id, ...props }): ReactElement {
 	const t = useTranslation();
 
 	const params = useMemo(() => ({ appId: _id }), [_id]);

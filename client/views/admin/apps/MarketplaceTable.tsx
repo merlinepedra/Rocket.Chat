@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, ReactElement } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
@@ -12,10 +12,10 @@ import { useFilteredApps } from './hooks/useFilteredApps';
 
 const filterFunction =
 	(text) =>
-	({ name, marketplace }) =>
+	({ name, marketplace }): boolean =>
 		marketplace !== false && name.toLowerCase().indexOf(text.toLowerCase()) > -1;
 
-function MarketplaceTable() {
+function MarketplaceTable(): ReactElement {
 	const t = useTranslation();
 
 	const [ref, onLargeBreakpoint, onMediumBreakpoint] = useResizeInlineBreakpoint([800, 600], 200);
@@ -36,7 +36,7 @@ function MarketplaceTable() {
 	const { finishedLoading } = useContext(AppsContext);
 
 	const [sortBy, sortDirection] = sort;
-	const onHeaderCellClick = (id) => {
+	const onHeaderCellClick = (id): void => {
 		setSort(([sortBy, sortDirection]) =>
 			sortBy === id ? [id, sortDirection === 'asc' ? 'desc' : 'asc'] : [id, 'asc'],
 		);
@@ -65,11 +65,11 @@ function MarketplaceTable() {
 			total={filteredAppsCount}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText placeholder={t('Search_Apps')} onChange={onChange} {...props} />
 			)}
 		>
-			{(props) => (
+			{(props): ReactElement => (
 				<MarketplaceRow
 					key={props.id}
 					medium={onMediumBreakpoint}

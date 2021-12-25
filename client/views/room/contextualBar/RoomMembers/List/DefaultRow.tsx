@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { MemberItem } from './components/MemberItem';
 
-const DefaultRow = ({ user, data, index, reload }) => {
+const DefaultRow = ({ user, data, index, reload }): ReactElement => {
 	const { onClickView, rid } = data;
 
 	if (!user) {

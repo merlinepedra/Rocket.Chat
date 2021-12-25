@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, ReactElement } from 'react';
 
 import { drawLineChart } from '../../../../../app/livechat/client/lib/chartHandler';
 import { secondsToHHMMSS } from '../../../../../app/utils/lib/timeConverter';
@@ -14,17 +14,17 @@ import { useUpdateChartData } from './useUpdateChartData';
 const [labels, initialData] = getMomentChartLabelsAndData();
 const tooltipCallbacks = {
 	callbacks: {
-		title(tooltipItem, data) {
+		title(tooltipItem, data): unknown {
 			return data.labels[tooltipItem[0].index];
 		},
-		label(tooltipItem, data) {
+		label(tooltipItem, data): string {
 			const { datasetIndex, index } = tooltipItem;
 			const { data: datasetData, label } = data.datasets[datasetIndex];
 			return `${label}: ${secondsToHHMMSS(datasetData[index])}`;
 		},
 	},
 };
-const init = (canvas, context, t) =>
+const init = (canvas, context, t): Promise<unknown> =>
 	drawLineChart(
 		canvas,
 		context,
@@ -34,7 +34,7 @@ const init = (canvas, context, t) =>
 		{ legends: true, anim: true, smallTicks: true, displayColors: false, tooltipCallbacks },
 	);
 
-const ChatDurationChart = ({ params, reloadRef, ...props }) => {
+const ChatDurationChart = ({ params, reloadRef, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const canvas = useRef();
@@ -65,7 +65,7 @@ const ChatDurationChart = ({ params, reloadRef, ...props }) => {
 	};
 
 	useEffect(() => {
-		const initChart = async () => {
+		const initChart = async (): Promise<void> => {
 			context.current = await init(canvas.current, context.current, t);
 		};
 		initChart();

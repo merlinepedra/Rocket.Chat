@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
@@ -10,7 +10,7 @@ import Field from './Field';
 import Info from './Info';
 import Label from './Label';
 
-const CustomField = ({ id, value }) => {
+const CustomField = ({ id, value }): ReactElement => {
 	const t = useTranslation();
 	const { value: data, phase: state, error } = useEndpointData(`livechat/custom-fields/${id}`);
 	if (state === AsyncStatePhase.LOADING) {

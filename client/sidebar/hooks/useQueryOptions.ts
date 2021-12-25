@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useSetting } from '../../contexts/SettingsContext';
 import { useUserPreference } from '../../contexts/UserContext';
 
-export const useQueryOptions = () => {
+export const useQueryOptions = (): unknown => {
 	const sortBy = useUserPreference('sidebarSortby');
 	const showRealName = useSetting('UI_Use_Real_Name');
 

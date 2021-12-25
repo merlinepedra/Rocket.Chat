@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Field, Select, FieldGroup } from '@rocket.chat/fuselage';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import { useTranslation } from '../../../../contexts/TranslationContext';
@@ -8,7 +8,7 @@ import { useTabBarClose } from '../../providers/ToolboxProvider';
 import FileExport from './FileExport';
 import MailExportForm from './MailExportForm';
 
-function ExportMessages({ rid }) {
+function ExportMessages({ rid }): ReactElement {
 	const t = useTranslation();
 	const close = useTabBarClose();
 
@@ -35,7 +35,7 @@ function ExportMessages({ rid }) {
 						<Field.Row>
 							<Select
 								value={type}
-								onChange={(value) => setType(value)}
+								onChange={(value): void => setType(value)}
 								placeholder={t('Type')}
 								options={exportOptions}
 							/>

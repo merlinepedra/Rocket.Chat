@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Sidebar } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import tinykeys from 'tinykeys';
 
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 import SearchList from '../../search/SearchList';
 
-const Search = (props) => {
+const Search = (props): ReactElement => {
 	const [searchOpen, setSearchOpen] = useState(false);
 
 	const ref = useRef();
@@ -34,7 +34,7 @@ const Search = (props) => {
 				openSearch();
 			},
 		});
-		return () => {
+		return (): void => {
 			unsubscribe();
 		};
 	}, [openSearch]);

@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Margins, Tag } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../contexts/TranslationContext';
 
-function RoomTags({ room }) {
+function RoomTags({ room }): ReactElement {
 	const t = useTranslation();
 	return (
 		<Box mi='x4' alignItems='center' display='flex'>

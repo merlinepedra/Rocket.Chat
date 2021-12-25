@@ -38,7 +38,7 @@ const oldPallet = {
 	'color-white': '#ffffff',
 };
 
-const getStyleTag = () => {
+const getStyleTag = (): HTMLElement => {
 	const style = document.getElementById('sidebar-style');
 	if (style) {
 		return style;
@@ -52,7 +52,7 @@ const getStyleTag = () => {
 	return newElement;
 };
 
-function lightenDarkenColor(col, amt) {
+function lightenDarkenColor(col, amt): string {
 	let usePound = false;
 
 	if (col[0] === '#') {
@@ -89,7 +89,7 @@ function lightenDarkenColor(col, amt) {
 	return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
 }
 
-function h2r(hex = '', a) {
+function h2r(hex = '', a): string {
 	const [hash, r, g, b] = hex.match(/#([0-f]{2})([0-f]{2})([0-f]{2})/i) || [];
 
 	return hash ? `rgba(${[r, g, b].map((value) => parseInt(value, 16)).join()}, ${a})` : hex;
@@ -98,7 +98,7 @@ function h2r(hex = '', a) {
 const modifier = '.sidebar--custom-colors';
 
 const query = { _id: /theme-color-rc/ };
-const useTheme = () => {
+const useTheme = (): unknown => {
 	const customColors = useSettings(query);
 	const result = useMemo(() => {
 		const n900 = customColors.find(({ _id }) => _id === 'theme-color-rc-color-primary-darkest');
@@ -137,11 +137,12 @@ const useTheme = () => {
 	return result;
 };
 
-const toVar = (color) =>
+const toVar = (color): string =>
 	color && color[0] === '#' ? color : oldPallet[color] || `var(--${color})`;
 
 const getStyle = (
-	(selector) => (colors) =>
+	(selector) =>
+	(colors): string =>
 		`
 		${selector} {
 			--rcx-color-neutral-100: ${toVar(colors.n900)};
@@ -197,10 +198,10 @@ const getStyle = (
 	`
 )(isIE11 ? ':root' : modifier);
 
-const useSidebarPaletteColorIE11 = () => {
+const useSidebarPaletteColorIE11 = (): (() => void) => {
 	const colors = useTheme();
 	useEffect(() => {
-		(async () => {
+		(async (): Promise<void> => {
 			const [{ default: cssVars }, CSSOM] = await Promise.all([
 				import('css-vars-ponyfill'),
 				import('cssom'),
@@ -228,8 +229,9 @@ const useSidebarPaletteColorIE11 = () => {
 						.join(' '),
 				);
 
-				const filterSelectors = (selector) => /rcx-(sidebar|button|divider|input)/.test(selector);
-				const insertSelector = (selector) =>
+				const filterSelectors = (selector): boolean =>
+					/rcx-(sidebar|button|divider|input)/.test(selector);
+				const insertSelector = (selector): string =>
 					selector.replace(
 						/^((html:not\(\.js-focus-visible\)|\.js-focus-visible)|\.)(.*)/,
 						(match, group, g2, g3, offset, text) => {
@@ -268,7 +270,7 @@ const useSidebarPaletteColorIE11 = () => {
 				console.log(error);
 			}
 		})();
-		return () => {
+		return (): void => {
 			getStyleTag().remove();
 		};
 	}, [colors]);
@@ -276,12 +278,12 @@ const useSidebarPaletteColorIE11 = () => {
 
 export const useSidebarPaletteColor = isIE11
 	? useSidebarPaletteColorIE11
-	: () => {
+	: (): void => {
 			const colors = useTheme();
 			useLayoutEffect(() => {
 				getStyleTag().innerHTML = getStyle(colors);
 
-				return () => {
+				return (): void => {
 					getStyleTag().innerHTML = '';
 				};
 			}, [colors]);

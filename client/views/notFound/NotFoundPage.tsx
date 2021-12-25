@@ -1,19 +1,19 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Flex, Margins } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useRoute } from '../../contexts/RouterContext';
 import { useTranslation } from '../../contexts/TranslationContext';
 
-function NotFoundPage() {
+function NotFoundPage(): ReactElement {
 	const t = useTranslation();
 	const homeRoute = useRoute('home');
 
-	const handleGoToPreviousPageClick = () => {
+	const handleGoToPreviousPageClick = (): void => {
 		window.history.back();
 	};
 
-	const handleGoHomeClick = () => {
+	const handleGoHomeClick = (): void => {
 		homeRoute.push();
 	};
 

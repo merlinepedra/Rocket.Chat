@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { useEditableSettingsGroupSections } from '../../../../contexts/EditableSettingsContext';
 import { useMethod } from '../../../../contexts/ServerContext';
@@ -9,7 +9,7 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import GroupPage from '../GroupPage';
 import Section from '../Section';
 
-function AssetsGroupPage({ _id, ...group }) {
+function AssetsGroupPage({ _id, ...group }): ReactElement {
 	const sections = useEditableSettingsGroupSections(_id);
 	const solo = sections.length === 1;
 	const t = useTranslation();
@@ -17,7 +17,7 @@ function AssetsGroupPage({ _id, ...group }) {
 	const refreshClients = useMethod('refreshClients');
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	const handleApplyAndRefreshAllClientsButtonClick = async () => {
+	const handleApplyAndRefreshAllClientsButtonClick = async (): Promise<void> => {
 		try {
 			await refreshClients();
 			dispatchToastMessage({

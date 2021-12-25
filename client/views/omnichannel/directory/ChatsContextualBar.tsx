@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useRoute, useRouteParameter } from '../../../contexts/RouterContext';
@@ -12,7 +12,7 @@ import Chat from './chats/Chat';
 import ChatInfoDirectory from './chats/contextualBar/ChatInfoDirectory';
 import RoomEditWithData from './chats/contextualBar/RoomEditWithData';
 
-const ChatsContextualBar = ({ chatReload }) => {
+const ChatsContextualBar = ({ chatReload }): ReactElement => {
 	const directoryRoute = useRoute('omnichannel-directory');
 
 	const bar = useRouteParameter('bar') || 'info';
@@ -20,15 +20,15 @@ const ChatsContextualBar = ({ chatReload }) => {
 
 	const t = useTranslation();
 
-	const openInRoom = () => {
+	const openInRoom = (): void => {
 		directoryRoute.push({ page: 'chats', id, bar: 'view' });
 	};
 
-	const handleChatsVerticalBarCloseButtonClick = () => {
+	const handleChatsVerticalBarCloseButtonClick = (): void => {
 		directoryRoute.push({ page: 'chats' });
 	};
 
-	const handleChatsVerticalBarBackButtonClick = () => {
+	const handleChatsVerticalBarBackButtonClick = (): void => {
 		directoryRoute.push({ page: 'chats', id, bar: 'info' });
 	};
 

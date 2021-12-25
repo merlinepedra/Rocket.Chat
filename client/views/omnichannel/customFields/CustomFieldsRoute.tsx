@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
@@ -14,9 +14,9 @@ import EditCustomFieldsPage from './EditCustomFieldsPageContainer';
 import NewCustomFieldsPage from './NewCustomFieldsPage';
 import RemoveCustomFieldButton from './RemoveCustomFieldButton';
 
-const sortDir = (sortDir) => (sortDir === 'asc' ? 1 : -1);
+const sortDir = (sortDir): number => (sortDir === 'asc' ? 1 : -1);
 
-const useQuery = ({ text, itemsPerPage, current }, [column, direction]) =>
+const useQuery = ({ text, itemsPerPage, current }, [column, direction]): unknown =>
 	useMemo(
 		() => ({
 			fields: JSON.stringify({ label: 1 }),
@@ -28,7 +28,7 @@ const useQuery = ({ text, itemsPerPage, current }, [column, direction]) =>
 		[text, itemsPerPage, current, column, direction],
 	);
 
-const CustomFieldsRoute = () => {
+const CustomFieldsRoute = (): ReactElement => {
 	const t = useTranslation();
 	const canViewCustomFields = usePermission('view-livechat-customfields');
 
@@ -53,7 +53,7 @@ const CustomFieldsRoute = () => {
 	});
 
 	const onRowClick = useMutableCallback(
-		(id) => () =>
+		(id) => (): void =>
 			departmentsRoute.push({
 				context: 'edit',
 				id,

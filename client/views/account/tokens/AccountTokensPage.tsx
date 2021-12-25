@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import { useTranslation } from '../../../contexts/TranslationContext';
@@ -7,7 +7,7 @@ import { useEndpointData } from '../../../hooks/useEndpointData';
 import AccountTokensTable from './AccountTokensTable';
 import AddToken from './AddToken';
 
-const AccountTokensPage = () => {
+const AccountTokensPage = (): ReactElement => {
 	const t = useTranslation();
 	const { value: data, reload } = useEndpointData('users.getPersonalAccessTokens');
 

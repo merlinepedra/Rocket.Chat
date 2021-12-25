@@ -1,9 +1,9 @@
 // @ts-nocheck
 import { Box, Field, FieldGroup, ToggleSwitch } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
-const NotificationToogle = ({ label, description, onChange, defaultChecked }) => {
+const NotificationToogle = ({ label, description, onChange, defaultChecked }): ReactElement => {
 	const id = useUniqueId();
 
 	return (

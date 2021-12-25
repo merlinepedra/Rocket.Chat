@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import { useRouteParameter } from '../../../contexts/RouterContext';
@@ -7,7 +7,7 @@ import { useIsPrivilegedSettingsContext } from '../../../contexts/SettingsContex
 import EditableSettingsProvider from '../../../providers/EditableSettingsProvider';
 import GroupSelector from './GroupSelector';
 
-export function SettingsRoute() {
+export function SettingsRoute(): ReactElement {
 	const hasPermission = useIsPrivilegedSettingsContext();
 
 	const groupId = useRouteParameter('group');

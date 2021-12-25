@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { PositionAnimated, AnimatedVisibility, Menu, Option } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useRef } from 'react';
+import React, { ReactElement, useMemo, useRef } from 'react';
 
 import { Backdrop } from '../../../components/Backdrop';
 import LocalTime from '../../../components/LocalTime';
@@ -15,7 +15,7 @@ import { useEndpointData } from '../../../hooks/useEndpointData';
 import { useActionSpread } from '../../hooks/useActionSpread';
 import { useUserInfoActions } from '../hooks/useUserInfoActions';
 
-const UserCardWithData = ({ username, onClose, target, open, rid }) => {
+const UserCardWithData = ({ username, onClose, target, open, rid }): ReactElement => {
 	const ref = useRef(target);
 
 	const getRoles = useRolesDescription();
@@ -84,7 +84,7 @@ const UserCardWithData = ({ username, onClose, target, open, rid }) => {
 				mi='x2'
 				key='menu'
 				ghost={false}
-				renderItem={({ label: { label, icon }, ...props }) => (
+				renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 					<Option {...props} label={label} icon={icon} />
 				)}
 				options={menuOptions}
@@ -93,7 +93,7 @@ const UserCardWithData = ({ username, onClose, target, open, rid }) => {
 	}, [menuOptions]);
 
 	const actions = useMemo(() => {
-		const mapAction = ([key, { label, icon, action }]) => (
+		const mapAction = ([key, { label, icon, action }]): ReactElement => (
 			<UserCard.Action key={key} title={label} aria-label={label} onClick={action} icon={icon} />
 		);
 

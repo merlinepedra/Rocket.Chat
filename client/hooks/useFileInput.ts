@@ -2,7 +2,11 @@
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useRef, useEffect } from 'react';
 
-export const useFileInput = (onSetFile, fileType = 'image/*', fileField = 'image') => {
+export const useFileInput = (
+	onSetFile,
+	fileType = 'image/*',
+	fileField = 'image',
+): [unknown, unknown] => {
 	const ref = useRef();
 
 	useEffect(() => {
@@ -12,7 +16,7 @@ export const useFileInput = (onSetFile, fileType = 'image/*', fileField = 'image
 		document.body.appendChild(fileInput);
 		ref.current = fileInput;
 
-		return () => {
+		return (): void => {
 			ref.current = null;
 			fileInput.remove();
 		};
@@ -33,7 +37,7 @@ export const useFileInput = (onSetFile, fileType = 'image/*', fileField = 'image
 			return;
 		}
 
-		const handleFiles = () => {
+		const handleFiles = (): void => {
 			const formData = new FormData();
 			formData.append(fileField, fileInput.files[0]);
 			onSetFile(fileInput.files[0], formData);
@@ -41,7 +45,7 @@ export const useFileInput = (onSetFile, fileType = 'image/*', fileField = 'image
 
 		fileInput.addEventListener('change', handleFiles, false);
 
-		return () => {
+		return (): void => {
 			fileInput.removeEventListener('change', handleFiles, false);
 		};
 	}, [fileField, fileType, onSetFile]);

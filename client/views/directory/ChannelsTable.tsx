@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Table, Avatar, Icon } from '@rocket.chat/fuselage';
 import { useMediaQuery, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, ReactElement } from 'react';
 
 import { roomTypes } from '../../../app/utils/client';
 import FilterByText from '../../components/FilterByText';
@@ -20,7 +20,7 @@ const style = {
 	overflow: 'hidden',
 };
 
-function ChannelsTable() {
+function ChannelsTable(): ReactElement {
 	const t = useTranslation();
 	const refAutoFocus = useAutoFocus(true);
 	const [sort, setSort] = useState(['name', 'asc']);
@@ -104,11 +104,13 @@ function ChannelsTable() {
 	const { value: data = {} } = useEndpointData('directory', query);
 
 	const onClick = useMemo(
-		() => (name, type) => (e) => {
-			if (e.type === 'click' || e.key === 'Enter') {
-				type === 'c' ? channelRoute.push({ name }) : groupsRoute.push({ name });
-			}
-		},
+		() =>
+			(name, type) =>
+			(e): void => {
+				if (e.type === 'click' || e.key === 'Enter') {
+					type === 'c' ? channelRoute.push({ name }) : groupsRoute.push({ name });
+				}
+			},
 		[channelRoute, groupsRoute],
 	);
 
@@ -179,7 +181,7 @@ function ChannelsTable() {
 	return (
 		<GenericTable
 			header={header}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText
 					placeholder={t('Search_Channels')}
 					inputRef={refAutoFocus}

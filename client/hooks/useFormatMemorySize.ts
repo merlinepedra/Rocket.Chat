@@ -1,7 +1,7 @@
 // @ts-nocheck
 import s from 'underscore.string';
 
-const formatMemorySize = (memorySize) => {
+const formatMemorySize = (memorySize): string => {
 	if (typeof memorySize !== 'number') {
 		return null;
 	}
@@ -22,4 +22,4 @@ const formatMemorySize = (memorySize) => {
 	return `${s.numberFormat(memorySize / divider, decimalDigits)} ${units[order]}`;
 };
 
-export const useFormatMemorySize = () => formatMemorySize;
+export const useFormatMemorySize = (): ((memorySize: number) => string) => formatMemorySize;

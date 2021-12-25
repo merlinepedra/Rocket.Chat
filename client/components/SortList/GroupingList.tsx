@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { CheckBox, OptionTitle } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useMethod } from '../../contexts/ServerContext';
 import { useTranslation } from '../../contexts/TranslationContext';
@@ -16,14 +16,14 @@ const checkBoxStyle = {
 	paddingInlineStart: '24px',
 };
 
-function GroupingList() {
+function GroupingList(): ReactElement {
 	const sidebarGroupByType = useUserPreference('sidebarGroupByType');
 	const sidebarShowFavorites = useUserPreference('sidebarShowFavorites');
 	const sidebarShowUnread = useUserPreference('sidebarShowUnread');
 
 	const saveUserPreferences = useMethod('saveUserPreferences');
 
-	const useHandleChange = (key, value) =>
+	const useHandleChange = (key, value): (() => void) =>
 		useCallback(() => saveUserPreferences({ [key]: value }), [key, value]);
 
 	const handleChangeGroupByType = useHandleChange('sidebarGroupByType', !sidebarGroupByType);

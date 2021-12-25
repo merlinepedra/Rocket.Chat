@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -8,7 +8,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { useFormatDateAndTime } from '../../../hooks/useFormatDateAndTime';
 
-export function OAuthAppsTable() {
+export function OAuthAppsTable(): ReactElement {
 	const t = useTranslation();
 	const formatDateAndTime = useFormatDateAndTime();
 
@@ -20,7 +20,7 @@ export function OAuthAppsTable() {
 	const router = useRoute('admin-oauth-apps');
 
 	const onClick = useCallback(
-		(_id) => () =>
+		(_id) => (): void =>
 			router.push({
 				context: 'edit',
 				id: _id,

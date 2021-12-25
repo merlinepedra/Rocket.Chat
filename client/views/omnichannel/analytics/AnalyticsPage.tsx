@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Select, Margins, Field, Label } from '@rocket.chat/fuselage';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, ReactElement } from 'react';
 
 import AutoCompleteDepartment from '../../../components/AutoCompleteDepartment';
 import Page from '../../../components/Page';
@@ -10,7 +10,7 @@ import DateRangePicker from './DateRangePicker';
 import InterchangeableChart from './InterchangeableChart';
 import Overview from './Overview';
 
-const useOptions = (type) => {
+const useOptions = (type): [unknown, string][] => {
 	const t = useTranslation();
 	return useMemo(() => {
 		if (type === 'Conversations') {
@@ -29,7 +29,7 @@ const useOptions = (type) => {
 	}, [t, type]);
 };
 
-const AnalyticsPage = () => {
+const AnalyticsPage = (): ReactElement => {
 	const t = useTranslation();
 	const [type, setType] = useState('Conversations');
 	const [department, setDepartment] = useState(null);

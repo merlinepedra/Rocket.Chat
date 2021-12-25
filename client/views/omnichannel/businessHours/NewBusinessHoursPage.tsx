@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, ButtonGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useRef, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 
 import Page from '../../../components/Page';
 import { useRoute } from '../../../contexts/RouterContext';
@@ -13,7 +13,7 @@ import BusinessHoursFormContainer from './BusinessHoursFormContainer';
 import { mapBusinessHoursForm } from './mapBusinessHoursForm';
 
 const closedDays = ['Saturday', 'Sunday'];
-const createDefaultBusinessHours = () => ({
+const createDefaultBusinessHours = (): unknown => ({
 	name: '',
 	workHours: DAYS_OF_WEEK.map((day) => ({
 		day,
@@ -32,7 +32,7 @@ const createDefaultBusinessHours = () => ({
 
 const defaultBusinessHour = createDefaultBusinessHours();
 
-const NewBusinessHoursPage = () => {
+const NewBusinessHoursPage = (): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

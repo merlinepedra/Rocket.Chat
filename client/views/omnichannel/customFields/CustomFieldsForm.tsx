@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Field, TextInput, ToggleSwitch, Select } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const CustomFieldsForm = ({ values = {}, handlers = {}, className }) => {
+const CustomFieldsForm = ({ values = {}, handlers = {}, className }): ReactElement => {
 	const t = useTranslation();
 
 	const { id, field, label, scope, visibility, regexp } = values;

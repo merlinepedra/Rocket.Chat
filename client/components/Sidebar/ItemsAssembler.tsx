@@ -1,10 +1,10 @@
 // @ts-nocheck
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { useTranslation } from '../../contexts/TranslationContext';
 import Sidebar from './Sidebar';
 
-const ItemsAssembler = ({ items, currentPath }) => {
+const ItemsAssembler = ({ items, currentPath }): ReactElement => {
 	const t = useTranslation();
 	return items.map(
 		({ href, pathSection, i18nLabel, name, icon, permissionGranted, pathGroup, tag }) => (

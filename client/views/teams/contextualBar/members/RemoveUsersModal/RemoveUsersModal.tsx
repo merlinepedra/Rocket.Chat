@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Skeleton } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import BaseRemoveUsersModal from './BaseRemoveUsersModal';
 
 const initialData = { user: { username: '' } };
 
-const RemoveUsersModal = ({ teamId, userId, onClose, onCancel, onConfirm }) => {
+const RemoveUsersModal = ({ teamId, userId, onClose, onCancel, onConfirm }): ReactElement => {
 	const t = useTranslation();
 	const { value, phase } = useEndpointData(
 		'teams.listRoomsOfUser',

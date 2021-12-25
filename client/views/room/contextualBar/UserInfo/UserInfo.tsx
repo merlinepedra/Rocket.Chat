@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Margins, Tag } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import MarkdownText from '../../../../components/MarkdownText';
 import UTCClock from '../../../../components/UTCClock';
@@ -32,7 +32,7 @@ function UserInfo({
 	nickname,
 	actions,
 	...props
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const timeAgo = useTimeAgo();
 	const customFieldsToShowSetting = useSetting('Accounts_CustomFieldsToShowInUserInfo');

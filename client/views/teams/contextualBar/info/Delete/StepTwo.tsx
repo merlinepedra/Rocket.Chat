@@ -1,11 +1,17 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import RoomLinkList from '../../RoomLinkList';
 
-export const StepTwo = ({ deletedRooms, keptRooms, onConfirm, onReturn, onCancel }) => {
+export const StepTwo = ({
+	deletedRooms,
+	keptRooms,
+	onConfirm,
+	onReturn,
+	onCancel,
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (
@@ -13,7 +19,7 @@ export const StepTwo = ({ deletedRooms, keptRooms, onConfirm, onReturn, onCancel
 			variant='danger'
 			icon='trash'
 			title={t('Deleting')}
-			onConfirm={() => onConfirm(Object.values(deletedRooms).map(({ _id }) => _id))}
+			onConfirm={(): void => onConfirm(Object.values(deletedRooms).map(({ _id }) => _id))}
 			onCancel={onReturn}
 			confirmText={t('Remove')}
 			cancelText={t('Back')}

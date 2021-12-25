@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Accordion, Box, FieldGroup, Skeleton } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Setting from './Setting';
 
-function SectionSkeleton() {
+function SectionSkeleton(): ReactElement {
 	return (
 		<Accordion.Item noncollapsible title={<Skeleton />}>
 			<Box is='p' color='hint' fontScale='p3'>

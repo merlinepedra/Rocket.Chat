@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 import UAParser from 'ua-parser-js';
 
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -10,7 +10,7 @@ import Info from '../../../components/Info';
 import Label from '../../../components/Label';
 import { FormSkeleton } from '../../Skeleton';
 
-const VisitorClientInfo = ({ uid }) => {
+const VisitorClientInfo = ({ uid }): ReactElement => {
 	const t = useTranslation();
 	const {
 		value: userData,

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Button, Icon, TextInput, Margins, Avatar } from '@rocket.chat/fuselage';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFileInput } from '../../../hooks/useFileInput';
@@ -14,15 +14,15 @@ function UserAvatarEditor({
 	suggestions,
 	disabled,
 	etag,
-}) {
+}): ReactElement {
 	const t = useTranslation();
 	const [avatarFromUrl, setAvatarFromUrl] = useState('');
 	const [newAvatarSource, setNewAvatarSource] = useState();
 	const [urlEmpty, setUrlEmpty] = useState(true);
 
-	const toDataURL = (file, callback) => {
+	const toDataURL = (file, callback): void => {
 		const reader = new FileReader();
-		reader.onload = function (e) {
+		reader.onload = function (e): void {
 			callback(e.target.result);
 		};
 		reader.readAsDataURL(file);
@@ -40,21 +40,21 @@ function UserAvatarEditor({
 
 	const [clickUpload] = useFileInput(setUploadedPreview);
 
-	const clickUrl = () => {
+	const clickUrl = (): void => {
 		if (avatarFromUrl === '') {
 			return;
 		}
 		setNewAvatarSource(avatarFromUrl);
 		setAvatarObj({ avatarUrl: avatarFromUrl });
 	};
-	const clickReset = () => {
+	const clickReset = (): void => {
 		setNewAvatarSource(`/avatar/%40${username}`);
 		setAvatarObj('reset');
 	};
 
 	const url = newAvatarSource;
 
-	const handleAvatarFromUrlChange = (event) => {
+	const handleAvatarFromUrlChange = (event): void => {
 		event.currentTarget.value !== '' ? setUrlEmpty(false) : setUrlEmpty(true);
 		setAvatarFromUrl(event.currentTarget.value);
 	};

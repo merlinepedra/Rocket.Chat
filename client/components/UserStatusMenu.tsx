@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, PositionAnimated, Options, useCursor, Box } from '@rocket.chat/fuselage';
-import React, { useRef, useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useRef, useCallback, useState, useMemo, useEffect, ReactElement } from 'react';
 
 import { useSetting } from '../contexts/SettingsContext';
 import { useTranslation } from '../contexts/TranslationContext';
@@ -12,13 +12,13 @@ const UserStatusMenu = ({
 	initialStatus = 'offline',
 	placement = 'bottom-end',
 	...props
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 	const [status, setStatus] = useState(initialStatus);
 	const allowInvisibleStatus = useSetting('Accounts_AllowInvisibleStatusOption');
 
 	const options = useMemo(() => {
-		const renderOption = (status, label) => (
+		const renderOption = (status, label): ReactElement => (
 			<Box display='flex' flexDirection='row' alignItems='center'>
 				<Box marginInlineEnd='x8'>
 					<UserStatus status={status} />

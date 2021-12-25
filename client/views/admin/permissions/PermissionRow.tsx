@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, memo } from 'react';
+import React, { useState, memo, ReactElement } from 'react';
 
 import { CONSTANTS } from '../../../../app/authorization/lib';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import RoleCell from './RoleCell';
 
-const useChangeRole = ({ onGrant, onRemove, permissionId }) => {
+const useChangeRole = ({ onGrant, onRemove, permissionId }): (() => Promise<boolean>) => {
 	const dispatchToastMessage = useToastMessageDispatch();
 	return useMutableCallback(async (roleId, granted) => {
 		try {
@@ -24,7 +24,7 @@ const useChangeRole = ({ onGrant, onRemove, permissionId }) => {
 	});
 };
 
-const getName = (t, permission) => {
+const getName = (t, permission): string => {
 	if (permission.level === CONSTANTS.SETTINGS_LEVEL) {
 		let path = '';
 		if (permission.group) {
@@ -39,7 +39,7 @@ const getName = (t, permission) => {
 	return t(permission._id);
 };
 
-const PermissionRow = ({ permission, t, roleList, onGrant, onRemove, ...props }) => {
+const PermissionRow = ({ permission, t, roleList, onGrant, onRemove, ...props }): ReactElement => {
 	const { _id, roles } = permission;
 
 	const [hovered, setHovered] = useState(false);

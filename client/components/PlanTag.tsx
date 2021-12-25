@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box, Tag } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { useMethod } from '../contexts/ServerContext';
 
-function PlanTag() {
+function PlanTag(): ReactElement {
 	const [plans, setPlans] = useSafely(useState([]));
 
 	const getTags = useMethod('license:getTags');
@@ -14,7 +14,7 @@ function PlanTag() {
 		const developmentTag =
 			process.env.NODE_ENV === 'development' ? { name: 'development', color: '#095ad2' } : null;
 
-		const fetchTags = async () => {
+		const fetchTags = async (): Promise<void> => {
 			const tags = await getTags();
 			setPlans(
 				[developmentTag, ...tags]

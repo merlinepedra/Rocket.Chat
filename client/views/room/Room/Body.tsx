@@ -1,7 +1,7 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-function Body({ children }) {
+function Body({ children }): ReactElement {
 	return <>{children}</>;
 }
 

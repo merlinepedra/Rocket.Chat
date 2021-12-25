@@ -1,25 +1,25 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon, Modal } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useSetModal } from '../../../contexts/ModalContext';
 import { useRoute } from '../../../contexts/RouterContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const CloudLoginModal = (props) => {
+const CloudLoginModal = (props): ReactElement => {
 	const t = useTranslation();
 	const setModal = useSetModal();
 	const cloudRoute = useRoute('cloud');
 
-	const handleCloseButtonClick = () => {
+	const handleCloseButtonClick = (): void => {
 		setModal(null);
 	};
 
-	const handleCancelButtonClick = () => {
+	const handleCancelButtonClick = (): void => {
 		setModal(null);
 	};
 
-	const handleLoginButtonClick = () => {
+	const handleLoginButtonClick = (): void => {
 		cloudRoute.push();
 		setModal(null);
 	};

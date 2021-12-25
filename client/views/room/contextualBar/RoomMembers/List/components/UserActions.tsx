@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Option, Menu } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useActionSpread } from '../../../../../hooks/useActionSpread';
 import { useUserInfoActions } from '../../../../hooks/useUserInfoActions';
 
-const UserActions = ({ username, _id, rid, reload }) => {
+const UserActions = ({ username, _id, rid, reload }): ReactElement => {
 	const { menu: menuOptions } = useActionSpread(
 		useUserInfoActions({ _id, username }, rid, reload),
 		0,
@@ -18,7 +18,7 @@ const UserActions = ({ username, _id, rid, reload }) => {
 			flexShrink={0}
 			key='menu'
 			tiny
-			renderItem={({ label: { label, icon }, ...props }) => (
+			renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 				<Option {...props} label={label} icon={icon} />
 			)}
 			options={menuOptions}

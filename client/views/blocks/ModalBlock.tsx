@@ -2,7 +2,7 @@
 import { Modal, AnimatedVisibility, ButtonGroup, Button, Box } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
 import { UiKitComponent, UiKitModal, modalParser } from '@rocket.chat/fuselage-ui-kit';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { getURL } from '../../../app/utils/lib/getURL';
 import './textParsers';
@@ -33,7 +33,7 @@ const focusableElementsStringInvalid = `
 	[tabindex]:not([tabindex="-1"]):invalid,
 	[contenteditable]:invalid`;
 
-function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }) {
+function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }): ReactElement {
 	const id = `modal_id_${useUniqueId()}`;
 	const ref = useRef();
 
@@ -54,7 +54,7 @@ function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }) {
 	// save focus to restore after close
 	const previousFocus = useMemo(() => document.activeElement, []);
 	// restore the focus after the component unmount
-	useEffect(() => () => previousFocus?.focus(), [previousFocus]);
+	useEffect(() => (): void => previousFocus?.focus(), [previousFocus]);
 	// Handle Tab, Shift + Tab, Enter and Escape
 	const handleKeyDown = useCallback(
 		(event) => {
@@ -103,7 +103,7 @@ function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }) {
 	useEffect(() => {
 		const element = document.querySelector('.rc-modal-wrapper');
 		const container = element.querySelector('.rcx-modal__content');
-		const close = (e) => {
+		const close = (e): void => {
 			if (e.target !== element) {
 				return;
 			}
@@ -113,7 +113,7 @@ function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }) {
 			return false;
 		};
 
-		const ignoreIfnotContains = (e) => {
+		const ignoreIfnotContains = (e): void => {
 			if (!container.contains(e.target)) {
 				return;
 			}
@@ -122,7 +122,7 @@ function ModalBlock({ view, errors, appId, onSubmit, onClose, onCancel }) {
 
 		document.addEventListener('keydown', ignoreIfnotContains);
 		element.addEventListener('click', close);
-		return () => {
+		return (): void => {
 			document.removeEventListener('keydown', ignoreIfnotContains);
 			element.removeEventListener('click', close);
 		};

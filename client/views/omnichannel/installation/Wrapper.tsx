@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-const Wrapper = (text) => (
+const Wrapper = (text): ReactElement => (
 	<Box
 		fontFamily='mono'
 		alignSelf='center'

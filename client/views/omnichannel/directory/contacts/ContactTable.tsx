@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, ReactElement } from 'react';
 
 import FilterByText from '../../../../components/FilterByText';
 import GenericTable from '../../../../components/GenericTable';
@@ -10,7 +10,7 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import { useFormatDate } from '../../../../hooks/useFormatDate';
 
-const useQuery = ({ text, itemsPerPage, current }, [column, direction]) =>
+const useQuery = ({ text, itemsPerPage, current }, [column, direction]): unknown =>
 	useMemo(
 		() => ({
 			term: text,
@@ -21,7 +21,7 @@ const useQuery = ({ text, itemsPerPage, current }, [column, direction]) =>
 		[column, current, direction, itemsPerPage, text],
 	);
 
-function ContactTable({ setContactReload }) {
+function ContactTable({ setContactReload }): ReactElement {
 	const [params, setParams] = useState({ text: '', current: 0, itemsPerPage: 25 });
 	const [sort, setSort] = useState(['username', 'asc']);
 	const t = useTranslation();
@@ -49,7 +49,7 @@ function ContactTable({ setContactReload }) {
 	);
 
 	const onRowClick = useMutableCallback(
-		(id) => () =>
+		(id) => (): void =>
 			directoryRoute.push({
 				page: 'contacts',
 				id,
@@ -145,7 +145,7 @@ function ContactTable({ setContactReload }) {
 			total={data?.total}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText
 					displayButton={true}
 					textButton={t('New_Contact')}

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, ButtonGroup, Margins } from '@rocket.chat/fuselage';
 import { useMutableCallback, useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import { useSetModal } from '../../../contexts/ModalContext';
@@ -21,7 +21,7 @@ import WorkspaceLoginSection from './WorkspaceLoginSection';
 import WorkspaceRegistrationSection from './WorkspaceRegistrationSection';
 import { cloudConsoleUrl } from './constants';
 
-function CloudPage() {
+function CloudPage(): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 
@@ -39,7 +39,7 @@ function CloudPage() {
 	const connectWorkspace = useMethod('cloud:connectWorkspace');
 
 	useEffect(() => {
-		const acceptOAuthAuthorization = async () => {
+		const acceptOAuthAuthorization = async (): Promise<void> => {
 			if (page !== 'oauth-callback') {
 				return;
 			}
@@ -79,7 +79,7 @@ function CloudPage() {
 	});
 
 	useEffect(() => {
-		const acceptWorkspaceToken = async () => {
+		const acceptWorkspaceToken = async (): Promise<void> => {
 			try {
 				if (token) {
 					const isConnected = await connectWorkspace(token);
@@ -100,8 +100,8 @@ function CloudPage() {
 		acceptWorkspaceToken();
 	}, [connectWorkspace, dispatchToastMessage, fetchRegisterStatus, t, token]);
 
-	const handleManualWorkspaceRegistrationButtonClick = () => {
-		const handleModalClose = () => {
+	const handleManualWorkspaceRegistrationButtonClick = (): void => {
+		const handleModalClose = (): void => {
 			setModal(null);
 			fetchRegisterStatus();
 		};

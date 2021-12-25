@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Accordion, Box, Button, ButtonGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, memo } from 'react';
+import React, { useMemo, memo, ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import {
@@ -21,7 +21,7 @@ function GroupPage({
 	i18nLabel,
 	i18nDescription = undefined,
 	tabs = undefined,
-}) {
+}): ReactElement {
 	const changedEditableSettings = useEditableSettings(
 		useMemo(
 			() => ({
@@ -99,17 +99,17 @@ function GroupPage({
 		);
 	});
 
-	const handleSubmit = (event) => {
+	const handleSubmit = (event): void => {
 		event.preventDefault();
 		save();
 	};
 
-	const handleCancelClick = (event) => {
+	const handleCancelClick = (event): void => {
 		event.preventDefault();
 		cancel();
 	};
 
-	const handleSaveClick = (event) => {
+	const handleSaveClick = (event): void => {
 		event.preventDefault();
 		save();
 	};

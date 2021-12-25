@@ -1,16 +1,16 @@
 // @ts-nocheck
 import { Box, Button, Tile } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useSetting, useSettingSetValue } from '../../../contexts/SettingsContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function FinalStep() {
+function FinalStep(): ReactElement {
 	const t = useTranslation();
 	const siteUrl = useSetting('Site_Url');
 	const setShowSetupWizard = useSettingSetValue('Show_Setup_Wizard');
 
-	const handleClick = () => {
+	const handleClick = (): void => {
 		setShowSetupWizard('completed');
 	};
 

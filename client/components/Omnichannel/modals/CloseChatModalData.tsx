@@ -1,12 +1,12 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { FormSkeleton } from '../Skeleton';
 import CloseChatModal from './CloseChatModal';
 
-const CloseChatModalData = ({ departmentId, onCancel, onConfirm }) => {
+const CloseChatModalData = ({ departmentId, onCancel, onConfirm }): ReactElement => {
 	const { value: data, phase: state } = useEndpointData(
 		`livechat/department/${departmentId}?includeAgents=false`,
 	);

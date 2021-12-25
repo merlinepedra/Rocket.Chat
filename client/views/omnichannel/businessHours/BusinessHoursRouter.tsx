@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 
 import { businessHourManager } from '../../../../app/livechat/client/views/app/business-hours/BusinessHours';
 import { useRoute, useRouteParameter } from '../../../contexts/RouterContext';
@@ -9,11 +9,11 @@ import BusinessHoursPage from './BusinessHoursPage';
 import EditBusinessHoursPage from './EditBusinessHoursPage';
 import NewBusinessHoursPage from './NewBusinessHoursPage';
 
-export const useIsSingleBusinessHours = () =>
+export const useIsSingleBusinessHours = (): boolean =>
 	useReactiveValue(useMutableCallback(() => businessHourManager.getTemplate())) ===
 	'livechatBusinessHoursForm';
 
-const BusinessHoursRouter = () => {
+const BusinessHoursRouter = (): ReactElement => {
 	const context = useRouteParameter('context');
 	const id = useRouteParameter('id');
 	const type = useRouteParameter('type');

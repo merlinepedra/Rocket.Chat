@@ -18,7 +18,7 @@ export const AgentInfo = memo(function AgentInfo({ uid, children, ...props }) {
 	const { value: data, phase: state, error } = useEndpointData(`livechat/users/agent/${uid}`);
 	const eeForms = useSubscription(formsSubscription);
 
-	const { useMaxChatsPerAgentDisplay = () => {} } = eeForms;
+	const { useMaxChatsPerAgentDisplay = (): void => undefined } = eeForms;
 
 	const MaxChats = useMaxChatsPerAgentDisplay();
 

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Margins, Tile } from '@rocket.chat/fuselage';
 import { useMediaQuery } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import ScrollableContentWrapper from '../../components/ScrollableContentWrapper';
 import { useTranslation } from '../../contexts/TranslationContext';
@@ -12,7 +12,7 @@ import FinalStep from './steps/FinalStep';
 import RegisterServerStep from './steps/RegisterServerStep';
 import SettingsBasedStep from './steps/SettingsBasedStep';
 
-function SetupWizardPage({ currentStep = 1 }) {
+function SetupWizardPage({ currentStep = 1 }): ReactElement {
 	const t = useTranslation();
 	const small = useMediaQuery('(max-width: 760px)');
 

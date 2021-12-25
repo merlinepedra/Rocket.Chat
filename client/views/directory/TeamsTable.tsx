@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Table, Avatar, Icon } from '@rocket.chat/fuselage';
 import { useAutoFocus, useMediaQuery } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, ReactElement } from 'react';
 
 import { roomTypes } from '../../../app/utils/client';
 import FilterByText from '../../components/FilterByText';
@@ -20,7 +20,7 @@ const style = {
 	overflow: 'hidden',
 };
 
-function TeamsTable() {
+function TeamsTable(): ReactElement {
 	const t = useTranslation();
 	const [sort, setSort] = useState(['name', 'asc']);
 	const [params, setParams] = useState({ current: 0, itemsPerPage: 25 });
@@ -80,11 +80,13 @@ function TeamsTable() {
 	const { value: data = {} } = useEndpointData('directory', query);
 
 	const onClick = useMemo(
-		() => (name, type) => (e) => {
-			if (e.type === 'click' || e.key === 'Enter') {
-				type === 'c' ? channelsRoute.push({ name }) : groupsRoute.push({ name });
-			}
-		},
+		() =>
+			(name, type) =>
+			(e): void => {
+				if (e.type === 'click' || e.key === 'Enter') {
+					type === 'c' ? channelsRoute.push({ name }) : groupsRoute.push({ name });
+				}
+			},
 		[channelsRoute, groupsRoute],
 	);
 
@@ -145,7 +147,7 @@ function TeamsTable() {
 	return (
 		<GenericTable
 			header={header}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByText
 					placeholder={t('Teams_Search_teams')}
 					inputRef={refAutoFocus}

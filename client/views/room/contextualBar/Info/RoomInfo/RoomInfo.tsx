@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box, Callout, Menu, Option } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import MarkdownText from '../../../../../components/MarkdownText';
 import VerticalBar from '../../../../../components/VerticalBar';
@@ -23,7 +23,7 @@ const RoomInfo = ({
 	onClickMoveToTeam,
 	onClickConvertToTeam,
 	onClickEnterRoom,
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 	const { name, fname, description, topic, archived, broadcast, announcement } = room;
 
@@ -113,7 +113,7 @@ const RoomInfo = ({
 				mi='x2'
 				key='menu'
 				ghost={false}
-				renderItem={({ label: { label, icon }, ...props }) => (
+				renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 					<Option {...props} label={label} icon={icon} />
 				)}
 				options={menuOptions}
@@ -122,7 +122,7 @@ const RoomInfo = ({
 	}, [menuOptions]);
 
 	const actions = useMemo(() => {
-		const mapAction = ([key, { label, icon, action }]) => (
+		const mapAction = ([key, { label, icon, action }]): ReactElement => (
 			<InfoPanel.Action key={key} label={label} onClick={action} icon={icon} />
 		);
 

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Avatar, Margins, Flex, Box, Tag } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { Rooms, Users } from '../../app/models/client';
 import { getUserAvatarURL } from '../../app/utils/client';
@@ -8,7 +8,7 @@ import { useTranslation } from '../contexts/TranslationContext';
 import { useUser } from '../contexts/UserContext';
 import { useReactiveValue } from '../hooks/useReactiveValue';
 
-const RoomForeword = ({ _id: rid }) => {
+const RoomForeword = ({ _id: rid }): ReactElement => {
 	const t = useTranslation();
 
 	const user = useUser();

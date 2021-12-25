@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Box, Margins } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-function Header({ children }) {
+function Header({ children }): ReactElement {
 	return (
 		<Box rcx-message__header display='flex' flexGrow={0} flexShrink={1} withTruncatedText>
 			<Box

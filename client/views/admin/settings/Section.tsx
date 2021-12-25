@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Accordion, Box, Button, FieldGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import {
 	useEditableSettings,
@@ -19,7 +19,7 @@ function Section({
 	sectionName,
 	tabName,
 	solo,
-}) {
+}): ReactElement {
 	const editableSettings = useEditableSettings(
 		useMemo(
 			() => ({
@@ -63,7 +63,7 @@ function Section({
 
 	const t = useTranslation();
 
-	const handleResetSectionClick = () => {
+	const handleResetSectionClick = (): void => {
 		reset();
 	};
 

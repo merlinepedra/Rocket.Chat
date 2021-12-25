@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import BaseAvatar from './BaseAvatar';
 
-export default function AppAvatar({ iconFileContent, size, iconFileData, ...props }) {
+export default function AppAvatar({ iconFileContent, size, iconFileData, ...props }): ReactElement {
 	return (
 		<Box {...props}>
 			<BaseAvatar

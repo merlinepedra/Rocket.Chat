@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, Icon, Throbber } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useState, memo } from 'react';
+import React, { useCallback, useState, memo, ReactElement } from 'react';
 
 import { Apps } from '../../../../app/apps/client/orchestrator';
 import { useSetModal } from '../../../contexts/ModalContext';
@@ -18,7 +18,7 @@ import {
 	handleInstallError,
 } from './helpers';
 
-const installApp = async ({ id, name, version, permissionsGranted }) => {
+const installApp = async ({ id, name, version, permissionsGranted }): Promise<void> => {
 	try {
 		const { status } = await Apps.installApp(id, version, permissionsGranted);
 		warnStatusChange(name, status);
@@ -30,7 +30,7 @@ const installApp = async ({ id, name, version, permissionsGranted }) => {
 const actions = {
 	purchase: installApp,
 	install: installApp,
-	update: async ({ id, name, marketplaceVersion, permissionsGranted }) => {
+	update: async ({ id, name, marketplaceVersion, permissionsGranted }): Promise<void> => {
 		try {
 			const { status } = await Apps.updateApp(id, marketplaceVersion, permissionsGranted);
 			warnStatusChange(name, status);
@@ -40,7 +40,7 @@ const actions = {
 	},
 };
 
-const AppStatus = ({ app, showStatus = true, ...props }) => {
+const AppStatus = ({ app, showStatus = true, ...props }): ReactElement => {
 	const t = useTranslation();
 	const [loading, setLoading] = useSafely(useState());
 	const [isAppPurchased, setPurchased] = useSafely(useState(app.isPurchased));
@@ -66,7 +66,7 @@ const AppStatus = ({ app, showStatus = true, ...props }) => {
 		setModal(null);
 	}, [setLoading, setModal]);
 
-	const showAppPermissionsReviewModal = () => {
+	const showAppPermissionsReviewModal = (): void => {
 		if (!isAppPurchased) {
 			setPurchased(true);
 		}
@@ -90,7 +90,7 @@ const AppStatus = ({ app, showStatus = true, ...props }) => {
 
 	const checkUserLoggedIn = useMethod('cloud:checkUserLoggedIn');
 
-	const handleClick = async (e) => {
+	const handleClick = async (e): Promise<void> => {
 		e.preventDefault();
 		e.stopPropagation();
 

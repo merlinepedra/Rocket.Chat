@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Option, Menu } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { memo, useMemo } from 'react';
+import React, { memo, ReactElement, useMemo } from 'react';
 
 import { RoomManager } from '../../app/ui-utils/client/lib/RoomManager';
 import { roomTypes, UiTextContext } from '../../app/utils/client';
@@ -23,7 +23,16 @@ const fields = {
 	name: 1,
 };
 
-const RoomMenu = ({ rid, unread, threadUnread, alert, roomOpen, type, cl, name = '' }) => {
+const RoomMenu = ({
+	rid,
+	unread,
+	threadUnread,
+	alert,
+	roomOpen,
+	type,
+	cl,
+	name = '',
+}): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const setModal = useSetModal();
@@ -49,7 +58,7 @@ const RoomMenu = ({ rid, unread, threadUnread, alert, roomOpen, type, cl, name =
 	const canLeaveChannel = usePermission('leave-c');
 	const canLeavePrivate = usePermission('leave-p');
 
-	const canLeave = (() => {
+	const canLeave = ((): boolean => {
 		if (type === 'c' && !canLeaveChannel) {
 			return false;
 		}
@@ -60,7 +69,7 @@ const RoomMenu = ({ rid, unread, threadUnread, alert, roomOpen, type, cl, name =
 	})();
 
 	const handleLeave = useMutableCallback(() => {
-		const leave = async () => {
+		const leave = async (): Promise<void> => {
 			try {
 				await leaveRoom(rid);
 				if (roomOpen) {
@@ -88,7 +97,7 @@ const RoomMenu = ({ rid, unread, threadUnread, alert, roomOpen, type, cl, name =
 	});
 
 	const handleHide = useMutableCallback(async () => {
-		const hide = async () => {
+		const hide = async (): Promise<void> => {
 			try {
 				await hideRoom(rid);
 			} catch (error) {
@@ -193,7 +202,7 @@ const RoomMenu = ({ rid, unread, threadUnread, alert, roomOpen, type, cl, name =
 			aria-keyshortcuts='alt'
 			tabIndex={-1}
 			options={menuOptions}
-			renderItem={({ label: { label, icon }, ...props }) => (
+			renderItem={({ label: { label, icon }, ...props }): ReactElement => (
 				<Option label={label} title={label} icon={icon} {...props} />
 			)}
 		/>

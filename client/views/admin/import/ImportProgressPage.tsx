@@ -2,7 +2,7 @@
 import { Box, Margins, Throbber } from '@rocket.chat/fuselage';
 import { useSafely } from '@rocket.chat/fuselage-hooks';
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, ReactElement } from 'react';
 import s from 'underscore.string';
 
 import {
@@ -16,7 +16,7 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useErrorHandler } from './useErrorHandler';
 
-function ImportProgressPage() {
+function ImportProgressPage(): ReactElement {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const handleError = useErrorHandler();
@@ -33,7 +33,7 @@ function ImportProgressPage() {
 	const prepareImportRoute = useRoute('admin-import-prepare');
 
 	useEffect(() => {
-		const loadCurrentOperation = async () => {
+		const loadCurrentOperation = async (): Promise<void> => {
 			try {
 				const { operation } = await getCurrentImportOperation();
 
@@ -73,7 +73,11 @@ function ImportProgressPage() {
 			return;
 		}
 
-		const handleProgressUpdated = ({ key, step, count: { completed = 0, total = 0 } = {} }) => {
+		const handleProgressUpdated = ({
+			key,
+			step,
+			count: { completed = 0, total = 0 } = {},
+		}): void => {
 			if (key.toLowerCase() !== importerKey) {
 				return;
 			}
@@ -103,7 +107,7 @@ function ImportProgressPage() {
 
 		const streamer = new Meteor.Streamer('importers');
 
-		const loadImportProgress = async () => {
+		const loadImportProgress = async (): Promise<void> => {
 			try {
 				const progress = await getImportProgress();
 
@@ -123,7 +127,7 @@ function ImportProgressPage() {
 
 		loadImportProgress();
 
-		return () => {
+		return (): void => {
 			streamer.removeListener('progress', handleProgressUpdated);
 		};
 	}, [

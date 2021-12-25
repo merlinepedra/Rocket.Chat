@@ -46,7 +46,7 @@ const UserCard = forwardRef(function UserCard(
 		localTime = <Skeleton width='100%' />,
 		onClose,
 		nickname,
-		t = (e) => e,
+		t = (e): unknown => e,
 	},
 	ref,
 ) {

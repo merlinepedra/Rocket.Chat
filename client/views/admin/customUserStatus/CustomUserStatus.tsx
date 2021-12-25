@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Table } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
@@ -8,7 +8,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 
 const style = { whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' };
 
-function CustomUserStatus({ data, sort, onClick, onHeaderClick, setParams, params }) {
+function CustomUserStatus({ data, sort, onClick, onHeaderClick, setParams, params }): ReactElement {
 	const t = useTranslation();
 
 	const header = useMemo(
@@ -36,7 +36,7 @@ function CustomUserStatus({ data, sort, onClick, onHeaderClick, setParams, param
 		[onHeaderClick, sort, t],
 	);
 
-	const renderRow = (status) => {
+	const renderRow = (status): ReactElement => {
 		const { _id, name, statusType } = status;
 		return (
 			<Table.Row
@@ -66,7 +66,9 @@ function CustomUserStatus({ data, sort, onClick, onHeaderClick, setParams, param
 			total={data?.total ?? 0}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => <FilterByText onChange={onChange} {...props} />}
+			renderFilter={({ onChange, ...props }): ReactElement => (
+				<FilterByText onChange={onChange} {...props} />
+			)}
 		/>
 	);
 }

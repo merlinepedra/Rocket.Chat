@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Box, Table, Icon, Button } from '@rocket.chat/fuselage';
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
 import { useCustomSound } from '../../../contexts/CustomSoundContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-function AdminSounds({ data, sort, onClick, onHeaderClick, setParams, params }) {
+function AdminSounds({ data, sort, onClick, onHeaderClick, setParams, params }): ReactElement {
 	const t = useTranslation();
 
 	const header = useMemo(
@@ -35,7 +35,7 @@ function AdminSounds({ data, sort, onClick, onHeaderClick, setParams, params }) 
 		[customSound],
 	);
 
-	const renderRow = (sound) => {
+	const renderRow = (sound): ReactElement => {
 		const { _id, name } = sound;
 
 		return (
@@ -57,7 +57,7 @@ function AdminSounds({ data, sort, onClick, onHeaderClick, setParams, params }) 
 						small
 						square
 						aria-label={t('Play')}
-						onClick={(e) => e.preventDefault() & e.stopPropagation() & handlePlay(_id)}
+						onClick={(e): void => e.preventDefault() & e.stopPropagation() & handlePlay(_id)}
 					>
 						<Icon name='play' size='x20' />
 					</Button>
@@ -74,7 +74,9 @@ function AdminSounds({ data, sort, onClick, onHeaderClick, setParams, params }) 
 			total={data?.total ?? 0}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => <FilterByText onChange={onChange} {...props} />}
+			renderFilter={({ onChange, ...props }): ReactElement => (
+				<FilterByText onChange={onChange} {...props} />
+			)}
 		/>
 	);
 }

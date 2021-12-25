@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import CounterContainer from '../counter/CounterContainer';
@@ -11,7 +11,7 @@ const overviewInitalValue = {
 
 const initialData = [overviewInitalValue, overviewInitalValue, overviewInitalValue];
 
-const AgentsOverview = ({ params, reloadRef, ...props }) => {
+const AgentsOverview = ({ params, reloadRef, ...props }): ReactElement => {
 	const {
 		value: data,
 		phase: state,

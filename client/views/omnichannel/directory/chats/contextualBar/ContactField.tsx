@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Avatar, Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { roomTypes } from '../../../../../../app/utils/client';
 import UserCard from '../../../../../components/UserCard';
@@ -13,7 +13,7 @@ import Info from '../../../components/Info';
 import Label from '../../../components/Label';
 import { FormSkeleton } from '../../Skeleton';
 
-const ContactField = ({ contact, room }) => {
+const ContactField = ({ contact, room }): ReactElement => {
 	const t = useTranslation();
 	const { status } = contact;
 	const { fname, t: type } = room;

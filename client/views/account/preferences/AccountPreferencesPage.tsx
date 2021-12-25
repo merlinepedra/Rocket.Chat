@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ButtonGroup, Button, Box, Accordion } from '@rocket.chat/fuselage';
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, ReactElement } from 'react';
 
 import Page from '../../../components/Page';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -16,7 +16,7 @@ import PreferencesNotificationsSection from './PreferencesNotificationsSection';
 import PreferencesSoundSection from './PreferencesSoundSection';
 import PreferencesUserPresenceSection from './PreferencesUserPresenceSection';
 
-const AccountPreferencesPage = () => {
+const AccountPreferencesPage = (): ReactElement => {
 	const t = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 

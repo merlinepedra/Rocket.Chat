@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Box, Table, Button, Icon } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
 import UserAvatar from '../../../components/avatar/UserAvatar';
 
-const UserRow = ({ _id, username, name, avatarETag, emails, onRemove }) => {
+const UserRow = ({ _id, username, name, avatarETag, emails, onRemove }): ReactElement => {
 	const email = getUserEmailAddress({ emails });
 
 	const handleRemove = useMutableCallback(() => {

@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { isIterable } from './isIterable';
 
-function Message({ className, ...props }) {
+function Message({ className, ...props }): ReactElement {
 	return (
 		<Box
 			rcx-message

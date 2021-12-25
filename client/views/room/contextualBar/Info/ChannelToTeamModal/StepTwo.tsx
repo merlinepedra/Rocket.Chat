@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 
-const StepTwo = ({ onClose, onCancel, onConfirm }) => {
+const StepTwo = ({ onClose, onCancel, onConfirm }): ReactElement => {
 	const t = useTranslation();
 
 	return (

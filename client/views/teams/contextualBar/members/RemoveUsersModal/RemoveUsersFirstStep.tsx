@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import GenericModal from '../../../../../components/GenericModal';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
@@ -10,18 +10,15 @@ const RemoveUsersFirstStep = ({
 	onClose,
 	onCancel,
 	onConfirm,
-	username,
-	results,
+	username: _username,
+	results: _results,
 	rooms,
-	// params,
-	// onChangeParams,
 	onToggleAllRooms,
 	onChangeRoomSelection,
 	selectedRooms,
-	// onChangeParams={(...args) => console.log(args)}
 	eligibleRoomsLength,
 	...props
-}) => {
+}): ReactElement => {
 	const t = useTranslation();
 
 	return (
@@ -44,7 +41,7 @@ const RemoveUsersFirstStep = ({
 				onToggleAllRooms={onToggleAllRooms}
 				rooms={rooms}
 				params={{}}
-				onChangeParams={() => {}}
+				onChangeParams={(): void => undefined}
 				onChangeRoomSelection={onChangeRoomSelection}
 				selectedRooms={selectedRooms}
 				eligibleRoomsLength={eligibleRoomsLength}

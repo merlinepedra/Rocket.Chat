@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import VerticalBar from '../../../components/VerticalBar';
 import { useRoute, useRouteParameter } from '../../../contexts/RouterContext';
@@ -8,18 +8,18 @@ import ContactEditWithData from './contacts/contextualBar/ContactEditWithData';
 import ContactInfo from './contacts/contextualBar/ContactInfo';
 import ContactNewEdit from './contacts/contextualBar/ContactNewEdit';
 
-const ContactContextualBar = ({ contactReload }) => {
+const ContactContextualBar = ({ contactReload }): ReactElement => {
 	const directoryRoute = useRoute('omnichannel-directory');
 	const bar = useRouteParameter('bar');
 	const id = useRouteParameter('id');
 
 	const t = useTranslation();
 
-	const handleContactsVerticalBarCloseButtonClick = () => {
+	const handleContactsVerticalBarCloseButtonClick = (): void => {
 		directoryRoute.push({ page: 'contacts' });
 	};
 
-	const handleContactsVerticalBarBackButtonClick = () => {
+	const handleContactsVerticalBarBackButtonClick = (): void => {
 		directoryRoute.push({ page: 'contacts', id, bar: 'info' });
 	};
 

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useDebouncedCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, ReactElement } from 'react';
 
 import MarkdownText from '../../../components/MarkdownText';
 import {
@@ -12,7 +12,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import MemoizedSetting from './MemoizedSetting';
 import SettingSkeleton from './SettingSkeleton';
 
-function Setting({ className, settingId, sectionChanged }) {
+function Setting({ className, settingId, sectionChanged }): ReactElement {
 	const setting = useEditableSetting(settingId);
 
 	const persistedSetting = useSettingStructure(settingId);

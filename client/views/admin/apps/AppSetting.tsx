@@ -1,12 +1,12 @@
 // @ts-nocheck
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactElement } from 'react';
 
 import MarkdownText from '../../../components/MarkdownText';
 import { useRouteParameter } from '../../../contexts/RouterContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import MemoizedSetting from '../settings/MemoizedSetting';
 
-const useAppTranslation = (appId) => {
+const useAppTranslation = (appId): unknown => {
 	const t = useTranslation();
 
 	const tApp = useCallback(
@@ -35,7 +35,7 @@ const useAppTranslation = (appId) => {
 	return tApp;
 };
 
-function AppSetting({ appSetting, onChange, value, ...props }) {
+function AppSetting({ appSetting, onChange, value, ...props }): ReactElement {
 	const appId = useRouteParameter('id');
 	const tApp = useAppTranslation(appId);
 

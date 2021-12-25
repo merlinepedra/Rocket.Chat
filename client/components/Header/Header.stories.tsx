@@ -24,8 +24,11 @@ const room = {
 };
 
 const settings = {
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	Favorite_Rooms: true,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	AutoTranslate_Enabled: true,
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	E2E_Enable: true,
 };
 

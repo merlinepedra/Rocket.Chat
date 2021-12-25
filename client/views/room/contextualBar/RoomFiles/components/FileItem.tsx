@@ -2,7 +2,7 @@
 import { css } from '@rocket.chat/css-in-js';
 import { Box, Avatar } from '@rocket.chat/fuselage';
 import colors from '@rocket.chat/fuselage-tokens/colors';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useFormatDateAndTime } from '../../../../../hooks/useFormatDateAndTime';
 import FileItemIcon from './FileItemIcon';
@@ -15,7 +15,7 @@ const hoverClass = css`
 	}
 `;
 
-const FileItem = ({ fileData, isDeletionAllowed, onClickDelete, index }) => {
+const FileItem = ({ fileData, isDeletionAllowed, onClickDelete, index }): ReactElement => {
 	const format = useFormatDateAndTime();
 
 	const { _id, name, url, uploadedAt, ts, type, typeGroup, style, className, user } = fileData;

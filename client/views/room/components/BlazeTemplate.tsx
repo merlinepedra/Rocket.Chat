@@ -2,9 +2,16 @@
 import { Box } from '@rocket.chat/fuselage';
 import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
-import React, { memo, useLayoutEffect, useRef } from 'react';
+import React, { memo, ReactElement, useLayoutEffect, useRef } from 'react';
 
-const BlazeTemplate = ({ name, flexShrink, overflow, onClick, children, ...props }) => {
+const BlazeTemplate = ({
+	name,
+	flexShrink,
+	overflow,
+	onClick,
+	children: _children,
+	...props
+}): ReactElement => {
 	const ref = useRef();
 	useLayoutEffect(() => {
 		if (!ref.current || !Template[name]) {
@@ -17,7 +24,7 @@ const BlazeTemplate = ({ name, flexShrink, overflow, onClick, children, ...props
 			view = Blaze.renderWithData(Template[name], props, ref.current);
 		}, 10);
 
-		return () => {
+		return (): void => {
 			clearTimeout(timeout);
 			view && Blaze.remove(view);
 		};

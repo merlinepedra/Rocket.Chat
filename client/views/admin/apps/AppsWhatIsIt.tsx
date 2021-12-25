@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, Box, Throbber } from '@rocket.chat/fuselage';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { Apps } from '../../../../app/apps/client';
 import ExternalLink from '../../../components/ExternalLink';
@@ -11,7 +11,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 
 const readMeUrl = 'https://go.rocket.chat/i/developing-an-app';
 
-function AppsWhatIsIt() {
+function AppsWhatIsIt(): ReactElement {
 	const t = useTranslation();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
@@ -20,7 +20,7 @@ function AppsWhatIsIt() {
 	const enableAppsEngine = useMethod('apps/go-enable');
 	const isAppsEngineEnabled = useMethod('apps/is-enabled');
 
-	const handleClick = async () => {
+	const handleClick = async (): Promise<void> => {
 		setLoading(true);
 		try {
 			await enableAppsEngine();

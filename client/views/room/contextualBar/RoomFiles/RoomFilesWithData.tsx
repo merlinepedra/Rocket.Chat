@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useMutableCallback, useLocalStorage } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, ReactElement } from 'react';
 
 import GenericModal from '../../../../components/GenericModal';
 import { useSetModal } from '../../../../contexts/ModalContext';
@@ -15,7 +15,7 @@ import RoomFiles from './RoomFiles';
 import { useFilesList } from './hooks/useFilesList';
 import { useMessageDeletionIsAllowed } from './hooks/useMessageDeletionIsAllowed';
 
-const RoomFilesWithData = ({ rid }) => {
+const RoomFilesWithData = ({ rid }): ReactElement => {
 	const uid = useUserId();
 	const onClickClose = useTabBarClose();
 	const t = useTranslation();
@@ -37,7 +37,7 @@ const RoomFilesWithData = ({ rid }) => {
 	const { phase, items: filesItems, itemCount: totalItemCount } = useRecordList(filesList);
 
 	const handleDelete = useMutableCallback((_id) => {
-		const onConfirm = async () => {
+		const onConfirm = async (): Promise<void> => {
 			try {
 				await deleteFile(_id);
 				dispatchToastMessage({ type: 'success', message: t('Deleted') });

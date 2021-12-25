@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { TEAM_TYPE } from '../../../../definition/ITeam';
 import Header from '../../../components/Header';
@@ -8,7 +8,7 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { goToRoomById } from '../../../lib/utils/goToRoomById';
 
-const ParentTeam = ({ room }) => {
+const ParentTeam = ({ room }): ReactElement => {
 	const userId = useUserId();
 
 	const { value, phase } = useEndpointData(
@@ -23,7 +23,7 @@ const ParentTeam = ({ room }) => {
 
 	const belongsToTeam = userTeams?.teams?.find((team) => team._id === room.teamId) || false;
 	const isTeamPublic = value?.teamInfo.type === TEAM_TYPE.PUBLIC;
-	const teamMainRoomHref = () => goToRoomById(value?.teamInfo.roomId);
+	const teamMainRoomHref = (): void => goToRoomById(value?.teamInfo.roomId);
 
 	if (phase === AsyncStatePhase.LOADING || userTeamsPhase === AsyncStatePhase.LOADING) {
 		return <Header.Tag.Skeleton />;

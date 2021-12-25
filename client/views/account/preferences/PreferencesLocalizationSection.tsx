@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Accordion, Field, Select, FieldGroup } from '@rocket.chat/fuselage';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { useLanguages, useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
 import { useForm } from '../../../hooks/useForm';
 
-const PreferencesLocalizationSection = ({ onChange, commitRef, ...props }) => {
+const PreferencesLocalizationSection = ({ onChange, commitRef, ...props }): ReactElement => {
 	const t = useTranslation();
 	const userLanguage = useUserPreference('language') || '';
 	const languages = useLanguages();

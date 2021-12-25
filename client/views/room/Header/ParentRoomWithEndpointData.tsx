@@ -1,17 +1,17 @@
 // @ts-nocheck
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 
 import Header from '../../../components/Header';
 import { useEndpoint } from '../../../contexts/ServerContext';
 import { AsyncStatePhase, useAsyncState } from '../../../hooks/useAsyncState';
 import ParentRoom from './ParentRoom';
 
-const ParentRoomWithEndpointData = ({ rid }) => {
+const ParentRoomWithEndpointData = ({ rid }): ReactElement => {
 	const { resolve, reject, reset, phase, value } = useAsyncState();
 	const getData = useEndpoint('GET', 'rooms.info');
 
 	useEffect(() => {
-		(async () => {
+		(async (): Promise<void> => {
 			reset();
 			getData({ roomId: rid })
 				.then(resolve)

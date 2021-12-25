@@ -22,7 +22,7 @@ export class JitsiBridge extends Emitter {
 		this.needsStart = false;
 	}
 
-	start(domTarget) {
+	start(domTarget): void {
 		if (!this.needsStart) {
 			return;
 		}
@@ -90,7 +90,7 @@ export class JitsiBridge extends Emitter {
 		this.once('dispose', () => api.dispose());
 	}
 
-	dispose() {
+	dispose(): void {
 		clearInterval(this.timer);
 		this.emit('dispose', true);
 	}

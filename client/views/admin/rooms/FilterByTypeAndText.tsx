@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Icon, TextInput, Field, CheckBox, Margins } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, ReactElement } from 'react';
 
 import { useTranslation } from '../../../contexts/TranslationContext';
 
@@ -16,7 +16,7 @@ export const roomTypeI18nMap = {
 	team: 'Team',
 };
 
-const FilterByTypeAndText = ({ setFilter, ...props }) => {
+const FilterByTypeAndText = ({ setFilter, ...props }): ReactElement => {
 	const [text, setText] = useState('');
 	const [types, setTypes] = useState({
 		d: false,
@@ -79,26 +79,42 @@ const FilterByTypeAndText = ({ setFilter, ...props }) => {
 				>
 					<Margins inline='x8'>
 						<Field.Row>
-							<CheckBox checked={types.d} id={idDirect} onChange={() => handleCheckBox('d')} />
+							<CheckBox
+								checked={types.d}
+								id={idDirect}
+								onChange={(): void => handleCheckBox('d')}
+							/>
 							<Field.Label htmlFor={idDirect}>{t('Direct')}</Field.Label>
 						</Field.Row>
 						<Field.Row>
-							<CheckBox checked={types.c} id={idDPublic} onChange={() => handleCheckBox('c')} />
+							<CheckBox
+								checked={types.c}
+								id={idDPublic}
+								onChange={(): void => handleCheckBox('c')}
+							/>
 							<Field.Label htmlFor={idDPublic}>{t('Public')}</Field.Label>
 						</Field.Row>
 						<Field.Row>
-							<CheckBox checked={types.p} id={idPrivate} onChange={() => handleCheckBox('p')} />
+							<CheckBox
+								checked={types.p}
+								id={idPrivate}
+								onChange={(): void => handleCheckBox('p')}
+							/>
 							<Field.Label htmlFor={idPrivate}>{t('Private')}</Field.Label>
 						</Field.Row>
 						<Field.Row>
-							<CheckBox checked={types.l} id={idOmnichannel} onChange={() => handleCheckBox('l')} />
+							<CheckBox
+								checked={types.l}
+								id={idOmnichannel}
+								onChange={(): void => handleCheckBox('l')}
+							/>
 							<Field.Label htmlFor={idOmnichannel}>{t('Omnichannel')}</Field.Label>
 						</Field.Row>
 						<Field.Row>
 							<CheckBox
 								checked={types.discussions}
 								id={idDiscussions}
-								onChange={() => handleCheckBox('discussions')}
+								onChange={(): void => handleCheckBox('discussions')}
 							/>
 							<Field.Label htmlFor={idDiscussions}>{t('Discussions')}</Field.Label>
 						</Field.Row>
@@ -106,7 +122,7 @@ const FilterByTypeAndText = ({ setFilter, ...props }) => {
 							<CheckBox
 								checked={types.teams}
 								id={idTeam}
-								onChange={() => handleCheckBox('teams')}
+								onChange={(): void => handleCheckBox('teams')}
 							/>
 							<Field.Label htmlFor={idTeam}>{t('Teams')}</Field.Label>
 						</Field.Row>

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ButtonGroup, Button, Skeleton, Margins } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Card from '../../../components/Card';
 import PlanTag from '../../../components/PlanTag';
@@ -13,7 +13,7 @@ import { useEndpointData } from '../../../hooks/useEndpointData';
 import Feature from './Feature';
 import OfflineLicenseModal from './OfflineLicenseModal';
 
-const LicenseCard = () => {
+const LicenseCard = (): ReactElement => {
 	const t = useTranslation();
 
 	const setModal = useSetModal();
@@ -37,7 +37,7 @@ const LicenseCard = () => {
 	const handleApplyLicense = useMutableCallback(() =>
 		setModal(
 			<OfflineLicenseModal
-				onClose={() => {
+				onClose={(): void => {
 					setModal();
 				}}
 				license={currentLicense}

@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Box, Skeleton } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import Medium from '../Medium';
 
-const MediumSkeleton = ({ showAvatar }) => (
+const MediumSkeleton = ({ showAvatar }): ReactElement => (
 	<Box height='x36'>
 		<Medium
 			title={<Skeleton width='100%' />}

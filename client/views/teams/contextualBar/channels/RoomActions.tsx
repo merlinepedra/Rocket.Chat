@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, CheckBox, Menu, Option } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { roomTypes } from '../../../../../app/utils/client';
 import { usePermission } from '../../../../contexts/AuthorizationContext';
@@ -11,11 +11,11 @@ import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useEndpointActionExperimental } from '../../../../hooks/useEndpointActionExperimental';
 import ConfirmationModal from './ConfirmationModal';
 
-const useReactModal = (Component, props) => {
+const useReactModal = (Component, props): unknown => {
 	const setModal = useSetModal();
 
 	return useMutableCallback(() => {
-		const handleClose = () => {
+		const handleClose = (): void => {
 			setModal(null);
 		};
 
@@ -23,7 +23,7 @@ const useReactModal = (Component, props) => {
 	});
 };
 
-const RoomActions = ({ room, reload }) => {
+const RoomActions = ({ room, reload }): ReactElement => {
 	const t = useTranslation();
 	const rid = room._id;
 	const type = room.t;
@@ -89,7 +89,7 @@ const RoomActions = ({ room, reload }) => {
 	});
 
 	const menuOptions = useMemo(() => {
-		const AutoJoinAction = async () => {
+		const AutoJoinAction = async (): Promise<void> => {
 			try {
 				await updateRoomEndpoint({
 					roomId: rid,
@@ -145,7 +145,7 @@ const RoomActions = ({ room, reload }) => {
 			flexShrink={0}
 			key='menu'
 			tiny
-			renderItem={({ label: { label, icon }, ...props }) =>
+			renderItem={({ label: { label, icon }, ...props }): ReactElement =>
 				icon.match(/hash/) ? (
 					<Option {...props} label={label} icon={icon}>
 						<CheckBox checked={room.teamDefault} />

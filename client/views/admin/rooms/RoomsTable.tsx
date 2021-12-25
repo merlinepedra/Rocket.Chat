@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Table, Icon } from '@rocket.chat/fuselage';
 import { useMediaQuery, useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, ReactElement } from 'react';
 
 import { roomTypes } from '../../../../app/utils/client';
 import GenericTable from '../../../components/GenericTable';
@@ -24,14 +24,14 @@ export const roomTypeI18nMap = {
 	discussion: 'Discussion',
 };
 
-const getRoomType = (room) => {
+const getRoomType = (room): unknown => {
 	if (room.teamMain) {
 		return room.t === 'c' ? 'Teams_Public_Team' : 'Teams_Private_Team';
 	}
 	return roomTypeI18nMap[room.t];
 };
 
-const useQuery = ({ text, types, itemsPerPage, current }, [column, direction]) =>
+const useQuery = ({ text, types, itemsPerPage, current }, [column, direction]): unknown =>
 	useMemo(
 		() => ({
 			filter: text || '',
@@ -43,10 +43,10 @@ const useQuery = ({ text, types, itemsPerPage, current }, [column, direction]) =
 		[text, types, itemsPerPage, current, column, direction],
 	);
 
-const getRoomDisplayName = (room) =>
+const getRoomDisplayName = (room): unknown =>
 	room.t === 'd' ? room.usernames.join(' x ') : roomTypes.getRoomName(room.t, room);
 
-const useDisplayData = (asyncState, sort) =>
+const useDisplayData = (asyncState, sort): unknown =>
 	useMemo(() => {
 		const { value = {}, phase } = asyncState;
 
@@ -68,7 +68,7 @@ const useDisplayData = (asyncState, sort) =>
 		return value.rooms;
 	}, [asyncState, sort]);
 
-function RoomsTable() {
+function RoomsTable(): ReactElement {
 	const t = useTranslation();
 
 	const mediaQuery = useMediaQuery('(min-width: 1024px)');
@@ -95,7 +95,7 @@ function RoomsTable() {
 	const router = useRoute(routeName);
 
 	const onClick = useCallback(
-		(rid) => () =>
+		(rid) => (): void =>
 			router.push({
 				context: 'edit',
 				id: rid,
@@ -195,12 +195,14 @@ function RoomsTable() {
 		(room) => {
 			const {
 				_id,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				name,
 				t: type,
 				usersCount,
 				msgs,
 				default: isDefault,
 				featured,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				usernames,
 				...args
 			} = room;
@@ -270,7 +272,7 @@ function RoomsTable() {
 			total={data.total}
 			setParams={setParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => (
+			renderFilter={({ onChange, ...props }): ReactElement => (
 				<FilterByTypeAndText setFilter={onChange} {...props} />
 			)}
 		/>

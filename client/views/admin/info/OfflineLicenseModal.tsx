@@ -10,13 +10,13 @@ import {
 	Icon,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointActionExperimental } from '../../../hooks/useEndpointActionExperimental';
 
-const OfflineLicenseModal = ({ onClose, license, licenseStatus, ...props }) => {
+const OfflineLicenseModal = ({ onClose, license, licenseStatus, ...props }): ReactElement => {
 	const t = useTranslation();
 
 	const dispatchToastMessage = useToastMessageDispatch();
@@ -26,7 +26,7 @@ const OfflineLicenseModal = ({ onClose, license, licenseStatus, ...props }) => {
 	const [status, setStatus] = useState(licenseStatus);
 	const [lastSetLicense, setLastSetLicense] = useState(license);
 
-	const handleNewLicense = (e) => {
+	const handleNewLicense = (e): void => {
 		setNewLicense(e.currentTarget.value);
 	};
 

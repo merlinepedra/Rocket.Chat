@@ -1,6 +1,6 @@
 // @ts-nocheck
 // Here previousData will define if it is an update or a new entry
-export function validate(soundData, soundFile) {
+export function validate(soundData, soundFile): string[] {
 	const errors = [];
 
 	if (!soundData.name) {
@@ -26,7 +26,7 @@ export function validate(soundData, soundFile) {
 	return errors;
 }
 
-export function createSoundData(soundFile, name = '', previousData) {
+export function createSoundData(soundFile, name = '', previousData): unknown {
 	const soundData = {
 		extension: soundFile.name.split('.').pop(),
 	};

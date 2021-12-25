@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Skeleton, Table } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-function ImportOperationSummarySkeleton({ small }) {
+function ImportOperationSummarySkeleton({ small }): ReactElement {
 	return (
 		<Table.Row>
 			<Table.Cell>

@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import RoomAvatar from '../../components/avatar/RoomAvatar';
 import { useUserPreference } from '../../contexts/UserContext';
 
-export const useAvatarTemplate = () => {
+export const useAvatarTemplate = (): ((room: unknown) => ReactElement) | null => {
 	const sidebarViewMode = useUserPreference('sidebarViewMode');
 	const sidebarDisplayAvatar = useUserPreference('sidebarDisplayAvatar');
 	return useMemo(() => {
@@ -12,7 +12,7 @@ export const useAvatarTemplate = () => {
 			return null;
 		}
 
-		const size = (() => {
+		const size = ((): string => {
 			switch (sidebarViewMode) {
 				case 'extended':
 					return 'x36';
@@ -24,7 +24,7 @@ export const useAvatarTemplate = () => {
 			}
 		})();
 
-		const renderRoomAvatar = (room) => (
+		const renderRoomAvatar = (room): ReactElement => (
 			<RoomAvatar size={size} room={{ ...room, _id: room.rid || room._id, type: room.t }} />
 		);
 

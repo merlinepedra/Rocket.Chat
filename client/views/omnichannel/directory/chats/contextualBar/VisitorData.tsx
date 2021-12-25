@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { useTranslation } from '../../../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../../../hooks/useAsyncState';
@@ -8,7 +8,7 @@ import { useEndpointData } from '../../../../../hooks/useEndpointData';
 import { FormSkeleton } from '../../Skeleton';
 import RoomEdit from './RoomEdit';
 
-function VisitorData({ room, reload, reloadInfo, close }) {
+function VisitorData({ room, reload, reloadInfo, close }): ReactElement {
 	const t = useTranslation();
 
 	const {

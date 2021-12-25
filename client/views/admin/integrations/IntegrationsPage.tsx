@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Button, ButtonGroup, Icon, Tabs } from '@rocket.chat/fuselage';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import Page from '../../../components/Page';
 import { useRoute, useRouteParameter } from '../../../contexts/RouterContext';
@@ -9,7 +9,7 @@ import IntegrationsTable from './IntegrationsTable';
 import NewBot from './new/NewBot';
 import NewZapier from './new/NewZapier';
 
-function IntegrationsPage() {
+function IntegrationsPage(): ReactElement {
 	const t = useTranslation();
 
 	const router = useRoute('admin-integrations');

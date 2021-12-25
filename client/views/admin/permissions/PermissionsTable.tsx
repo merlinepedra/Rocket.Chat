@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Margins, Icon, Tabs, Button } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 import Page from '../../../components/Page';
@@ -15,7 +15,7 @@ import PermissionsContextBar from './PermissionsContextBar';
 import RoleHeader from './RoleHeader';
 import { usePermissionsAndRoles } from './hooks/usePermissionsAndRoles';
 
-const PermissionsTable = () => {
+const PermissionsTable = (): ReactElement => {
 	const t = useTranslation();
 	const [filter, setFilter] = useState('');
 	const canViewPermission = usePermission('access-permissions');

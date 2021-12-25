@@ -9,7 +9,7 @@ import {
 	CheckBox,
 } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useSetModal } from '../../../contexts/ModalContext';
 import { useMethod } from '../../../contexts/ServerContext';
@@ -24,7 +24,7 @@ const initialValues = {
 	bypassTwoFactor: false,
 };
 
-const AddToken = ({ onDidAddToken, ...props }) => {
+const AddToken = ({ onDidAddToken, ...props }): ReactElement => {
 	const t = useTranslation();
 	const createTokenFn = useMethod('personalAccessTokens:generateToken');
 	const dispatchToastMessage = useToastMessageDispatch();

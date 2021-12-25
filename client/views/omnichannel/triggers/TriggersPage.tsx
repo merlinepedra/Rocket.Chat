@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, Icon } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import Page from '../../../components/Page';
@@ -13,14 +13,14 @@ import EditTriggerPageContainer from './EditTriggerPageContainer';
 import NewTriggerPage from './NewTriggerPage';
 import TriggersTableContainer from './TriggersTableContainer';
 
-const MonitorsPage = () => {
+const MonitorsPage = (): ReactElement => {
 	const t = useTranslation();
 
 	const canViewTriggers = usePermission('view-livechat-triggers');
 
 	const router = useRoute('omnichannel-triggers');
 
-	const reload = useRef(() => {});
+	const reload = useRef(() => undefined);
 
 	const context = useRouteParameter('context');
 	const id = useRouteParameter('id');

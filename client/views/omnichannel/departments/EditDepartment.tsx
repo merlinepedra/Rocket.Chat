@@ -14,7 +14,7 @@ import {
 	PaginatedSelectFiltered,
 } from '@rocket.chat/fuselage';
 import { useMutableCallback, useUniqueId } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, ReactElement } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { isEmail } from '../../../../lib/utils/isEmail';
@@ -31,21 +31,21 @@ import { AsyncStatePhase } from '../../../lib/asyncState';
 import { formsSubscription } from '../additionalForms';
 import DepartmentsAgentsTable from './DepartmentsAgentsTable';
 
-function withDefault(key, defaultValue) {
+function withDefault(key, defaultValue): unknown {
 	return key || defaultValue;
 }
 
-function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
+function EditDepartment({ data, id, title, reload, allowedToForwardData }): ReactElement {
 	const t = useTranslation();
 	const departmentsRoute = useRoute('omnichannel-departments');
 
 	const {
-		useEeNumberInput = () => {},
-		useEeTextInput = () => {},
-		useEeTextAreaInput = () => {},
-		useDepartmentForwarding = () => {},
-		useDepartmentBusinessHours = () => {},
-		useSelectForwardDepartment = () => {},
+		useEeNumberInput = (): unknown => undefined,
+		useEeTextInput = (): unknown => undefined,
+		useEeTextAreaInput = (): unknown => undefined,
+		useDepartmentForwarding = (): unknown => undefined,
+		useDepartmentBusinessHours = (): unknown => undefined,
+		useSelectForwardDepartment = (): unknown => undefined,
 	} = useSubscription(formsSubscription);
 
 	const initialAgents = useRef(data?.agents || []);
@@ -122,7 +122,7 @@ function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 
 	const { phase: roomsPhase, items: roomsItems, itemCount: roomsTotal } = useRecordList(RoomsList);
 
-	const handleTagChipClick = (tag) => () => {
+	const handleTagChipClick = (tag) => (): void => {
 		setTagsState(([tags, tagsText]) => [tags.filter((_tag) => _tag !== tag), tagsText]);
 	};
 
@@ -138,7 +138,7 @@ function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 		});
 	});
 
-	const handleTagTextChange = (e) => {
+	const handleTagTextChange = (e): void => {
 		setTagsState(([tags]) => [tags, e.target.value]);
 	};
 
@@ -260,7 +260,7 @@ function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 		[data.agents, agentList],
 	);
 
-	const agentsHaveChanged = () => {
+	const agentsHaveChanged = (): boolean => {
 		let hasChanges = false;
 		if (agentList.length !== initialAgents.current.length) {
 			hasChanges = true;
@@ -396,8 +396,8 @@ function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 									placeholder={t('Channel_name')}
 									endReached={
 										roomsPhase === AsyncStatePhase.LOADING
-											? () => {}
-											: (start) => loadMoreRooms(start, Math.min(50, roomsTotal))
+											? (): void => undefined
+											: (start): void => loadMoreRooms(start, Math.min(50, roomsTotal))
 									}
 								/>
 							</Field.Row>

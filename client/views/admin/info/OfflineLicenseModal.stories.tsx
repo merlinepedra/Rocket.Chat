@@ -8,4 +8,4 @@ export default {
 	component: OfflineLicenseModal,
 };
 
-export const _default = () => <OfflineLicenseModal onClose={() => {}} />;
+export const _default = () => <OfflineLicenseModal onClose={() => undefined} />;

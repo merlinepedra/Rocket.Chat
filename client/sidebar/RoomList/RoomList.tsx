@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box } from '@rocket.chat/fuselage';
 import { useResizeObserver } from '@rocket.chat/fuselage-hooks';
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, ReactElement } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import { useSession } from '../../contexts/SessionContext';
@@ -16,7 +16,7 @@ import { useTemplateByViewMode } from '../hooks/useTemplateByViewMode';
 import Row from './Row';
 import ScrollerWithCustomProps from './ScrollerWithCustomProps';
 
-const RoomList = () => {
+const RoomList = (): ReactElement => {
 	useSidebarPaletteColor();
 	const listRef = useRef();
 	const { ref } = useResizeObserver({ debounceDelay: 100 });
@@ -58,7 +58,7 @@ const RoomList = () => {
 				totalCount={roomsList.length}
 				data={roomsList}
 				components={{ Scroller: ScrollerWithCustomProps }}
-				itemContent={(index, data) => <Row data={itemData} item={data} />}
+				itemContent={(index, data): ReactElement => <Row data={itemData} item={data} />}
 			/>
 		</Box>
 	);

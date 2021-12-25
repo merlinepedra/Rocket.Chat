@@ -2,11 +2,11 @@
 import { css } from '@rocket.chat/css-in-js';
 import { Margins, Box, Icon } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import GenericTable from '../../../components/GenericTable';
 
-const RoleHeader = ({ router, _id, name, description, ...props }) => {
+const RoleHeader = ({ router, _id, name, description, ...props }): ReactElement => {
 	const onClick = useMutableCallback(() => {
 		router.push({
 			context: 'edit',

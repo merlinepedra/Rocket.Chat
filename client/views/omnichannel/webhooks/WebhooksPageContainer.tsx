@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Callout } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import NotAuthorizedPage from '../../../components/NotAuthorizedPage';
 import Page from '../../../components/Page';
@@ -11,13 +11,13 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import WebhooksPage from './WebhooksPage';
 
-const reduceSettings = (settings) =>
+const reduceSettings = (settings): unknown =>
 	settings.reduce((acc, { _id, value }) => {
 		acc = { ...acc, [_id]: value };
 		return acc;
 	}, {});
 
-const WebhooksPageContainer = () => {
+const WebhooksPageContainer = (): ReactElement => {
 	const t = useTranslation();
 
 	const { value: data, phase: state, error } = useEndpointData('livechat/integrations.settings');

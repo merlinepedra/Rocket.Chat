@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { css } from '@rocket.chat/css-in-js';
 import colors from '@rocket.chat/fuselage-tokens/colors';
-import React from 'react';
+import React, { ComponentType, ReactElement } from 'react';
 
 const clickable = css`
 	cursor: pointer;
@@ -14,8 +14,10 @@ const clickable = css`
 `;
 
 // TODO remove border from here
-export function clickableItem(Component) {
-	const WrappedComponent = (props) => <Component className={clickable} tabIndex={0} {...props} />;
+export function clickableItem(Component): ComponentType {
+	const WrappedComponent = (props): ReactElement => (
+		<Component className={clickable} tabIndex={0} {...props} />
+	);
 
 	WrappedComponent.displayName = `clickableItem(${
 		Component.displayName ?? Component.name ?? 'Component'

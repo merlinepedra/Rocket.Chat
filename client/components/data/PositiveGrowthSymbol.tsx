@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 const style = { width: '1.5em', height: '1.5em', verticalAlign: '-0.5em' };
 
-const PositiveGrowthSymbol = (props) => (
+const PositiveGrowthSymbol = (props): ReactElement => (
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' style={style} {...props}>
 		<path
 			clipRule='evenodd'

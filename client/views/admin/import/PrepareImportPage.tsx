@@ -11,7 +11,7 @@ import {
 } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useSafely } from '@rocket.chat/fuselage-hooks';
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, ReactElement } from 'react';
 import s from 'underscore.string';
 
 import {
@@ -30,9 +30,9 @@ import PrepareChannels from './PrepareChannels';
 import PrepareUsers from './PrepareUsers';
 import { useErrorHandler } from './useErrorHandler';
 
-const waitFor = (fn, predicate) =>
+const waitFor = (fn, predicate): Promise<unknown> =>
 	new Promise((resolve, reject) => {
-		const callPromise = () => {
+		const callPromise = (): void => {
 			fn().then((result) => {
 				if (predicate(result)) {
 					resolve(result);
@@ -46,7 +46,7 @@ const waitFor = (fn, predicate) =>
 		callPromise();
 	});
 
-function PrepareImportPage() {
+function PrepareImportPage(): ReactElement {
 	const t = useTranslation();
 	const handleError = useErrorHandler();
 
@@ -58,8 +58,10 @@ function PrepareImportPage() {
 	const [channels, setChannels] = useState([]);
 	const [isImporting, setImporting] = useSafely(useState(false));
 
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	const usersCount = useMemo(() => users.filter(({ do_import }) => do_import).length, [users]);
 	const channelsCount = useMemo(
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		() => channels.filter(({ do_import }) => do_import).length,
 		[channels],
 	);
@@ -75,19 +77,19 @@ function PrepareImportPage() {
 	useEffect(() => {
 		const streamer = new Meteor.Streamer('importers');
 
-		const handleProgressUpdated = ({ rate }) => {
+		const handleProgressUpdated = ({ rate }): void => {
 			setProgressRate(rate);
 		};
 
 		streamer.on('progress', handleProgressUpdated);
 
-		return () => {
+		return (): void => {
 			streamer.removeListener('progress', handleProgressUpdated);
 		};
 	}, [setProgressRate]);
 
 	useEffect(() => {
-		const loadImportFileData = async () => {
+		const loadImportFileData = async (): Promise<void> => {
 			try {
 				const data = await waitFor(getImportFileData, (data) => data && !data.waiting);
 
@@ -104,7 +106,9 @@ function PrepareImportPage() {
 				}
 
 				setMessageCount(data.message_count);
+				// eslint-disable-next-line @typescript-eslint/camelcase
 				setUsers(data.users.map((user) => ({ ...user, do_import: true })));
+				// eslint-disable-next-line @typescript-eslint/camelcase
 				setChannels(data.channels.map((channel) => ({ ...channel, do_import: true })));
 				setPreparing(false);
 				setProgressRate(null);
@@ -114,7 +118,7 @@ function PrepareImportPage() {
 			}
 		};
 
-		const loadCurrentOperation = async () => {
+		const loadCurrentOperation = async (): Promise<void> => {
 			try {
 				const { operation } = await waitFor(
 					getCurrentImportOperation,
@@ -175,11 +179,11 @@ function PrepareImportPage() {
 		t,
 	]);
 
-	const handleBackToImportsButtonClick = () => {
+	const handleBackToImportsButtonClick = (): void => {
 		importHistoryRoute.push();
 	};
 
-	const handleStartButtonClick = async () => {
+	const handleStartButtonClick = async (): Promise<void> => {
 		setImporting(true);
 
 		try {
@@ -192,7 +196,7 @@ function PrepareImportPage() {
 	};
 
 	const [tab, setTab] = useState('users');
-	const handleTabClick = useMemo(() => (tab) => () => setTab(tab), []);
+	const handleTabClick = useMemo(() => (tab) => (): void => setTab(tab), []);
 
 	const statusDebounced = useDebouncedValue(status, 100);
 

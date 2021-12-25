@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import colors from '@rocket.chat/fuselage-tokens/colors';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import Header from '../../../../components/Header';
 import { useMethod } from '../../../../contexts/ServerContext';
 import { useSetting } from '../../../../contexts/SettingsContext';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 
-const Encrypted = ({ room }) => {
+const Encrypted = ({ room }): ReactElement => {
 	const t = useTranslation();
 	const e2eEnabled = useSetting('E2E_Enable');
 	const toggleE2E = useMethod('saveRoomSettings');
