@@ -1,23 +1,26 @@
-// @ts-nocheck
 import React, { ComponentType, ReactElement } from 'react';
 
-export function mapProps(Component): ComponentType {
+type InputProps = {
+	replies?: unknown[];
+	tcount?: number;
+};
+
+type OutputProps = {
+	replies: unknown;
+	participants?: unknown;
+};
+
+export function mapProps<TProps>(
+	Component: ComponentType<TProps & OutputProps>,
+): ComponentType<Omit<TProps, keyof OutputProps> & InputProps> {
+	type WrappedComponentProps = Omit<TProps, keyof OutputProps> & InputProps;
+
 	const WrappedComponent = ({
-		msg,
-		username,
 		replies = [],
-		tcount,
-		ts,
+		tcount = 0,
 		...props
-	}): ReactElement => (
-		<Component
-			replies={tcount}
-			participants={replies?.length}
-			username={username}
-			msg={msg}
-			ts={ts}
-			{...props}
-		/>
+	}: WrappedComponentProps): ReactElement => (
+		<Component replies={tcount} participants={replies?.length} {...(props as TProps)} />
 	);
 
 	WrappedComponent.displayName = `mapProps(${

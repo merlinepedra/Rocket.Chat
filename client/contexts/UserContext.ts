@@ -27,7 +27,7 @@ type Sort = {
 	[key: string]: -1 | 1 | number;
 };
 
-type FindOptions = {
+export type FindOptions = {
 	fields?: Fields;
 	sort?: Sort;
 };

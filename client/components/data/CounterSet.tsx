@@ -4,7 +4,15 @@ import React, { ReactElement } from 'react';
 
 import Counter from './Counter';
 
-function CounterSet({ counters = [] }): ReactElement {
+type CounterSetProps = {
+	counters?: {
+		count: ReactNode;
+		variation?: ReactNode;
+		description: ReactNode;
+	}[];
+};
+
+function CounterSet({ counters = [] }: CounterSetProps): ReactElement {
 	return (
 		<Grid>
 			{counters.map(({ count, variation, description }, i) => (

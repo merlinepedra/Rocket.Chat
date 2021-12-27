@@ -2,11 +2,17 @@
 import { Modal, ButtonGroup, Button, Accordion } from '@rocket.chat/fuselage';
 import React, { ReactElement } from 'react';
 
+import { IInstance } from '../../../../definition/IInstance';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFormatDateAndTime } from '../../../hooks/useFormatDateAndTime';
 import DescriptionList from './DescriptionList';
 
-const InstancesModal = ({ instances = [], onClose }): ReactElement => {
+type InstancesModalProps = {
+	instances?: IInstance[];
+	onClose: () => void;
+};
+
+const InstancesModal = ({ instances = [], onClose }: InstancesModalProps): ReactElement => {
 	const t = useTranslation();
 
 	const formatDateAndTime = useFormatDateAndTime();

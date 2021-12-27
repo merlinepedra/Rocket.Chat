@@ -4,7 +4,13 @@ import React, { ReactElement } from 'react';
 
 import Growth from './Growth';
 
-function Counter({ count, variation = 0, description }): ReactElement {
+type CounterProps = {
+	count: ReactNode;
+	variation?: ReactNode;
+	description: ReactNode;
+};
+
+function Counter({ count, variation = 0, description }: CounterProps): ReactElement {
 	return (
 		<>
 			<Flex.Container alignItems='end'>

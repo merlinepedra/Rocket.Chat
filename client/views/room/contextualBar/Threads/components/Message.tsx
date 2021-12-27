@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { Button, Icon } from '@rocket.chat/fuselage';
-import React, { memo } from 'react';
+import { Box, Button, Icon } from '@rocket.chat/fuselage';
+import React, { ComponentProps, memo } from 'react';
 
+import { IMessage } from '../../../../../../definition/IMessage';
 import Metrics from '../../../../../components/Message/Metrics';
 import * as NotificationStatus from '../../../../../components/Message/NotificationStatus';
 import { followStyle, anchor } from '../../../../../components/Message/helpers/followSyle';
@@ -16,6 +17,26 @@ function isIterable(obj): boolean {
 	}
 	return typeof obj[Symbol.iterator] === 'function';
 }
+
+type MessageProps = {
+	_id?: unknown;
+	msg: unknown;
+	following: unknown;
+	username: unknown;
+	name?: unknown;
+	ts: unknown;
+	u: unknown;
+	replies: unknown;
+	participants: unknown;
+	handleFollowButton: unknown;
+	unread: unknown;
+	mention: unknown;
+	all: unknown;
+	t?: unknown;
+	formatDate?: unknown;
+	tlm?: unknown;
+	onClick?: (mid: IMessage['_id']) => void;
+} & Pick<ComponentProps<typeof Box>, 'className' | 'tabIndex'>;
 
 export default memo(function Message({
 	_id,
@@ -35,7 +56,7 @@ export default memo(function Message({
 	tlm,
 	className = [],
 	...props
-}) {
+}: MessageProps) {
 	const button = !following ? 'bell-off' : 'bell';
 	const actionLabel = t(!following ? 'Not_Following' : 'Following');
 

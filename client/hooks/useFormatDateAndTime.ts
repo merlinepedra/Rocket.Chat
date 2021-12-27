@@ -1,11 +1,11 @@
 // @ts-nocheck
-import moment from 'moment';
+import moment, { MomentInput } from 'moment';
 import { useCallback } from 'react';
 
 import { useSetting } from '../contexts/SettingsContext';
 import { useUserPreference } from '../contexts/UserContext';
 
-export const useFormatDateAndTime = (): (() => string) => {
+export const useFormatDateAndTime = (): ((input: MomentInput) => string) => {
 	const clockMode = useUserPreference('clockMode', false);
 	const format = useSetting('Message_TimeAndDateFormat');
 

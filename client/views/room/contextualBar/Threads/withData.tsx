@@ -64,6 +64,10 @@ export function withData(Component: FC<ThreadListProps>): FC<{ rid: string }> {
 			setText(event.currentTarget.value);
 		}, []);
 
+		if (!room) {
+			throw new Error('room not found');
+		}
+
 		return (
 			<Component
 				{...props}

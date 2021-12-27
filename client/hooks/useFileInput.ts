@@ -6,7 +6,7 @@ export const useFileInput = (
 	onSetFile,
 	fileType = 'image/*',
 	fileField = 'image',
-): [unknown, unknown] => {
+): [onClick: () => void, reset: () => void] => {
 	const ref = useRef();
 
 	useEffect(() => {

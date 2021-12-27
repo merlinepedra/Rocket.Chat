@@ -17,7 +17,7 @@ const appErroredStatuses = [
 
 export const apiCurlGetter =
 	(absoluteUrl) =>
-	(method, api): string => {
+	(method, api): string[] => {
 		const example = api.examples[method] || {};
 		return Utilities.curl({
 			url: absoluteUrl(api.computedPath),

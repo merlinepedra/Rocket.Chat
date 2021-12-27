@@ -1,7 +1,7 @@
-// @ts-nocheck
 import { css } from '@rocket.chat/css-in-js';
-import colors from '@rocket.chat/fuselage-tokens/colors';
-import React, { ComponentType, ReactElement } from 'react';
+import { Box } from '@rocket.chat/fuselage';
+import colors from '@rocket.chat/fuselage-tokens/colors.json';
+import React, { ComponentProps, ComponentType, FunctionComponent, ReactElement } from 'react';
 
 const clickable = css`
 	cursor: pointer;
@@ -13,10 +13,14 @@ const clickable = css`
 	}
 `;
 
+export type ClickableItemProps = Pick<ComponentProps<typeof Box>, 'className' | 'tabIndex'>;
+
 // TODO remove border from here
-export function clickableItem(Component): ComponentType {
-	const WrappedComponent = (props): ReactElement => (
-		<Component className={clickable} tabIndex={0} {...props} />
+export function clickableItem<TProps extends ClickableItemProps>(
+	Component: ComponentType<TProps>,
+): FunctionComponent<Omit<TProps, 'className' | 'tabIndex'>> {
+	const WrappedComponent = (props: Omit<TProps, 'className' | 'tabIndex'>): ReactElement => (
+		<Component className={clickable} tabIndex={0} {...(props as TProps)} />
 	);
 
 	WrappedComponent.displayName = `clickableItem(${

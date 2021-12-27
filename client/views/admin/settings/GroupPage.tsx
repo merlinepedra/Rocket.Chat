@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Accordion, Box, Button, ButtonGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
-import React, { useMemo, memo, ReactElement } from 'react';
+import React, { useMemo, memo, ReactElement, ReactNode } from 'react';
 
 import Page from '../../../components/Page';
 import {
@@ -10,9 +10,22 @@ import {
 } from '../../../contexts/EditableSettingsContext';
 import { useSettingsDispatch, useSettings } from '../../../contexts/SettingsContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
-import { useTranslation, useLoadLanguage } from '../../../contexts/TranslationContext';
+import {
+	useTranslation,
+	useLoadLanguage,
+	TranslationKey,
+} from '../../../contexts/TranslationContext';
 import { useUser } from '../../../contexts/UserContext';
 import GroupPageSkeleton from './GroupPageSkeleton';
+
+type GroupPageProps = {
+	children?: ReactNode;
+	headerButtons?: ReactNode;
+	_id: string;
+	i18nLabel: string;
+	i18nDescription?: string;
+	tabs?: ReactNode;
+};
 
 function GroupPage({
 	children = undefined,
@@ -21,7 +34,7 @@ function GroupPage({
 	i18nLabel,
 	i18nDescription = undefined,
 	tabs = undefined,
-}): ReactElement {
+}: GroupPageProps): ReactElement {
 	const changedEditableSettings = useEditableSettings(
 		useMemo(
 			() => ({
@@ -125,7 +138,7 @@ function GroupPage({
 
 	return (
 		<Page is='form' action='#' method='post' onSubmit={handleSubmit}>
-			<Page.Header title={t(i18nLabel)}>
+			<Page.Header title={t(i18nLabel as TranslationKey)}>
 				<ButtonGroup>
 					{changedEditableSettings.length > 0 && (
 						<Button danger primary type='reset' onClick={handleCancelClick}>
@@ -148,9 +161,9 @@ function GroupPage({
 
 			<Page.ScrollableContentWithShadow>
 				<Box marginBlock='none' marginInline='auto' width='full' maxWidth='x580'>
-					{t.has(i18nDescription) && (
+					{t.has(i18nDescription as TranslationKey) && (
 						<Box is='p' color='hint' fontScale='p3'>
-							{t(i18nDescription)}
+							{t(i18nDescription as TranslationKey)}
 						</Box>
 					)}
 
