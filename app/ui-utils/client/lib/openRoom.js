@@ -92,16 +92,26 @@ export const openRoom = async function (type, name, render = true) {
 			return callbacks.run('enter-room', sub);
 		} catch (error) {
 			c.stop();
-			if (type === 'd') {
-				try {
-					const { rid } = await call('createDirectMessage', ...name.split(', '));
-					return FlowRouter.go('direct', { rid }, FlowRouter.current().queryParams);
-				} catch (error) {
-					console.error(error);
+			/**
+			 * If findRoom and getRoomByTypeAndName both couldn't find a room,
+			 * and the type of room to open is a direct message, create the direct room.
+			 * --
+			 * Otherwise just print the error
+			 */
+			if (error.error === 'error-invalid-room') {
+				if (type === 'd') {
+					try {
+						const { rid } = await call('createDirectMessage', ...name.split(', '));
+						return FlowRouter.go('direct', { rid }, FlowRouter.current().queryParams);
+					} catch (error) {
+						console.error(error);
+					}
 				}
+				Session.set('roomNotFound', { type, name, error });
+				appLayout.renderMainLayout({ center: 'roomNotFound' });
+			} else {
+				console.error(error);
 			}
-			Session.set('roomNotFound', { type, name, error });
-			appLayout.renderMainLayout({ center: 'roomNotFound' });
 		}
 	});
 };
