@@ -1,15 +1,22 @@
 import { Match, check } from 'meteor/check';
 import { parser } from '@rocket.chat/message-parser';
 
-import { settings } from '../../../settings';
+import { settings } from '../../../settings/server';
 import { callbacks } from '../../../../lib/callbacks';
-import { Messages } from '../../../models';
+import { Messages } from '../../../models/server';
 import { Apps } from '../../../apps/server';
 import { isURL, isRelativeURL } from '../../../utils/lib/isURL';
 import { FileUpload } from '../../../file-upload/server';
 import { hasPermission } from '../../../authorization/server';
 import { SystemLogger } from '../../../../server/lib/logger/system';
 import { parseUrlsInMessage } from './parseUrlsInMessage';
+
+import { IMessage } from '../../../../definition/IMessage';
+import { IRoom } from '../../../../definition/IRoom';
+import { IUser } from '../../../../definition/IUser';
+
+import { isValidatedMessage } from './validateMessage';
+
 
 const { DISABLE_MESSAGE_PARSER = 'false' } = process.env;
 
@@ -50,23 +57,46 @@ const ValidPartialURLParam = Match.Where((value) => {
 	return true;
 });
 
-const objectMaybeIncluding = (types) =>
-	Match.Where((value) => {
+/*
+const objectMaybeIncluding = (types: unknown) =>
+	Match.Where((value: any) => {
 		Object.keys(types).forEach((field) => {
 			if (value[field] != null) {
 				try {
 					check(value[field], types[field]);
-				} catch (error) {
-					error.path = field;
-					throw error;
+				} catch (error: unknown) {
+					if(error instanceof Error){
+						// The error.stack property will represent the point in the code at which new Error() was called.
+						error.stack = field;
+						throw error;
+					}
 				}
 			}
 		});
 
 		return true;
 	});
+*/
 
-const validateAttachmentsFields = (attachmentField) => {
+
+/***********************************/
+
+//type FunctionType = <T>(value: T) => void;
+const my_function: FunctionType = <T>(value: unknown): T | void => { // generic function
+	
+}
+
+/*********************************/
+
+
+
+type FunctionType = <T>(value: T) => void;
+//const validateAttachmentsFields = (attachmentField) => {
+const validateAttachmentsFields: FunctionType = <T>(attachmentField: unknown): T | void => {
+	if(!isValidatedMessage(attachmentField)){
+		throw new Error("Can't validate this attachmentField");
+	}
+	/*
 	check(
 		attachmentField,
 		objectMaybeIncluding({
@@ -75,13 +105,25 @@ const validateAttachmentsFields = (attachmentField) => {
 			value: Match.OneOf(String, Number, Boolean),
 		}),
 	);
+	*/
 
+	/*
+	//Already checked if it's not empty in the validateMessage.ts
 	if (typeof attachmentField.value !== 'undefined') {
 		attachmentField.value = String(attachmentField.value);
 	}
+	*/
 };
 
-const validateAttachmentsActions = (attachmentActions) => {
+
+const validateAttachmentsActions = (attachmentActions: IMessage.attachmentActions) => {
+	attachmentActions.url = ValidFullURLParam;
+	attachmentActions.image_url = ValidFullURLParam;
+
+	if(!isValidatedMessage(attachmentActions)){
+		throw new Error("Can't validate this attachmentActions");
+	}
+	/*
 	check(
 		attachmentActions,
 		objectMaybeIncluding({
@@ -95,9 +137,24 @@ const validateAttachmentsActions = (attachmentActions) => {
 			msg_in_chat_window: Boolean,
 		}),
 	);
+	*/
 };
 
-const validateAttachment = (attachment) => {
+
+const validateAttachment = (attachment: Required<IMessage>["attachments"][0]) => {
+	attachment.thumb_url = ValidFullURLParam;
+	attachment.message_link = ValidFullURLParam;
+	attachment.author_link = ValidFullURLParam;
+	attachment.author_icon = ValidFullURLParam;
+	attachment.title_link = ValidFullURLParam;
+	attachment.image_url = ValidFullURLParam;
+	attachment.audio_url = ValidFullURLParam;
+	attachment.video_url = ValidFullURLParam;
+
+	if(!isValidatedMessage(attachment)){
+		throw new Error("Can't validate this attachment");
+	}
+	/*
 	check(
 		attachment,
 		objectMaybeIncluding({
@@ -129,7 +186,10 @@ const validateAttachment = (attachment) => {
 			fields: [Match.Any],
 		}),
 	);
+	*/
 
+	/*
+	//Already checked if "fields" and "actions" are not empty
 	if (attachment.fields && attachment.fields.length) {
 		attachment.fields.map(validateAttachmentsFields);
 	}
@@ -137,11 +197,21 @@ const validateAttachment = (attachment) => {
 	if (attachment.actions && attachment.actions.length) {
 		attachment.actions.map(validateAttachmentsActions);
 	}
+	*/
 };
+
 
 const validateBodyAttachments = (attachments) => attachments.map(validateAttachment);
 
-const validateMessage = (message, room, user) => {
+
+const validateMessage = (message: IMessage, room: IRoom, user: IUser) => {
+	message.avatar = ValidPartialURLParam;
+	
+	if(!isValidatedMessage(message)){
+		throw new Error("Can't send this message");
+	}
+	
+	/*
 	check(
 		message,
 		objectMaybeIncluding({
@@ -157,7 +227,7 @@ const validateMessage = (message, room, user) => {
 			blocks: [Match.Any],
 		}),
 	);
-
+	*/
 	if (message.alias || message.avatar) {
 		const isLiveChatGuest = !message.avatar && user.token && user.token === room.v?.token;
 
@@ -166,12 +236,14 @@ const validateMessage = (message, room, user) => {
 		}
 	}
 
+	//Double check?
 	if (Array.isArray(message.attachments) && message.attachments.length) {
 		validateBodyAttachments(message.attachments);
 	}
+
 };
 
-export const sendMessage = function (user, message, room, upsert = false) {
+export const sendMessage = function (user: IUser, message: IMessage, room: IRoom, upsert = false) {
 	if (!user || !message || !room._id) {
 		return false;
 	}
@@ -206,9 +278,10 @@ export const sendMessage = function (user, message, room, upsert = false) {
 		message.unread = true;
 	}
 
+	//Used a "Non-null assertion operator" to fix Apps.getBridges()
 	// For the Rocket.Chat Apps :)
 	if (Apps && Apps.isLoaded()) {
-		const prevent = Promise.await(Apps.getBridges().getListenerBridge().messageEvent('IPreMessageSentPrevent', message));
+		const prevent = Promise.await(Apps.getBridges()!.getListenerBridge().messageEvent('IPreMessageSentPrevent', message));
 		if (prevent) {
 			if (settings.get('Apps_Framework_Development_Mode')) {
 				SystemLogger.info({ msg: 'A Rocket.Chat App prevented the message sending.', message });
@@ -218,8 +291,8 @@ export const sendMessage = function (user, message, room, upsert = false) {
 		}
 
 		let result;
-		result = Promise.await(Apps.getBridges().getListenerBridge().messageEvent('IPreMessageSentExtend', message));
-		result = Promise.await(Apps.getBridges().getListenerBridge().messageEvent('IPreMessageSentModify', result));
+		result = Promise.await(Apps.getBridges()!.getListenerBridge().messageEvent('IPreMessageSentExtend', message));
+		result = Promise.await(Apps.getBridges()!.getListenerBridge().messageEvent('IPreMessageSentModify', result));
 
 		if (typeof result === 'object') {
 			message = Object.assign(message, result);
@@ -236,9 +309,12 @@ export const sendMessage = function (user, message, room, upsert = false) {
 		if (message.msg && DISABLE_MESSAGE_PARSER !== 'true') {
 			message.md = parser(message.msg);
 		}
-	} catch (e) {
-		SystemLogger.error(e); // errors logged while the parser is at experimental stage
+	} catch (e: unknown) {
+		if(e instanceof Error){
+			SystemLogger.error(e); // errors logged while the parser is at experimental stage
+		}
 	}
+
 	if (message) {
 		if (message._id && upsert) {
 			const { _id } = message;
@@ -262,7 +338,7 @@ export const sendMessage = function (user, message, room, upsert = false) {
 		if (Apps && Apps.isLoaded()) {
 			// This returns a promise, but it won't mutate anything about the message
 			// so, we don't really care if it is successful or fails
-			Apps.getBridges().getListenerBridge().messageEvent('IPostMessageSent', message);
+			Apps.getBridges()!.getListenerBridge().messageEvent('IPostMessageSent', message);
 		}
 
 		/*
