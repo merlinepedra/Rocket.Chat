@@ -17,7 +17,6 @@ import { IUser } from '../../../../definition/IUser';
 
 import { isValidatedMessage } from './validateMessage';
 
-
 const { DISABLE_MESSAGE_PARSER = 'false' } = process.env;
 
 /**
@@ -78,22 +77,19 @@ const objectMaybeIncluding = (types: unknown) =>
 	});
 */
 
-
 /***********************************/
 
 //type FunctionType = <T>(value: T) => void;
-const my_function: FunctionType = <T>(value: unknown): T | void => { // generic function
-	
-}
+const my_function: FunctionType = <T>(value: unknown): T | void => {
+	// generic function
+};
 
 /*********************************/
-
-
 
 type FunctionType = <T>(value: T) => void;
 //const validateAttachmentsFields = (attachmentField) => {
 const validateAttachmentsFields: FunctionType = <T>(attachmentField: unknown): T | void => {
-	if(!isValidatedMessage(attachmentField)){
+	if (!isValidatedMessage(attachmentField)) {
 		throw new Error("Can't validate this attachmentField");
 	}
 	/*
@@ -115,12 +111,11 @@ const validateAttachmentsFields: FunctionType = <T>(attachmentField: unknown): T
 	*/
 };
 
-
 const validateAttachmentsActions = (attachmentActions: IMessage.attachmentActions) => {
 	attachmentActions.url = ValidFullURLParam;
 	attachmentActions.image_url = ValidFullURLParam;
 
-	if(!isValidatedMessage(attachmentActions)){
+	if (!isValidatedMessage(attachmentActions)) {
 		throw new Error("Can't validate this attachmentActions");
 	}
 	/*
@@ -140,8 +135,7 @@ const validateAttachmentsActions = (attachmentActions: IMessage.attachmentAction
 	*/
 };
 
-
-const validateAttachment = (attachment: Required<IMessage>["attachments"][0]) => {
+const validateAttachment = (attachment: Required<IMessage>['attachments'][0]) => {
 	attachment.thumb_url = ValidFullURLParam;
 	attachment.message_link = ValidFullURLParam;
 	attachment.author_link = ValidFullURLParam;
@@ -151,7 +145,7 @@ const validateAttachment = (attachment: Required<IMessage>["attachments"][0]) =>
 	attachment.audio_url = ValidFullURLParam;
 	attachment.video_url = ValidFullURLParam;
 
-	if(!isValidatedMessage(attachment)){
+	if (!isValidatedMessage(attachment)) {
 		throw new Error("Can't validate this attachment");
 	}
 	/*
@@ -200,17 +194,15 @@ const validateAttachment = (attachment: Required<IMessage>["attachments"][0]) =>
 	*/
 };
 
-
 const validateBodyAttachments = (attachments) => attachments.map(validateAttachment);
-
 
 const validateMessage = (message: IMessage, room: IRoom, user: IUser) => {
 	message.avatar = ValidPartialURLParam;
-	
-	if(!isValidatedMessage(message)){
+
+	if (!isValidatedMessage(message)) {
 		throw new Error("Can't send this message");
 	}
-	
+
 	/*
 	check(
 		message,
@@ -240,10 +232,9 @@ const validateMessage = (message: IMessage, room: IRoom, user: IUser) => {
 	if (Array.isArray(message.attachments) && message.attachments.length) {
 		validateBodyAttachments(message.attachments);
 	}
-
 };
 
-export const sendMessage = function (user: IUser, message: IMessage, room: IRoom, upsert = false) {
+export const sendMessage = function (user: IUser, message: IMessage, room: IRoom, upsert = false): boolean {
 	if (!user || !message || !room._id) {
 		return false;
 	}
@@ -310,7 +301,7 @@ export const sendMessage = function (user: IUser, message: IMessage, room: IRoom
 			message.md = parser(message.msg);
 		}
 	} catch (e: unknown) {
-		if(e instanceof Error){
+		if (e instanceof Error) {
 			SystemLogger.error(e); // errors logged while the parser is at experimental stage
 		}
 	}
