@@ -21,43 +21,43 @@ function Create(command: string, params: Record<string, any>, item: Record<strin
 		return result;
 	}
 
-    let settings_channel_names = settings.get('UTF8_Channel_Names_Validation');
+	const settingsChannel = settings.get('UTF8_Channel_Names_Validation');
 
-    if (typeof(settings_channel_names) !== 'string') {
-        return;
-    }
+	if (typeof(settingsChannel) !== 'string') {
+		return;
+	}
 
-	const regexp = new RegExp(settings_channel_names);
+	const regexp = new RegExp(settingsChannel);
 
 	if (command !== 'create' || !Match.test(params, String)) {
 		return;
 	}
-	let channel = regexp.exec(params.trim());
+	const channel = regexp.exec(params.trim());
 
-    if (!channel) {
-        return;
-    }
-
-	let channel_str:string = channel ? channel[0] : '';
-	if (channel_str === '') {
+	if (!channel) {
 		return;
 	}
-    const userId = Meteor.userId();
+
+	const channelStr: string = channel ? channel[0] : '';
+	if (channelStr === '') {
+		return;
+	}
+	const userId = Meteor.userId();
 	if (!userId) {
 		return;
 	}
 
 	const user = Meteor.users.findOne(userId);
-    if (!user) {
-        return;
-    }
+	if (!user) {
+		return;
+	}
 
-	const room = Rooms.findOneByName(channel_str);
+	const room = Rooms.findOneByName(channelStr);
 	if (room != null) {
 		api.broadcast('notify.ephemeralMessage', userId, item.rid, {
 			msg: TAPi18n.__('Channel_already_exist', {
 				postProcess: 'sprintf',
-				sprintf: [channel_str],
+				sprintf: [channelStr],
 				lng: settings.get('Language') || 'en',
 			}),
 		});
@@ -65,10 +65,10 @@ function Create(command: string, params: Record<string, any>, item: Record<strin
 	}
 
 	if (getParams(params).indexOf('private') > -1) {
-		return Meteor.call('createPrivateGroup', channel_str, []);
+		return Meteor.call('createPrivateGroup', channelStr, []);
 	}
 
-	Meteor.call('createChannel', channel_str, []);
+	Meteor.call('createChannel', channelStr, []);
 }
 
 slashCommands.add('create', Create, {
