@@ -6,7 +6,7 @@ import { slashCommands } from '../../utils/lib/slashCommand';
  * @param {Object} message - The message object
  */
 
-function Tableflip(command:string, params:Record<string, string>, item:Record<string, string>) {
+function Tableflip(command: string, params: Record<string, any>, item: Record<string, string>) {
 	if (command === 'tableflip') {
 		const msg = item;
 		msg.msg = `${params} (╯°□°）╯︵ ┻━┻`;

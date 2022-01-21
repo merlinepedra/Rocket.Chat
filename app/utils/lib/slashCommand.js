@@ -2,15 +2,7 @@ import { Meteor } from 'meteor/meteor';
 
 export const slashCommands = {
 	commands: {},
-	add: function _addingSlashCommand(
-		command,
-		callback,
-		options = {},
-		result,
-		providesPreview = false,
-		previewer,
-		previewCallback,
-	) {
+	add: function _addingSlashCommand(command, callback, options = {}, result, providesPreview = false, previewer, previewCallback) {
 		slashCommands.commands[command] = {
 			command,
 			callback,
@@ -37,29 +29,29 @@ export const slashCommands = {
 			if (!message || !message.rid) {
 				throw new Meteor.Error('invalid-command-usage', 'Executing a command requires at least a message with a room id.');
 			}
-	
+
 			// { id, type, value }
 			if (!preview.id || !preview.type || !preview.value) {
 				throw new Meteor.Error('error-invalid-preview', 'Preview Item must have an id, type, and value.');
 			}
-	
+
 			return slashCommands.commands[command].previewCallback(command, params, message, preview, triggerId);
 		}
 	},
 	executePreview: function _executeSlashCommandPreview(command, params, message, preview, triggerId) {
-	if (slashCommands.commands[command] && typeof slashCommands.commands[command].previewCallback === 'function') {
-		if (!message || !message.rid) {
-			throw new Meteor.Error('invalid-command-usage', 'Executing a command requires at least a message with a room id.');
-		}
+		if (slashCommands.commands[command] && typeof slashCommands.commands[command].previewCallback === 'function') {
+			if (!message || !message.rid) {
+				throw new Meteor.Error('invalid-command-usage', 'Executing a command requires at least a message with a room id.');
+			}
 
-		// { id, type, value }
-		if (!preview.id || !preview.type || !preview.value) {
-			throw new Meteor.Error('error-invalid-preview', 'Preview Item must have an id, type, and value.');
-		}
+			// { id, type, value }
+			if (!preview.id || !preview.type || !preview.value) {
+				throw new Meteor.Error('error-invalid-preview', 'Preview Item must have an id, type, and value.');
+			}
 
-		return slashCommands.commands[command].previewCallback(command, params, message, preview, triggerId);
-	}
-	}
+			return slashCommands.commands[command].previewCallback(command, params, message, preview, triggerId);
+		}
+	},
 };
 
 Meteor.methods({
