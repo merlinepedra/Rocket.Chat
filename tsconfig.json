@@ -45,7 +45,8 @@
 		"./imports/client**",
 		"**/dist/**",
 		// "./ee/server/services/**"
-		"node_modules"
+		"node_modules",
+		"./tests/cypress/**",
 	],
 	"ts-node": {
 		"files": true
