@@ -10,6 +10,11 @@ registerAdminRoute('/custom-sounds/:context?/:id?', {
 	lazyRouteComponent: () => import('./customSounds/AdminSoundsRoute'),
 });
 
+registerAdminRoute('/voip/:context?', {
+	name: 'admin-voip',
+	lazyRouteComponent: () => import('./voip/AdminVoipRoute'),
+});
+
 registerAdminRoute('/apps/what-is-it', {
 	name: 'admin-apps-disabled',
 	lazyRouteComponent: () => import('./apps/AppsWhatIsIt'),

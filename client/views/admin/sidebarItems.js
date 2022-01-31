@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { hasPermission, hasRole } from '../../../app/authorization/client';
+import { settings } from '../../../app/settings/client';
 import { createSidebarItems } from '../../lib/createSidebarItems';
 
 export const {
@@ -55,6 +56,12 @@ export const {
 		i18nLabel: 'Custom_Sounds',
 		icon: 'volume',
 		permissionGranted: () => hasPermission(['manage-sounds']),
+	},
+	{
+		href: 'admin-voip',
+		i18nLabel: 'VoIP',
+		icon: 'phone',
+		permissionGranted: () => settings.get('Livechat_enabled'),
 	},
 	{
 		icon: 'discover',
