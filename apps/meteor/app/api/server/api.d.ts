@@ -95,15 +95,16 @@ type ActionThis<TMethod extends Method, TPathPattern extends PathPattern, TOptio
 		query: Record<string, unknown>;
 	};
 	getUserFromParams(): IUser;
-} & (TOptions extends { authRequired: true }
-	? {
-			readonly user: IUser;
-			readonly userId: string;
-	  }
-	: {
-			readonly user: null;
-			readonly userId: null;
-	  });
+} & IAPIClass &
+	(TOptions extends { authRequired: true }
+		? {
+				readonly user: IUser;
+				readonly userId: string;
+		  }
+		: {
+				readonly user: null;
+				readonly userId: null;
+		  });
 
 export type ResultFor<TMethod extends Method, TPathPattern extends PathPattern> =
 	| SuccessResult<OperationResult<TMethod, TPathPattern>>
@@ -125,7 +126,9 @@ type Operations<TPathPattern extends PathPattern, TOptions extends Options = {}>
 	[M in MethodOf<TPathPattern> as Lowercase<M>]: Operation<Uppercase<M>, TPathPattern, TOptions>;
 };
 
-declare class APIClass<TBasePath extends string = '/'> {
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface IAPIClass {}
+declare class APIClass<TBasePath extends string = '/'> extends IAPIClass {
 	fieldSeparator(fieldSeparator: unknown): void;
 
 	limitedUserFieldsToExclude(fields: { [x: string]: unknown }, limitedUserFieldsToExclude: unknown): { [x: string]: unknown };

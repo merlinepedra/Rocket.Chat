@@ -82,7 +82,7 @@ const updateRegistrationFile = async function (): Promise<void> {
 
 	let { bridgeUrl } = config;
 
-	if (!bridgeUrl.includes(':')) {
+	if (!bridgeUrl?.includes(':')) {
 		bridgeUrl = `${bridgeUrl}:3300`;
 	}
 
