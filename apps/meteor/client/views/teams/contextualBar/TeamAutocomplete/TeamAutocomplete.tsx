@@ -1,10 +1,10 @@
 import { AutoComplete, Option } from '@rocket.chat/fuselage';
-import React, { memo, useMemo, useState } from 'react';
+import React, { ComponentProps, memo, useMemo, useState } from 'react';
 
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import Avatar from './Avatar';
 
-const TeamAutocomplete = (props) => {
+const TeamAutocomplete = (props: ComponentProps<typeof AutoComplete>) => {
 	const [filter, setFilter] = useState('');
 
 	const { value: data } = useEndpointData(
@@ -14,14 +14,12 @@ const TeamAutocomplete = (props) => {
 
 	const options = useMemo(
 		() =>
-			(data &&
-				data.teams.map(({ name, teamId, _id, avatarETag, t }) => ({
-					value: teamId,
-					label: { name, avatarETag, type: t, _id },
-				}))) ||
-			[],
+			data?.teams.map(({ name, teamId, _id, avatarETag, t }) => ({
+				value: teamId,
+				label: { name, avatarETag, type: t, _id },
+			})) || [],
 		[data],
-	);
+	) as ComponentProps<typeof AutoComplete>['options'];
 
 	return (
 		<AutoComplete

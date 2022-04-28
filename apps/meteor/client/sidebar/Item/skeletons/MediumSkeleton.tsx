@@ -3,7 +3,7 @@ import React from 'react';
 
 import Medium from '../Medium';
 
-const MediumSkeleton = ({ showAvatar }) => (
+const MediumSkeleton = ({ showAvatar }: { showAvatar: boolean }) => (
 	<Box height='x36'>
 		<Medium
 			title={<Skeleton width='100%' />}

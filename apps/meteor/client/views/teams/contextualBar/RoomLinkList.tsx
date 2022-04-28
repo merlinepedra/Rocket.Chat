@@ -1,8 +1,9 @@
+import { IRoom } from '@rocket.chat/core-typings';
 import React from 'react';
 
 import { roomCoordinator } from '../../../lib/rooms/roomCoordinator';
 
-const RoomLinkList = ({ rooms }) => {
+const RoomLinkList = ({ rooms }: { rooms: IRoom[] }) => {
 	const roomsArray = Object.values(rooms);
 	return roomsArray.map((room, i) => (
 		<React.Fragment key={i}>

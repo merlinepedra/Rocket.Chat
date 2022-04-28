@@ -1,9 +1,15 @@
 import { Box, Button, ButtonGroup, Icon, Modal } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 
 import { useTranslation } from '../../../../../../contexts/TranslationContext';
 
-export const CallModal = ({ handleYes, handleCancel }) => {
+export const CallModal = ({
+	handleYes,
+	handleCancel,
+}: {
+	handleYes: MouseEventHandler<HTMLElement>;
+	handleCancel: MouseEventHandler<HTMLElement>;
+}) => {
 	const t = useTranslation();
 
 	return (

@@ -1,5 +1,5 @@
 import { Box, Sidebar, Dropdown } from '@rocket.chat/fuselage';
-import React, { useRef } from 'react';
+import React, { ComponentProps, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { useAtLeastOnePermission } from '../../../contexts/AuthorizationContext';
@@ -8,7 +8,7 @@ import CreateRoomList from './CreateRoomList';
 
 const CREATE_ROOM_PERMISSIONS = ['create-c', 'create-p', 'create-d', 'start-discussion', 'start-discussion-other-user'];
 
-const CreateRoom = (props) => {
+const CreateRoom = (props: ComponentProps<typeof Sidebar.TopBar.Action>) => {
 	const reference = useRef(null);
 	const target = useRef(null);
 	const { isVisible, toggle } = useDropdownVisibility({ reference, target });

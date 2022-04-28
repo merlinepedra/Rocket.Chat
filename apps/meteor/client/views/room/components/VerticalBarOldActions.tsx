@@ -5,7 +5,7 @@ import { useTranslation } from '../../../contexts/TranslationContext';
 import { useTabBarClose } from '../providers/ToolboxProvider';
 import BlazeTemplate from './BlazeTemplate';
 
-const VerticalBarOldActions = ({ name, icon, tabBar, title, ...props }) => {
+const VerticalBarOldActions = ({ name, icon, tabBar, title, ...props }: any) => {
 	const close = useTabBarClose();
 	const t = useTranslation();
 

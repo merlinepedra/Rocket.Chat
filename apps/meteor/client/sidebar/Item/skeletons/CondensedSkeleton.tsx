@@ -3,7 +3,7 @@ import React from 'react';
 
 import Condensed from '../Condensed';
 
-const CondensedSkeleton = ({ showAvatar }) => (
+const CondensedSkeleton = ({ showAvatar }: { showAvatar: boolean }) => (
 	<Box height='x28'>
 		<Condensed
 			title={<Skeleton width='100%' />}

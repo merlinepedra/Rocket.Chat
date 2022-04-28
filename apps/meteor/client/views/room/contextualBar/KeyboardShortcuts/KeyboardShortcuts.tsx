@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 
 import VerticalBar from '../../../../components/VerticalBar';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import ShortcutSection from './ShortcutSection';
 
-const KeyboardShortcuts = ({ handleClose }) => {
+const KeyboardShortcuts = ({ handleClose }: { handleClose: MouseEventHandler<HTMLElement> }) => {
 	const t = useTranslation();
 
 	return (

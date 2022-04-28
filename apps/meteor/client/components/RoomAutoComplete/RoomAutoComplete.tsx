@@ -1,5 +1,5 @@
 import { AutoComplete, Option, Box } from '@rocket.chat/fuselage';
-import React, { memo, useMemo, useState } from 'react';
+import React, { ComponentProps, memo, useMemo, useState } from 'react';
 
 import { useEndpointData } from '../../hooks/useEndpointData';
 import RoomAvatar from '../avatar/RoomAvatar';
@@ -7,7 +7,7 @@ import Avatar from './Avatar';
 
 const query = (term = '') => ({ selector: JSON.stringify({ name: term }) });
 
-const RoomAutoComplete = (props) => {
+const RoomAutoComplete = (props: Omit<ComponentProps<typeof AutoComplete>, 'options'>) => {
 	const [filter, setFilter] = useState('');
 	const { value: data } = useEndpointData(
 		'rooms.autocomplete.channelAndPrivate',
@@ -15,14 +15,12 @@ const RoomAutoComplete = (props) => {
 	);
 	const options = useMemo(
 		() =>
-			(data &&
-				data.items.map(({ name, _id, avatarETag, t }) => ({
-					value: _id,
-					label: { name, avatarETag, type: t },
-				}))) ||
-			[],
+			data?.items.map(({ name, _id, avatarETag, t }) => ({
+				value: _id,
+				label: { name, avatarETag, type: t },
+			})) || [],
 		[data],
-	);
+	) as unknown as ComponentProps<typeof AutoComplete>['options'];
 
 	return (
 		<AutoComplete

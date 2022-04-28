@@ -3,7 +3,7 @@ import React from 'react';
 
 import Extended from './Extended';
 
-const ExtendedSkeleton = ({ showAvatar }) => (
+const ExtendedSkeleton = ({ showAvatar }: { showAvatar: boolean }) => (
 	<Box height='x44'>
 		<Extended
 			title={<Skeleton width='100%' />}

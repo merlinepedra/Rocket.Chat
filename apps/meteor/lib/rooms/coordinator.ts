@@ -120,15 +120,15 @@ export abstract class RoomCoordinator {
 		return this.roomTypes[identifier].config;
 	}
 
-	getRouteLink(roomType: string, subData: RoomIdentification): string | false {
+	getRouteLink(roomType: string, subData: RoomIdentification): string {
 		const config = this.getRoomTypeConfig(roomType);
 		if (!config?.route) {
-			return false;
+			throw new Error(`Room type with identifier ${roomType} does not exist.`);
 		}
 
 		const routeData = this.getRouteData(roomType, subData);
 		if (!routeData) {
-			return false;
+			throw new Error(`Room type with identifier ${roomType} does not exist.`);
 		}
 
 		return FlowRouter.path(config.route.name, routeData);

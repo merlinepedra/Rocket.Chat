@@ -1,16 +1,16 @@
 import { TAPi18n, TAPi18next } from 'meteor/rocketchat:tap-i18n';
-import React, { useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import { TranslationContext } from '../contexts/TranslationContext';
 import { useReactiveValue } from '../hooks/useReactiveValue';
 
-const createTranslateFunction = (language) => {
-	const translate = (key, ...replaces) => {
+const createTranslateFunction = (language: any) => {
+	const translate = (key: string, ...replaces: unknown[]) => {
 		if (typeof replaces[0] === 'object') {
-			const [options, lang_tag = language] = replaces;
+			const [options, lng = language] = replaces;
 			return TAPi18next.t(key, {
 				ns: 'project',
-				lng: lang_tag,
+				lng,
 				...options,
 			});
 		}
@@ -27,15 +27,15 @@ const createTranslateFunction = (language) => {
 		});
 	};
 
-	translate.has = (key, { lng = language, ...options } = {}) => !!key && TAPi18next.exists(key, { ns: 'project', lng, ...options });
+	translate.has = (key: string, { lng = language, ...options } = {}) => !!key && TAPi18next.exists(key, { ns: 'project', lng, ...options });
 
 	return translate;
 };
 
 const getLanguages = () => {
-	const result = Object.entries(TAPi18n.getLanguages())
+	const result = (Object.entries(TAPi18n.getLanguages()) as [string, { name: string; en: string }][])
 		.map(([key, language]) => ({ ...language, key: key.toLowerCase() }))
-		.sort((a, b) => a.key - b.key);
+		.sort((a, b) => a.key.localeCompare(b.key));
 
 	result.unshift({
 		name: 'Default',
@@ -48,9 +48,9 @@ const getLanguages = () => {
 
 const getLanguage = () => TAPi18n.getLanguage();
 
-const loadLanguage = (language) => TAPi18n._loadLanguage(language);
+const loadLanguage = (language: string) => TAPi18n._loadLanguage(language);
 
-function TranslationProvider({ children }) {
+const TranslationProvider: FC = function TranslationProvider({ children }) {
 	const languages = useReactiveValue(getLanguages);
 	const language = useReactiveValue(getLanguage);
 
@@ -67,6 +67,6 @@ function TranslationProvider({ children }) {
 	);
 
 	return <TranslationContext.Provider children={children} value={value} />;
-}
+};
 
 export default TranslationProvider;

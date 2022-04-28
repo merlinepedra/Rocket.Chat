@@ -1,7 +1,7 @@
 import { Box, Divider } from '@rocket.chat/fuselage';
 import React from 'react';
 
-const ShortcutSection = ({ title, command }) => (
+const ShortcutSection = ({ title, command }: { title: string; command: string }) => (
 	<Box is='section' mb='x16'>
 		<Box fontScale='p2m' fontWeight='700'>
 			{title}

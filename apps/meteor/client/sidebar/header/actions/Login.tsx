@@ -1,10 +1,10 @@
 import { Sidebar } from '@rocket.chat/fuselage';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 
 import { useSessionDispatch } from '../../../contexts/SessionContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
 
-const Login = (props) => {
+const Login = (props: ComponentProps<typeof Sidebar.TopBar.Action>) => {
 	const setForceLogin = useSessionDispatch('forceLogin');
 	const t = useTranslation();
 
