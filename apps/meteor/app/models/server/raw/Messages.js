@@ -1,6 +1,6 @@
 import { escapeRegExp } from '@rocket.chat/string-helpers';
-import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 import { BaseRaw } from './BaseRaw';
 
 export class MessagesRaw extends BaseRaw {
