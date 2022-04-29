@@ -1,3 +1,4 @@
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 import { Base } from './_Base';
 
 export class LivechatInquiry extends Base {
@@ -234,7 +235,7 @@ export class LivechatInquiry extends Base {
 			aggregate.push({ $match: { _id } });
 		}
 
-		return collectionObj.aggregate(aggregate).toArray();
+		return collectionObj.aggregate(aggregate, { readPreference: readSecondaryPreferred() }).toArray();
 	}
 
 	removeDefaultAgentById(inquiryId) {

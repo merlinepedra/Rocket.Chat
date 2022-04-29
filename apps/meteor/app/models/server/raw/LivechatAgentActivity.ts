@@ -3,6 +3,7 @@ import type { ILivechatAgentActivity, IServiceHistory } from '@rocket.chat/core-
 import type { AggregationCursor, Cursor, FindAndModifyWriteOpResultObject, IndexSpecification, UpdateWriteOpResult } from 'mongodb';
 
 import { BaseRaw } from './BaseRaw';
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 
 export class LivechatAgentActivityRaw extends BaseRaw<ILivechatAgentActivity> {
 	modelIndexes(): IndexSpecification[] {
@@ -135,7 +136,7 @@ export class LivechatAgentActivityRaw extends BaseRaw<ILivechatAgentActivity> {
 		}
 		params.push(group);
 		params.push(project);
-		return this.col.aggregate(params).toArray();
+		return this.col.aggregate(params, { readPreference: readSecondaryPreferred() }).toArray();
 	}
 
 	findAvailableServiceTimeHistory({
@@ -192,7 +193,7 @@ export class LivechatAgentActivityRaw extends BaseRaw<ILivechatAgentActivity> {
 		const params = [match, lookup, unwind, group, project, sort] as object[];
 		if (onlyCount) {
 			params.push({ $count: 'total' });
-			return this.col.aggregate(params);
+			return this.col.aggregate(params, { readPreference: readSecondaryPreferred() });
 		}
 		if (options.offset) {
 			params.push({ $skip: options.offset });
@@ -200,6 +201,6 @@ export class LivechatAgentActivityRaw extends BaseRaw<ILivechatAgentActivity> {
 		if (options.count) {
 			params.push({ $limit: options.count });
 		}
-		return this.col.aggregate(params, { allowDiskUse: true });
+		return this.col.aggregate(params, { allowDiskUse: true, readPreference: readSecondaryPreferred() });
 	}
 }

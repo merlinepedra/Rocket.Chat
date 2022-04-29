@@ -1,4 +1,5 @@
 import { LivechatDepartmentAgentsRaw } from '../../../../../app/models/server/raw/LivechatDepartmentAgents';
+import { readSecondaryPreferred } from '../../../../../server/database/readSecondaryPreferred';
 import { overwriteClassOnLicense } from '../../../license/server';
 
 overwriteClassOnLicense('livechat-enterprise', LivechatDepartmentAgentsRaw, {
@@ -23,6 +24,8 @@ overwriteClassOnLicense('livechat-enterprise', LivechatDepartmentAgentsRaw, {
 		const withBusinessHourId = { $match: { 'departments.businessHourId': businessHourId } };
 		const project = { $project: { departments: 0 } };
 		const model = this as unknown as LivechatDepartmentAgentsRaw;
-		return model.col.aggregate([match, lookup, unwind, withBusinessHourId, project]).toArray();
+		return model.col
+			.aggregate([match, lookup, unwind, withBusinessHourId, project], { readPreference: readSecondaryPreferred() })
+			.toArray();
 	},
 });

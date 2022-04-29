@@ -1,4 +1,5 @@
 import { escapeRegExp } from '@rocket.chat/string-helpers';
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 
 import { BaseRaw } from './BaseRaw';
 
@@ -110,7 +111,7 @@ export class MessagesRaw extends BaseRaw {
 		const params = [...firstParams, group, project, sort];
 		if (onlyCount) {
 			params.push({ $count: 'total' });
-			return this.col.aggregate(params);
+			return this.col.aggregate(params, { readPreference: readSecondaryPreferred() });
 		}
 		if (options.offset) {
 			params.push({ $skip: options.offset });
@@ -118,7 +119,7 @@ export class MessagesRaw extends BaseRaw {
 		if (options.count) {
 			params.push({ $limit: options.count });
 		}
-		return this.col.aggregate(params, { allowDiskUse: true });
+		return this.col.aggregate(params, { allowDiskUse: true, readPreference: readSecondaryPreferred() });
 	}
 
 	getTotalOfMessagesSentByDate({ start, end, options = {} }) {
@@ -176,7 +177,7 @@ export class MessagesRaw extends BaseRaw {
 		if (options.count) {
 			params.push({ $limit: options.count });
 		}
-		return this.col.aggregate(params).toArray();
+		return this.col.aggregate(params, { readPreference: readSecondaryPreferred() }).toArray();
 	}
 
 	findLivechatClosedMessages(rid, options) {

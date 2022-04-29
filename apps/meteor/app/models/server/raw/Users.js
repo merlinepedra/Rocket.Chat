@@ -1,5 +1,6 @@
 import { escapeRegExp } from '@rocket.chat/string-helpers';
 
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 import { BaseRaw } from './BaseRaw';
 
 export class UsersRaw extends BaseRaw {
@@ -275,7 +276,7 @@ export class UsersRaw extends BaseRaw {
 
 		aggregate.push({ $limit: 1 });
 
-		const [agent] = await this.col.aggregate(aggregate).toArray();
+		const [agent] = await this.col.aggregate(aggregate, { readPreference: readSecondaryPreferred() }).toArray();
 		if (agent) {
 			await this.setLastRoutingTime(agent.agentId);
 		}
@@ -312,7 +313,7 @@ export class UsersRaw extends BaseRaw {
 
 		aggregate.push({ $limit: 1 });
 
-		const [agent] = await this.col.aggregate(aggregate).toArray();
+		const [agent] = await this.col.aggregate(aggregate, { readPreference: readSecondaryPreferred() }).toArray();
 		if (agent) {
 			await this.setLastRoutingTime(agent.agentId);
 		}
@@ -394,7 +395,7 @@ export class UsersRaw extends BaseRaw {
 			{ $sort: { 'queueInfo.chats': 1, 'lastAssignTime': 1, 'lastRoutingTime': 1, 'username': 1 } },
 		];
 
-		const [agent] = await this.col.aggregate(aggregate).toArray();
+		const [agent] = await this.col.aggregate(aggregate, { readPreference: readSecondaryPreferred() }).toArray();
 		return agent;
 	}
 
@@ -560,7 +561,7 @@ export class UsersRaw extends BaseRaw {
 			params.push(departmentsMatch);
 		}
 		params.push(group);
-		return this.col.aggregate(params).toArray();
+		return this.col.aggregate(params, { readPreference: readSecondaryPreferred() }).toArray();
 	}
 
 	getTotalOfRegisteredUsersByDate({ start, end, options = {} }) {
@@ -600,7 +601,7 @@ export class UsersRaw extends BaseRaw {
 		if (options.count) {
 			params.push({ $limit: options.count });
 		}
-		return this.col.aggregate(params).toArray();
+		return this.col.aggregate(params, { readPreference: readSecondaryPreferred() }).toArray();
 	}
 
 	getUserLanguages() {
@@ -621,7 +622,7 @@ export class UsersRaw extends BaseRaw {
 			},
 		];
 
-		return this.col.aggregate(pipeline).toArray();
+		return this.col.aggregate(pipeline, { readPreference: readSecondaryPreferred() }).toArray();
 	}
 
 	updateStatusText(_id, statusText) {

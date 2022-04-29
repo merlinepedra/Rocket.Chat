@@ -1,6 +1,7 @@
 import { escapeRegExp } from '@rocket.chat/string-helpers';
 
 import { BaseRaw } from './BaseRaw';
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 
 export class RoomsRaw extends BaseRaw {
 	findOneByRoomIdAndUserId(rid, uid, options = {}) {
@@ -43,7 +44,7 @@ export class RoomsRaw extends BaseRaw {
 			{ $project: { _id: '$_id', avgChatDuration: { $divide: ['$sumChatDuration', '$chats'] } } },
 		];
 
-		const [statistic] = await this.col.aggregate(aggregate).toArray();
+		const [statistic] = await this.col.aggregate(aggregate, { readPreference: readSecondaryPreferred() }).toArray();
 		return statistic;
 	}
 
@@ -403,7 +404,7 @@ export class RoomsRaw extends BaseRaw {
 			params.push({ $limit: options.count });
 		}
 
-		return this.col.aggregate(params);
+		return this.col.aggregate(params, { readPreference: readSecondaryPreferred() });
 	}
 
 	findOneByName(name, options = {}) {
@@ -441,21 +442,24 @@ export class RoomsRaw extends BaseRaw {
 	}
 
 	allRoomSourcesCount() {
-		return this.col.aggregate([
-			{
-				$match: {
-					source: {
-						$exists: true,
+		return this.col.aggregate(
+			[
+				{
+					$match: {
+						source: {
+							$exists: true,
+						},
+						t: 'l',
 					},
-					t: 'l',
 				},
-			},
-			{
-				$group: {
-					_id: '$source',
-					count: { $sum: 1 },
+				{
+					$group: {
+						_id: '$source',
+						count: { $sum: 1 },
+					},
 				},
-			},
-		]);
+			],
+			{ readPreference: readSecondaryPreferred() },
+		);
 	}
 }

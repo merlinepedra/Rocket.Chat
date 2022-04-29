@@ -2,6 +2,7 @@ import { FindOneOptions, ObjectId, WithoutProjection } from 'mongodb';
 import { ILivechatBusinessHour, LivechatBusinessHourTypes } from '@rocket.chat/core-typings';
 
 import { BaseRaw } from './BaseRaw';
+import { readSecondaryPreferred } from '../../../../server/database/readSecondaryPreferred';
 
 export interface IWorkHoursCronJobsItem {
 	day: string;
@@ -69,50 +70,53 @@ export class LivechatBusinessHoursRaw extends BaseRaw<ILivechatBusinessHour> {
 
 	findHoursToScheduleJobs(): Promise<IWorkHoursCronJobsWrapper[]> {
 		return this.col
-			.aggregate([
-				{
-					$facet: {
-						start: [
-							{ $match: { active: true } },
-							{ $project: { _id: 0, workHours: 1 } },
-							{ $unwind: { path: '$workHours' } },
-							{ $match: { 'workHours.open': true } },
-							{
-								$group: {
-									_id: { day: '$workHours.start.cron.dayOfWeek' },
-									times: { $addToSet: '$workHours.start.cron.time' },
+			.aggregate(
+				[
+					{
+						$facet: {
+							start: [
+								{ $match: { active: true } },
+								{ $project: { _id: 0, workHours: 1 } },
+								{ $unwind: { path: '$workHours' } },
+								{ $match: { 'workHours.open': true } },
+								{
+									$group: {
+										_id: { day: '$workHours.start.cron.dayOfWeek' },
+										times: { $addToSet: '$workHours.start.cron.time' },
+									},
 								},
-							},
-							{
-								$project: {
-									_id: 0,
-									day: '$_id.day',
-									times: 1,
+								{
+									$project: {
+										_id: 0,
+										day: '$_id.day',
+										times: 1,
+									},
 								},
-							},
-						],
-						finish: [
-							{ $match: { active: true } },
-							{ $project: { _id: 0, workHours: 1 } },
-							{ $unwind: { path: '$workHours' } },
-							{ $match: { 'workHours.open': true } },
-							{
-								$group: {
-									_id: { day: '$workHours.finish.cron.dayOfWeek' },
-									times: { $addToSet: '$workHours.finish.cron.time' },
+							],
+							finish: [
+								{ $match: { active: true } },
+								{ $project: { _id: 0, workHours: 1 } },
+								{ $unwind: { path: '$workHours' } },
+								{ $match: { 'workHours.open': true } },
+								{
+									$group: {
+										_id: { day: '$workHours.finish.cron.dayOfWeek' },
+										times: { $addToSet: '$workHours.finish.cron.time' },
+									},
 								},
-							},
-							{
-								$project: {
-									_id: 0,
-									day: '$_id.day',
-									times: 1,
+								{
+									$project: {
+										_id: 0,
+										day: '$_id.day',
+										times: 1,
+									},
 								},
-							},
-						],
+							],
+						},
 					},
-				},
-			])
+				],
+				{ readPreference: readSecondaryPreferred() },
+			)
 			.toArray() as any;
 	}
 
