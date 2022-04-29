@@ -23,6 +23,19 @@ describe('[Statistics]', function () {
 					.end(done);
 			});
 		});
+		it('should update the statistics when is provided the "refresh:true" query parameter', (done) => {
+			request
+				.get(api('statistics?refresh=true'))
+				.set(credentials)
+				.expect(200)
+				.expect((res) => {
+					expect(res.body).to.have.property('success', true);
+					expect(res.body).to.have.property('process');
+					expect(res.body.process).to.have.property('uptime');
+					expect(lastUptime).to.not.be.equal(res.body.process.uptime);
+				})
+				.end(done);
+		});
 		it('should return an object with the statistics', (done) => {
 			updatePermission('view-statistics', ['admin']).then(() => {
 				request
@@ -37,19 +50,6 @@ describe('[Statistics]', function () {
 					})
 					.end(done);
 			});
-		});
-		it('should update the statistics when is provided the "refresh:true" query parameter', (done) => {
-			request
-				.get(api('statistics?refresh=true'))
-				.set(credentials)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body).to.have.property('success', true);
-					expect(res.body).to.have.property('process');
-					expect(res.body.process).to.have.property('uptime');
-					expect(lastUptime).to.not.be.equal(res.body.process.uptime);
-				})
-				.end(done);
 		});
 	});
 
