@@ -19,7 +19,7 @@ API.v1.addRoute(
 			if (id && typeof id !== 'string') {
 				throw new Meteor.Error('error-id-param-not-valid', 'The required "id" body param is invalid.');
 			} else {
-				id = Random.id();
+				id = Random.id(); // should we use _randomString?
 			}
 
 			if (!type || (type !== 'apn' && type !== 'gcm')) {
