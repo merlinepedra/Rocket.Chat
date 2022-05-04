@@ -50,7 +50,11 @@ export const MessageListProvider: FC<{
 								return [];
 							}
 							if (!isMessageReactionsNormalized(message)) {
-								return (message.reactions && message.reactions[reaction]?.usernames.map((username) => `@${username}`)) || [];
+								return (
+									(message.reactions &&
+										message.reactions[reaction]?.usernames.filter((user) => user !== username).map((username) => `@${username}`)) ||
+									[]
+								);
 							}
 							if (!username) {
 								return message.reactions[reaction].names;
