@@ -1,6 +1,6 @@
 import { Box, Margins, ButtonGroup } from '@rocket.chat/fuselage';
 import { useTranslation } from '@rocket.chat/ui-contexts';
-import React, { memo } from 'react';
+import React, { memo, ReactElement } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { FormSkeleton } from '../../../components/Skeleton';
@@ -12,12 +12,17 @@ import UserInfo from '../../room/contextualBar/UserInfo';
 import { formsSubscription } from '../additionalForms';
 import AgentInfoAction from './AgentInfoAction';
 
-export const AgentInfo = memo(function AgentInfo({ uid, children, ...props }) {
+type AgentInfoProps = {
+	uid: string;
+	children?: React.ReactNode;
+};
+
+export const AgentInfo = memo(function AgentInfo({ uid, children }: AgentInfoProps): ReactElement {
 	const t = useTranslation();
 	const { value: data, phase: state, error } = useEndpointData(`livechat/users/agent/${uid}`);
 	const eeForms = useSubscription(formsSubscription);
 
-	const { useMaxChatsPerAgentDisplay = () => {} } = eeForms;
+	const { useMaxChatsPerAgentDisplay = (): void => undefined } = eeForms;
 
 	const MaxChats = useMaxChatsPerAgentDisplay();
 
@@ -33,18 +38,18 @@ export const AgentInfo = memo(function AgentInfo({ uid, children, ...props }) {
 	const { username, statusLivechat, status: userStatus } = user;
 
 	return (
-		<VerticalBar.ScrollableContent p='x24' {...props}>
+		<VerticalBar.ScrollableContent p='x24'>
 			<Box alignSelf='center'>
 				<UserInfo.Avatar size={'x332'} username={username} />
 			</Box>
 
-			<ButtonGroup mi='neg-x4' flexShrink={0} flexWrap='nowrap' withTruncatedText justifyContent='center' flexShrink={0}>
+			<ButtonGroup mi='neg-x4' flexShrink={0} flexWrap='nowrap' withTruncatedText justifyContent='center'>
 				{children}
 			</ButtonGroup>
 
 			<Margins block='x4'>
 				<Box mb='x2'>
-					<UserInfo.Username name={username} status={<UserStatus status={userStatus} />} />
+					<UserInfo.Username name={username} username={username} status={<UserStatus status={userStatus} />} />
 				</Box>
 
 				{statusLivechat && (

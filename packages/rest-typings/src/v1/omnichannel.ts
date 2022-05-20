@@ -160,6 +160,12 @@ export type OmnichannelEndpoints = {
 		}>;
 	};
 
+	'livechat/users/agent/:_id': {
+		GET: (params: PaginatedRequest<{ text?: string }>) => {
+			user: ILivechatAgent;
+		};
+	};
+
 	'livechat/users/manager/:_id': {
 		DELETE: () => { success: boolean };
 	};
