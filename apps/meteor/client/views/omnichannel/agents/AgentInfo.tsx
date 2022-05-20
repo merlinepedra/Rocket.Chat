@@ -22,9 +22,9 @@ export const AgentInfo = memo(function AgentInfo({ uid, children }: AgentInfoPro
 	const { value: data, phase: state, error } = useEndpointData(`livechat/users/agent/${uid}`);
 	const eeForms = useSubscription(formsSubscription);
 
-	const { useMaxChatsPerAgentDisplay = (): void => undefined } = eeForms;
+	const { useMaxChatsPerAgentDisplay } = eeForms;
 
-	const MaxChats = useMaxChatsPerAgentDisplay();
+	const MaxChats = useMaxChatsPerAgentDisplay?.();
 
 	if (state === AsyncStatePhase.LOADING) {
 		return <FormSkeleton />;

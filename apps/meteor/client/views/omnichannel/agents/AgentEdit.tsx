@@ -1,4 +1,4 @@
-import type { IUser } from '@rocket.chat/core-typings';
+import type { ILivechatAgent } from '@rocket.chat/core-typings';
 import { Field, TextInput, Button, Margins, Box, MultiSelect, Icon, Select } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useToastMessageDispatch, useRoute, useSetting, useMethod, useTranslation } from '@rocket.chat/ui-contexts';
@@ -14,13 +14,8 @@ import { formsSubscription } from '../additionalForms';
 // TODO: TYPE:
 // Department
 
-type dataType = {
-	status: string;
-	user: IUser;
-};
-
 type AgentEditProps = {
-	data: dataType;
+	data: ILivechatAgent;
 	userDepartments: { departments: Array<{ departmentId: string }> };
 	availableDepartments: { departments: Array<{ _id: string; name?: string }> };
 	uid: string;

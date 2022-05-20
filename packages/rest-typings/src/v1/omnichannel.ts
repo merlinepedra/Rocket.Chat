@@ -164,6 +164,7 @@ export type OmnichannelEndpoints = {
 		GET: (params: PaginatedRequest<{ text?: string }>) => {
 			user: ILivechatAgent;
 		};
+		DELETE: () => { success: boolean };
 	};
 
 	'livechat/users/manager/:_id': {
@@ -228,6 +229,10 @@ export type OmnichannelEndpoints = {
 		};
 	};
 	'livechat/agents/:uid/departments?enabledDepartmentsOnly=true': {
+		GET: () => { departments: ILivechatDepartment[] };
+	};
+
+	'livechat/agents/:uid/departments': {
 		GET: () => { departments: ILivechatDepartment[] };
 	};
 
