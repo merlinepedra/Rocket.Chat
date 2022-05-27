@@ -143,27 +143,16 @@ export type OmnichannelEndpoints = {
 	};
 	'livechat/users/agent': {
 		GET: (params: PaginatedRequest<{ text?: string }>) => PaginatedResult<{
-			users: {
-				_id: string;
-				emails: {
-					address: string;
-					verified: boolean;
-				}[];
-				status: string;
-				name: string;
-				username: string;
-				statusLivechat: string;
-				livechat: {
-					maxNumberSimultaneousChat: number;
-				};
-			}[];
+			users: ILivechatAgent[];
 		}>;
+		POST: (prams: {username: string}) => { success: boolean };
 	};
 
 	'livechat/users/agent/:_id': {
 		GET: (params: PaginatedRequest<{ text?: string }>) => {
 			user: ILivechatAgent;
 		};
+		
 		DELETE: () => { success: boolean };
 	};
 

@@ -1,8 +1,8 @@
 import type { ILivechatAgent } from '@rocket.chat/core-typings';
-import { Field, TextInput, Button, Margins, Box, MultiSelect, Icon, Select } from '@rocket.chat/fuselage';
+import { Field, TextInput, Button, Margins, Box, MultiSelect, Icon, Select, SelectOption } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useToastMessageDispatch, useRoute, useSetting, useMethod, useTranslation } from '@rocket.chat/ui-contexts';
-import React, { useMemo, useRef, useState, FC, ReactElement } from 'react';
+import React, { useRef, useState, FC, ReactElement } from 'react';
 import { useSubscription } from 'use-subscription';
 
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
@@ -15,9 +15,9 @@ import { formsSubscription } from '../additionalForms';
 // Department
 
 type AgentEditProps = {
-	data: ILivechatAgent;
-	userDepartments: { departments: Array<{ departmentId: string }> };
-	availableDepartments: { departments: Array<{ _id: string; name?: string }> };
+	data: { user: ILivechatAgent };
+	userDepartments: SelectOption[];
+	availableDepartments: SelectOption[];
 	uid: string;
 	reset: () => void;
 };
@@ -33,15 +33,6 @@ const AgentEdit: FC<AgentEditProps> = ({ data, userDepartments, availableDepartm
 
 	const email = getUserEmailAddress(user);
 
-	const options: [string, string][] = useMemo(
-		() =>
-			availableDepartments?.departments ? availableDepartments.departments.map(({ _id, name }) => (name ? [_id, name] : [_id, _id])) : [],
-		[availableDepartments],
-	);
-	const initialDepartmentValue = useMemo(
-		() => (userDepartments?.departments ? userDepartments.departments.map(({ departmentId }) => departmentId) : []),
-		[userDepartments],
-	);
 	const eeForms = useSubscription(formsSubscription);
 
 	const saveRef = useRef({
@@ -64,11 +55,13 @@ const AgentEdit: FC<AgentEditProps> = ({ data, userDepartments, availableDepartm
 	const { useMaxChatsPerAgent = (): ReactElement | null => null } = eeForms as any; // TODO: Find out how to use ts with eeForms
 
 	const { values, handlers, hasUnsavedChanges, commit } = useForm({
-		departments: initialDepartmentValue,
+		departments: userDepartments,
 		status: statusLivechat,
 		maxChats: 0,
 		voipExtension: '',
 	});
+
+	console.log(values.departments, userDepartments);
 
 	const { handleDepartments, handleStatus, handleVoipExtension } = handlers;
 	const { departments, status, voipExtension } = values as {
@@ -130,7 +123,7 @@ const AgentEdit: FC<AgentEditProps> = ({ data, userDepartments, availableDepartm
 				<Field.Label>{t('Departments')}</Field.Label>
 				<Field.Row>
 					<MultiSelect
-						options={options}
+						options={availableDepartments}
 						value={departments}
 						placeholder={t('Select_an_option')}
 						onChange={handleDepartments}

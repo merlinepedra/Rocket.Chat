@@ -23,12 +23,14 @@ const AddAgent = ({ reload }: { reload: () => void }): ReactElement => {
 		reload();
 		setUsername('');
 	});
+
+	const handleUserChange = useMutableCallback((user) => setUsername(user));
 	return (
-		<Box display='flex' alignItems='center'>
+		<Box display='flex' alignItems='center' pi='x24'>
 			<Field>
 				<Field.Label>{t('Username')}</Field.Label>
 				<Field.Row>
-					<UserAutoComplete value={username} onChange={setUsername} />
+					<UserAutoComplete value={username} onChange={handleUserChange} />
 					<Button disabled={!username} onClick={handleSave} mis='x8' primary>
 						{t('Add')}
 					</Button>

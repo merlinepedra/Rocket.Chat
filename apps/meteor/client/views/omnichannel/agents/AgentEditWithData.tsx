@@ -35,7 +35,13 @@ const AgentEditWithData = ({ uid, reload }: AgentEditWithDataProps): ReactElemen
 	}
 
 	return (
-		<AgentEdit uid={uid} data={data.user} userDepartments={userDepartments} availableDepartments={availableDepartments} reset={reload} />
+		<AgentEdit
+			uid={uid}
+			data={data}
+			userDepartments={userDepartments?.departments?.map((department) => department._id) || []}
+			availableDepartments={availableDepartments?.departments?.map(({ _id, name }) => (name ? [_id, name] : [_id, _id])) || []}
+			reset={reload}
+		/>
 	);
 };
 
