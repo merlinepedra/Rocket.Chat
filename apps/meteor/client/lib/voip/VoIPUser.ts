@@ -37,6 +37,7 @@ import {
 	Registerer,
 	SessionInviteOptions,
 	RequestPendingError,
+	Inviter,
 } from 'sip.js';
 import { OutgoingByeRequest, OutgoingRequestDelegate, URI } from 'sip.js/lib/core';
 import { SessionDescriptionHandler, SessionDescriptionHandlerOptions } from 'sip.js/lib/platform/web';
@@ -98,8 +99,6 @@ export class VoIPUser extends Emitter<VoipEvents> {
 	private attemptRegistration = false;
 
 	private deviceManager: DeviceManager;
-
-	// private selectedDevices: ISelectedDevices;
 
 	constructor(private readonly config: VoIPUserConfiguration, mediaRenderer?: IMediaStreamRenderer) {
 		super();
@@ -347,9 +346,9 @@ export class VoIPUser extends Emitter<VoipEvents> {
 					break;
 				case SessionState.Established:
 					this._opInProgress = Operation.OP_NONE;
-					this._callState = 'IN_CALL';
 					this.setupRemoteMedia();
-					this.emit('callestablished');
+					this._callState = 'IN_CALL';
+					this.emit('callestablished', { userState: this._userState, callInfo: this._callerInfo });
 					this.emit('stateChanged');
 					break;
 				case SessionState.Terminating:
@@ -646,6 +645,29 @@ export class VoIPUser extends Emitter<VoipEvents> {
 		throw new Error('Something went wrong');
 	}
 
+	/* Helper routines for checking call actions BEGIN */
+
+	private canRejectCall(): boolean {
+		if (this._callState !== 'OFFER_RECEIVED' && this._callState !== 'OFFER_SENT') {
+			return false;
+		}
+		return true;
+	}
+
+	private canEndOrHoldCall(): boolean {
+		if (
+			this._callState !== 'ANSWER_SENT' &&
+			this._callState !== 'ANSWER_RECEIVED' &&
+			this._callState !== 'IN_CALL' &&
+			this._callState !== 'ON_HOLD'
+		) {
+			return false;
+		}
+		return true;
+	}
+
+	/* Helper routines for checking call actions END */
+
 	/**
 	 * Public method called from outside to reject a call.
 	 * @remarks
@@ -654,7 +676,7 @@ export class VoIPUser extends Emitter<VoipEvents> {
 		if (!this.session) {
 			throw new Error('Session does not exist.');
 		}
-		if (this._callState !== 'OFFER_RECEIVED') {
+		if (!this.canRejectCall()) {
 			throw new Error(`Incorrect call State = ${this.callState}`);
 		}
 		if (!(this.session instanceof Invitation)) {
@@ -671,7 +693,7 @@ export class VoIPUser extends Emitter<VoipEvents> {
 		if (!this.session) {
 			throw new Error('Session does not exist.');
 		}
-		if (this._callState !== 'ANSWER_SENT' && this._callState !== 'IN_CALL' && this._callState !== 'ON_HOLD') {
+		if (!this.canEndOrHoldCall()) {
 			throw new Error(`Incorrect call State = ${this.callState}`);
 		}
 
@@ -721,7 +743,7 @@ export class VoIPUser extends Emitter<VoipEvents> {
 		if (!this.session) {
 			throw new Error('Session does not exist.');
 		}
-		if (this._callState !== 'ANSWER_SENT' && this._callState !== 'IN_CALL' && this._callState !== 'ON_HOLD') {
+		if (!this.canEndOrHoldCall()) {
 			throw new Error(`Incorrect call State = ${this.callState}`);
 		}
 		this.handleHoldUnhold(holdState);
@@ -999,7 +1021,6 @@ export class VoIPUser extends Emitter<VoipEvents> {
 			return false;
 		}
 		this.deviceManager.changeAudioInputDevice(selectedAudioDevices);
-		// const stream = await this.getStream(this.deviceManager.getConstraints('audio'));
 		const newStream = await LocalStream.requestNewStream(this.deviceManager.getConstraints('audio'), this.session);
 		if (!newStream) {
 			console.warn('changeAudioInputDevice() : Unable to get local stream. Returning');
@@ -1052,5 +1073,55 @@ export class VoIPUser extends Emitter<VoipEvents> {
 
 	setSelectedDevices(selectedDevices: ISelectedDevices): void {
 		this.deviceManager.setSelectedDevices(selectedDevices);
+	}
+
+	async makeCall(callee: string, mediaRenderer?: IMediaStreamRenderer): Promise<void> {
+		if (mediaRenderer) {
+			this.mediaStreamRendered = mediaRenderer;
+		}
+		if (this.session) {
+			throw new Error('Session exists');
+		}
+		if (!this.userAgent) {
+			throw new Error('No User Agent.');
+		}
+		if (this.callState !== 'REGISTERED') {
+			throw new Error('Incorrect UA state');
+		}
+		const target = UserAgent.makeURI(callee);
+		if (!target) {
+			throw new Error(`Failed to create valid URI ${callee}`);
+		}
+		const constraints = this.deviceManager.getConstraints();
+		const inviterOptions = {
+			sessionDescriptionHandlerOptions: { constraints },
+		};
+		// Create a new Inviter for the outgoing Session
+		const inviter = new Inviter(this.userAgent, target, inviterOptions);
+		this.session = inviter;
+		this.setupSessionEventHandlers(inviter);
+		this._opInProgress = Operation.OP_SEND_INVITE;
+		inviter
+			.invite({
+				requestDelegate: {
+					onAccept: (): void => {
+						this._callState = 'ANSWER_RECEIVED';
+					},
+					onReject: (error): void => {
+						console.error(`Unable to make call error = ${error} `);
+					},
+				},
+			})
+			.then(() => {
+				this._callState = 'OFFER_SENT';
+				const callerInfo: ICallerInfo = {
+					callerId: inviter.remoteIdentity.uri.user ? inviter.remoteIdentity.uri.user : '',
+					callerName: inviter.remoteIdentity.displayName,
+					host: inviter.remoteIdentity.uri.host,
+				};
+				this._callerInfo = callerInfo;
+				this._userState = UserState.UAC;
+				console.error(`sent INVITE ${JSON.stringify(inviter.body)}`);
+			});
 	}
 }

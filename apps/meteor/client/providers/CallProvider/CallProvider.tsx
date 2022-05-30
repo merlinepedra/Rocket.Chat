@@ -3,6 +3,7 @@ import {
 	IUser,
 	VoipEventDataSignature,
 	VoipClientEvents,
+	UserState,
 	ICallerInfo,
 	isVoipEventAgentCalled,
 	isVoipEventAgentConnected,
@@ -11,6 +12,7 @@ import {
 	isVoipEventQueueMemberRemoved,
 	isVoipEventCallAbandoned,
 } from '@rocket.chat/core-typings';
+import { ICallDetails } from '@rocket.chat/core-typings/dist/voip/ICallDetails';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useRoute, useUser, useSetting, useEndpoint, useStream } from '@rocket.chat/ui-contexts';
 import { Random } from 'meteor/random';
@@ -55,6 +57,13 @@ export const CallProvider: FC = ({ children }) => {
 	const [queueCounter, setQueueCounter] = useState(0);
 	const [queueName, setQueueName] = useState('');
 
+	const setModal = useSetModal();
+
+	const visitorEndpoint = useEndpoint('POST', 'livechat/visitor');
+	const voipEndpoint = useEndpoint('GET', 'voip/room');
+	const voipCloseRoomEndpoint = useEndpoint('POST', 'voip/room.close');
+	const [roomInfo, setRoomInfo] = useState<{ v: { token?: string }; rid: string }>();
+
 	const openWrapUpModal = useCallback((): void => {
 		imperativeModal.open({ component: WrapUpCallModal });
 	}, []);
@@ -63,6 +72,75 @@ export const CallProvider: FC = ({ children }) => {
 
 	const [networkStatus, setNetworkStatus] = useState<NetworkState>('online');
 
+	const openRoom = (rid: IVoipRoom['_id']): void => {
+		roomCoordinator.openRouteLink('v', { rid });
+	};
+
+	const createRoom = useCallback(
+		async (caller: ICallerInfo): Promise<IVoipRoom['_id']> => {
+			if (user) {
+				const { visitor } = await visitorEndpoint({
+					visitor: {
+						token: Random.id(),
+						phone: caller.callerId,
+						name: caller.callerName || caller.callerId,
+					},
+				});
+				const voipRoom = visitor && (await voipEndpoint({ token: visitor.token, agentId: user._id }));
+				openRoom(voipRoom.room._id);
+				voipRoom.room && setRoomInfo({ v: { token: voipRoom.room.v.token }, rid: voipRoom.room._id });
+				const queueAggregator = result.voipClient?.getAggregator();
+				if (queueAggregator) {
+					queueAggregator.callStarted();
+				}
+				return voipRoom.room._id;
+			}
+			return '';
+		},
+		[result.voipClient, user, visitorEndpoint, voipEndpoint],
+	);
+
+	const onCallEstablished = useCallback(
+		async (callDetails: ICallDetails): Promise<IVoipRoom['_id'] | undefined> => {
+			if (!result.voipClient) {
+				return;
+			}
+			if (!callDetails.callInfo) {
+				return;
+			}
+			stopRingback();
+			if (callDetails.userState === UserState.UAC) {
+				// Agent has sent Invite. So it must create a room.
+				console.error('ERROR');
+				const { callInfo } = callDetails;
+				return createRoom(callInfo);
+			}
+		},
+		[createRoom, result.voipClient],
+	);
+
+	/*
+	const createRoom = async (caller: ICallerInfo): Promise<IVoipRoom['_id']> => {
+		if (user) {
+			const { visitor } = await visitorEndpoint({
+				visitor: {
+					token: Random.id(),
+					phone: caller.callerId,
+					name: caller.callerName || caller.callerId,
+				},
+			});
+			const voipRoom = visitor && (await voipEndpoint({ token: visitor.token, agentId: user._id }));
+			openRoom(voipRoom.room._id);
+			voipRoom.room && setRoomInfo({ v: { token: voipRoom.room.v.token }, rid: voipRoom.room._id });
+			const queueAggregator = voipClient.getAggregator();
+			if (queueAggregator) {
+				queueAggregator.callStarted();
+			}
+			return voipRoom.room._id;
+		}
+		return '';
+	}
+	*/
 	useEffect(() => {
 		if (!result?.voipClient) {
 			return;
@@ -234,16 +312,6 @@ export const CallProvider: FC = ({ children }) => {
 		};
 	}, [onNetworkConnected, onNetworkDisconnected, result.voipClient]);
 
-	const visitorEndpoint = useEndpoint('POST', 'livechat/visitor');
-	const voipEndpoint = useEndpoint('GET', 'voip/room');
-	const voipCloseRoomEndpoint = useEndpoint('POST', 'voip/room.close');
-
-	const [roomInfo, setRoomInfo] = useState<{ v: { token?: string }; rid: string }>();
-
-	const openRoom = (rid: IVoipRoom['_id']): void => {
-		roomCoordinator.openRouteLink('v', { rid });
-	};
-
 	const contextValue: CallContextValue = useMemo(() => {
 		if (!voipEnabled) {
 			return {
@@ -277,7 +345,7 @@ export const CallProvider: FC = ({ children }) => {
 		const { registrationInfo, voipClient } = result;
 
 		voipClient.on('incomingcall', () => user && startRingback(user));
-		voipClient.on('callestablished', () => stopRingback());
+		voipClient.on('callestablished', (callDetails: ICallDetails) => onCallEstablished(callDetails));
 		voipClient.on('callterminated', () => stopRingback());
 
 		return {
@@ -299,6 +367,8 @@ export const CallProvider: FC = ({ children }) => {
 				reject: (): Promise<void> => voipClient.rejectCall(),
 			},
 			openRoom,
+			createRoom,
+			/*
 			createRoom: async (caller: ICallerInfo): Promise<IVoipRoom['_id']> => {
 				if (user) {
 					const { visitor } = await visitorEndpoint({
@@ -319,6 +389,7 @@ export const CallProvider: FC = ({ children }) => {
 				}
 				return '';
 			},
+			*/
 			closeRoom: async (data?: { comment: string; tags: string[] }): Promise<void> => {
 				roomInfo &&
 					(await voipCloseRoomEndpoint({
@@ -342,9 +413,9 @@ export const CallProvider: FC = ({ children }) => {
 		roomInfo,
 		queueCounter,
 		queueName,
+		createRoom,
 		openWrapUpModal,
-		visitorEndpoint,
-		voipEndpoint,
+		onCallEstablished,
 		voipCloseRoomEndpoint,
 		homeRoute,
 	]);
