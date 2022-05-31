@@ -279,6 +279,9 @@ export const CallProvider: FC = ({ children }) => {
 		result.voipClient.onNetworkEvent('connectionerror', onNetworkDisconnected);
 		result.voipClient.onNetworkEvent('localnetworkonline', onNetworkConnected);
 		result.voipClient.onNetworkEvent('localnetworkoffline', onNetworkDisconnected);
+		result.voipClient.on('incomingcall', () => user && startRingback(user));
+		result.voipClient.on('callestablished', (callDetails: ICallDetails) => onCallEstablished(callDetails));
+		result.voipClient.on('callterminated', () => stopRingback());
 
 		return (): void => {
 			result.voipClient?.offNetworkEvent('connected', onNetworkConnected);
@@ -286,8 +289,11 @@ export const CallProvider: FC = ({ children }) => {
 			result.voipClient?.offNetworkEvent('connectionerror', onNetworkDisconnected);
 			result.voipClient?.offNetworkEvent('localnetworkonline', onNetworkConnected);
 			result.voipClient?.offNetworkEvent('localnetworkoffline', onNetworkDisconnected);
+			result.voipClient?.off('incomingcall', () => user && startRingback(user));
+			result.voipClient?.off('callestablished', (callDetails: ICallDetails) => onCallEstablished(callDetails));
+			result.voipClient?.off('callterminated', () => stopRingback());
 		};
-	}, [onNetworkConnected, onNetworkDisconnected, result.voipClient]);
+	}, [onCallEstablished, onNetworkConnected, onNetworkDisconnected, result.voipClient, user]);
 
 	const contextValue: CallContextValue = useMemo(() => {
 		if (!voipEnabled) {
@@ -320,11 +326,6 @@ export const CallProvider: FC = ({ children }) => {
 		}
 
 		const { registrationInfo, voipClient } = result;
-
-		voipClient.on('incomingcall', () => user && startRingback(user));
-		voipClient.on('callestablished', (callDetails: ICallDetails) => onCallEstablished(callDetails));
-		voipClient.on('callterminated', () => stopRingback());
-
 		return {
 			enabled: true,
 			ready: true,
