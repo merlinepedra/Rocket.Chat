@@ -1,3 +1,4 @@
+import { ILivechatDepartment, ILivechatAgent } from '@rocket.chat/core-typings';
 import { Box } from '@rocket.chat/fuselage';
 import { useTranslation } from '@rocket.chat/ui-contexts';
 import React, { ReactElement } from 'react';
@@ -37,9 +38,9 @@ const AgentEditWithData = ({ uid, reload }: AgentEditWithDataProps): ReactElemen
 	return (
 		<AgentEdit
 			uid={uid}
-			data={data}
-			userDepartments={userDepartments?.departments?.map((department) => department._id) || []}
-			availableDepartments={availableDepartments?.departments?.map(({ _id, name }) => (name ? [_id, name] : [_id, _id])) || []}
+			data={data as { user: ILivechatAgent }}
+			userDepartments={userDepartments as { departments: ILivechatDepartment[] }}
+			availableDepartments={availableDepartments as { departments: ILivechatDepartment[] }}
 			reset={reload}
 		/>
 	);

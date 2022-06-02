@@ -1,8 +1,9 @@
 import { Box, Pagination } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { usePermission, useTranslation, useRouteParameter, useRoute } from '@rocket.chat/ui-contexts';
-import React, { ReactElement, useMemo, useCallback } from 'react';
+import React, { ReactElement, useMemo, useCallback, useState } from 'react';
 
+import FilterByText from '../../../components/FilterByText';
 import {
 	GenericTable,
 	GenericTableBody,
@@ -31,16 +32,18 @@ const AgentsRoute = (): ReactElement => {
 	const t = useTranslation();
 	const { current, itemsPerPage, setItemsPerPage: onSetItemsPerPage, setCurrent: onSetCurrent, ...paginationProps } = usePagination();
 
+	const [text, setText] = useState('');
+
 	const query = useDebouncedValue(
 		useMemo(
 			() => ({
-				// text,
+				query: JSON.stringify({ name: { $regex: text || '', $options: 'i' } }),
 				fields: JSON.stringify({ name: 1, username: 1, emails: 1, avatarETag: 1 }),
 				sort: `{ "${sortBy}": ${sortDirection === 'asc' ? 1 : -1} }`,
 				count: itemsPerPage,
 				offset: current,
 			}),
-			[itemsPerPage, current, sortBy, sortDirection],
+			[text, sortBy, sortDirection, itemsPerPage, current],
 		),
 		500,
 	);
@@ -54,7 +57,7 @@ const AgentsRoute = (): ReactElement => {
 	const id = useRouteParameter('id');
 
 	const onRowClick = useMutableCallback(
-		(id) => () =>
+		(id) => (): void =>
 			agentsRoute.push({
 				context: 'info',
 				id,
@@ -96,6 +99,7 @@ const AgentsRoute = (): ReactElement => {
 			<Page>
 				<Page.Header title={t('Agents')} />
 				<AddAgent reload={reload} />
+				<FilterByText onChange={({ text }): void => setText(text)} />
 				<Page.Content>
 					<GenericTable>
 						<GenericTableHeader>

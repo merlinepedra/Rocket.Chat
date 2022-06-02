@@ -24,7 +24,11 @@ const AddAgent = ({ reload }: { reload: () => void }): ReactElement => {
 		setUsername('');
 	});
 
-	const handleUserChange = useMutableCallback((user) => setUsername(user));
+	const handleUserChange = useMutableCallback((user) => {
+		if (typeof user === 'string') {
+			setUsername(user);
+		}
+	});
 	return (
 		<Box display='flex' alignItems='center' pi='x24'>
 			<Field>
