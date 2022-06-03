@@ -1,6 +1,6 @@
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
 import { useRoute, useRouteParameter, useTranslation } from '@rocket.chat/ui-contexts';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, ReactElement } from 'react';
 
 import UserPageHeaderContentWithSeatsCap from '../../../../ee/client/views/admin/users/UserPageHeaderContentWithSeatsCap';
 import { useSeatsCap } from '../../../../ee/client/views/admin/users/useSeatsCap';
@@ -10,13 +10,13 @@ import { useEndpointData } from '../../../hooks/useEndpointData';
 import { AddUser } from './AddUser';
 import EditUserWithData from './EditUserWithData';
 import { InviteUsers } from './InviteUsers';
-import { UserInfoWithData } from './UserInfo';
+import UserInfoWithData from './UserInfo';
 import UserPageHeaderContent from './UserPageHeaderContent';
 import UsersTable from './UsersTable';
 
-const sortDir = (sortDir) => (sortDir === 'asc' ? 1 : -1);
+const sortDir = (sortDir: 'asc' | 'desc') => (sortDir === 'asc' ? 1 : -1);
 
-const useQuery = ({ text, itemsPerPage, current }, sortFields) =>
+const useQuery = ({ text, itemsPerPage, current }: { text?: string; itemsPerPage?: 25 | 50 | 100; current?: number }, sortFields: [string, 'asc' | 'desc'][]) =>
 	useMemo(
 		() => ({
 			fields: JSON.stringify({
@@ -36,7 +36,7 @@ const useQuery = ({ text, itemsPerPage, current }, sortFields) =>
 				],
 			}),
 			sort: JSON.stringify(
-				sortFields.reduce((agg, [column, direction]) => {
+				sortFields.reduce((agg: { [x: string]: number }, [column, direction]) => {
 					agg[column] = sortDir(direction);
 					return agg;
 				}, {}),
@@ -47,7 +47,7 @@ const useQuery = ({ text, itemsPerPage, current }, sortFields) =>
 		[text, itemsPerPage, current, sortFields],
 	);
 
-function UsersPage() {
+const UsersPage = (): ReactElement => {
 	const context = useRouteParameter('context');
 	const id = useRouteParameter('id');
 	const seatsCap = useSeatsCap();
@@ -65,11 +65,11 @@ function UsersPage() {
 
 	const t = useTranslation();
 
-	const handleVerticalBarCloseButtonClick = () => {
+	const handleVerticalBarCloseButtonClick = (): void => {
 		usersRoute.push({});
 	};
-	const [params, setParams] = useState({ text: '', current: 0, itemsPerPage: 25 });
-	const [sort, setSort] = useState([
+	const [params, setParams] = useState<{ text?: string; current?: number; itemsPerPage?: 25 | 50 | 100; }>({ text: '', current: 0, itemsPerPage: 25 });
+	const [sort, setSort] = useState<[string, 'asc' | 'desc'][]>([
 		['name', 'asc'],
 		['usernames', 'asc'],
 	]);
@@ -77,7 +77,7 @@ function UsersPage() {
 	const debouncedParams = useDebouncedValue(params, 500);
 	const debouncedSort = useDebouncedValue(sort, 500);
 	const query = useQuery(debouncedParams, debouncedSort);
-	const { value: data = {}, reload: reloadList } = useEndpointData('users.list', query);
+	const { value: data, reload: reloadList } = useEndpointData('users.list', query);
 
 	const reload = () => {
 		seatsCap?.reload();
@@ -96,7 +96,7 @@ function UsersPage() {
 						))}
 				</Page.Header>
 				<Page.Content>
-					<UsersTable users={data.users} total={data.total} params={params} onChangeParams={setParams} sort={sort} onChangeSort={setSort} />
+					<UsersTable users={data?.users} total={data?.total} params={params} onChangeParams={setParams} sort={sort} onChangeSort={setSort} />
 				</Page.Content>
 			</Page>
 			{context && (

@@ -1,7 +1,8 @@
+import { Serialized, IUser } from '@rocket.chat/core-typings';
 import { Box } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useSetting, useRolesDescription, useTranslation } from '@rocket.chat/ui-contexts';
-import React, { useMemo } from 'react';
+import React, { useMemo, ReactElement, useState, useEffect } from 'react';
 
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
 import { FormSkeleton } from '../../../components/Skeleton';
@@ -11,9 +12,30 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { getUserEmailVerified } from '../../../lib/utils/getUserEmailVerified';
 import UserInfo from '../../room/contextualBar/UserInfo/UserInfo';
+import { convertUserFromAPI } from './convertUserFromAPI';
 import { UserInfoActions } from './UserInfoActions';
 
-export function UserInfoWithData({ uid, username, onReload, ...props }) {
+type UserInfoWithDataProps = {
+	uid: string;
+	username?: string;
+	onReload: () => void;
+};
+
+const useUserFromAPI = (userFromAPI: Serialized<IUser> | undefined): IUser | undefined => {
+	const [user, setUser] = useState<IUser | undefined>();
+
+	useEffect(() => {
+		if(!userFromAPI) {
+			return;
+		}
+		const convertedUser = convertUserFromAPI(userFromAPI);
+		setUser(convertedUser);
+	}, []);
+
+	return user;
+};
+
+const UserInfoWithData = ({ uid, username, onReload, ...props }: UserInfoWithDataProps): ReactElement => {
 	const t = useTranslation();
 	const showRealNames = useSetting('UI_Use_Real_Name');
 	const getRoles = useRolesDescription();
@@ -29,13 +51,19 @@ export function UserInfoWithData({ uid, username, onReload, ...props }) {
 		useMemo(() => ({ ...(uid && { userId: uid }), ...(username && { username }) }), [uid, username]),
 	);
 
+	const user = useUserFromAPI(data?.user);
+
 	const onChange = useMutableCallback(() => {
 		onReload();
 		reloadUserInfo();
 	});
 
-	const user = useMemo(() => {
-		const { user } = data || { user: {} };
+	const userObj = useMemo(() => {
+		if(!user) {
+			return;
+		}
+
+		// const { user } = data || { user: {} };
 
 		const { name, username, roles = [], status, statusText, bio, utcOffset, lastLogin, nickname } = user;
 
@@ -50,7 +78,7 @@ export function UserInfoWithData({ uid, username, onReload, ...props }) {
 			utcOffset,
 			customFields: {
 				...user.customFields,
-				...(approveManuallyUsers && user.active === false && user.reason && { Reason: user.reason }),
+				...(approveManuallyUsers && user.active === false && user.reason && { Reason: user.reason }) as {},
 			},
 			verified: getUserEmailVerified(user),
 			email: getUserEmailAddress(user),
@@ -73,21 +101,20 @@ export function UserInfoWithData({ uid, username, onReload, ...props }) {
 		return <Box mbs='x16'>{t('User_not_found')}</Box>;
 	}
 
-	const admin = data.user?.roles?.includes('admin');
+	const admin = data?.user?.roles?.includes('admin');
 
 	return (
 		<UserInfo
-			{...user}
-			data={data.user}
+			{...userObj}
+			data={user}
 			onChange={onChange}
 			actions={
-				data &&
-				data.user && (
+				user && (
 					<UserInfoActions
-						isActive={data.user.active}
+						isActive={user.active}
 						isAdmin={admin}
-						_id={data.user._id}
-						username={data.user.username}
+						_id={user._id}
+						username={user.username}
 						onChange={onChange}
 						onReload={onReload}
 					/>
@@ -96,4 +123,6 @@ export function UserInfoWithData({ uid, username, onReload, ...props }) {
 			{...props}
 		/>
 	);
-}
+};
+
+export default UserInfoWithData;

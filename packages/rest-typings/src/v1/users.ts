@@ -1,4 +1,6 @@
 import type { ITeam, IUser } from '@rocket.chat/core-typings';
+import type { PaginatedRequest } from '../helpers/PaginatedRequest';
+import type { PaginatedResult } from '../helpers/PaginatedResult';
 
 export type UsersEndpoints = {
 	'users.info': {
@@ -20,5 +22,12 @@ export type UsersEndpoints = {
 	};
 	'users.resetAvatar': {
 		POST: (params: { userId?: IUser['_id']; username?: IUser['username'] }) => void;
+	};
+	'users.list': {
+		GET: (params: PaginatedRequest<{
+			text?: string;
+		}>) => PaginatedResult<{
+			users: Pick<IUser, '_id' | 'username' | 'name' | 'emails' | 'status' | 'active' | 'roles' | 'lastLogin' | 'avatarETag'>[];
+		}>;
 	};
 };

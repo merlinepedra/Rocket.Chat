@@ -1,6 +1,7 @@
-import { Box, Margins, Tag } from '@rocket.chat/fuselage';
+import { IUser, UserStatus } from '@rocket.chat/core-typings';
+import { Box, Margins, Tag, Icon } from '@rocket.chat/fuselage';
 import { useSetting, useTranslation } from '@rocket.chat/ui-contexts';
-import React, { memo } from 'react';
+import React, { memo, ReactNode, ReactElement } from 'react';
 
 import MarkdownText from '../../../../components/MarkdownText';
 import UTCClock from '../../../../components/UTCClock';
@@ -10,7 +11,20 @@ import { useTimeAgo } from '../../../../hooks/useTimeAgo';
 import InfoPanel from '../../../InfoPanel';
 import Avatar from './Avatar';
 
-function UserInfo({
+type UserInfoProps = IUser & {
+	canViewAllInfo: boolean;
+	email: string;
+	verified: boolean;
+	showRealNames: boolean;
+	phone: string;
+	customStatus: IUser['statusText'];
+	data?: IUser;
+	onChange: () => void;
+	actions: ReactNode;
+	roles?: ReactNode;
+};
+
+const UserInfo = ({
 	username,
 	bio,
 	canViewAllInfo,
@@ -20,7 +34,7 @@ function UserInfo({
 	status,
 	phone,
 	customStatus,
-	roles = [],
+	roles,
 	lastLogin,
 	createdAt,
 	utcOffset,
@@ -30,13 +44,15 @@ function UserInfo({
 	nickname,
 	actions,
 	...props
-}) {
+}: UserInfoProps): ReactElement => {
 	const t = useTranslation();
 	const timeAgo = useTimeAgo();
 	const customFieldsToShowSetting = useSetting('Accounts_CustomFieldsToShowInUserInfo');
 	let customFieldsToShowObj;
 	try {
-		customFieldsToShowObj = JSON.parse(customFieldsToShowSetting);
+		if(typeof customFieldsToShowSetting === 'string') {
+			customFieldsToShowObj = JSON.parse(customFieldsToShowSetting);
+		}
 	} catch (error) {
 		customFieldsToShowObj = undefined;
 	}
@@ -61,7 +77,7 @@ function UserInfo({
 				{actions && <InfoPanel.Section>{actions}</InfoPanel.Section>}
 
 				<InfoPanel.Section>
-					<InfoPanel.Title title={(showRealNames && name) || username || name} icon={status} />
+					<InfoPanel.Title title={(showRealNames && name) || username || name || ''} icon={status || UserStatus.OFFLINE} />
 
 					<InfoPanel.Text>
 						<MarkdownText content={customStatus} parseEmoji={true} variant='inline' />
@@ -80,7 +96,7 @@ function UserInfo({
 						<InfoPanel.Field>
 							<InfoPanel.Label>{t('Local_Time')}</InfoPanel.Label>
 							<InfoPanel.Text>
-								<UTCClock utcOffset={utcOffset} />
+								<UTCClock utcOffset={utcOffset || 0} />
 							</InfoPanel.Text>
 						</InfoPanel.Field>
 					)}
@@ -153,9 +169,9 @@ function UserInfo({
 					{customFieldsToShow.map((customField) =>
 						Object.values(customField)[0] ? (
 							<InfoPanel.Field key={Object.keys(customField)[0]}>
-								<InfoPanel.Label>{t(Object.keys(customField)[0])}</InfoPanel.Label>
+								<InfoPanel.Label>{Object.keys(customField)[0]}</InfoPanel.Label>
 								<InfoPanel.Text>
-									<MarkdownText content={Object.values(customField)[0]} variant='inline' />
+									<MarkdownText content={Object.values(customField)[0] as string} variant='inline' />
 								</InfoPanel.Text>
 							</InfoPanel.Field>
 						) : null,

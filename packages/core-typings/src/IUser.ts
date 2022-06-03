@@ -139,6 +139,10 @@ export interface IUser extends IRocketChatRecord {
 	ldap?: boolean;
 	extension?: string;
 	inviteToken?: string;
+	nickname?: string;
+	bio?: string;
+	phone?: string;
+	reason?: string;
 }
 
 export interface IRegisterUser extends IUser {

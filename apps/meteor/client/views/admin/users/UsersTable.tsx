@@ -1,18 +1,32 @@
+import { IUser } from '@rocket.chat/core-typings';
 import { useMediaQuery } from '@rocket.chat/fuselage-hooks';
 import { useRoute, useTranslation } from '@rocket.chat/ui-contexts';
-import React, { useCallback } from 'react';
+import React, { Dispatch, ReactElement, SetStateAction, useCallback } from 'react';
 
 import FilterByText from '../../../components/FilterByText';
 import GenericTable from '../../../components/GenericTable';
 import UserRow from './UserRow';
 
-function UsersTable({ params, onChangeParams, sort, onChangeSort, ...props }) {
+type UsersTableProps = {
+	params: { text?: string; current?: number; itemsPerPage?: 25 | 50 | 100 };
+	onChangeParams: Dispatch<SetStateAction<{
+		text?: string;
+		current?: number;
+		itemsPerPage?: 25 | 50 | 100;
+	}>>;
+	sort: [string, 'asc' | 'desc'][];
+	onChangeSort: Dispatch<SetStateAction<[string, "asc" | "desc"][]>>;
+	users?: Pick<IUser, '_id' | 'username' | 'name' | 'emails' | 'status' | 'active' | 'roles' | 'lastLogin' | 'avatarETag'>[];
+	total?: number;
+};
+
+const UsersTable = ({ params, onChangeParams, sort, onChangeSort, users, total }: UsersTableProps): ReactElement => {
 	const t = useTranslation();
 
 	const usersRoute = useRoute('admin-users');
 
 	const onClick = useCallback(
-		(username) => () =>
+		(username) => (): void =>
 			usersRoute.push({
 				context: 'info',
 				id: username,
@@ -21,8 +35,8 @@ function UsersTable({ params, onChangeParams, sort, onChangeSort, ...props }) {
 	);
 
 	const onHeaderClick = useCallback(
-		(id) => {
-			const preparedSort = [];
+		(id: string) => {
+			const preparedSort: [string, 'asc' | 'desc'][] = [];
 
 			const [[sortBy, sortDirection]] = sort;
 
@@ -112,11 +126,11 @@ function UsersTable({ params, onChangeParams, sort, onChangeSort, ...props }) {
 					</GenericTable.HeaderCell>
 				</>
 			}
-			results={props.users}
-			total={props.total}
+			results={users}
+			total={total}
 			setParams={onChangeParams}
 			params={params}
-			renderFilter={({ onChange, ...props }) => <FilterByText placeholder={t('Search_Users')} onChange={onChange} {...props} />}
+			renderFilter={({ onChange, ...props }: any): ReactElement => <FilterByText placeholder={t('Search_Users')} onChange={onChange} {...props} />}
 		>
 			{(props) => <UserRow key={props._id} onClick={onClick} mediaQuery={mediaQuery} {...props} />}
 		</GenericTable>
