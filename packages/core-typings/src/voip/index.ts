@@ -15,5 +15,3 @@ export * from './WorkflowTypes';
 export * from './IVoipClientEvents';
 export * from './VoIPUserConfiguration';
 export * from './VoIpCallerInfo';
-export * from './DeviceEvents';
-export * from './IDeviceInfo';
