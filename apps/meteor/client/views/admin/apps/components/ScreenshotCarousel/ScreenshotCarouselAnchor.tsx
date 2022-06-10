@@ -67,7 +67,7 @@ const ScreenshotCarouselAnchor = ({ screenshots }: ScreenshotCarouselAnchorProps
 
 	const carouselPortal = createPortal(
 		<ScreenshotCarousel
-			AppScreenshots={screenshots}
+			ScreenshotsList={screenshots}
 			setViewCarousel={setViewCarousel}
 			handleNextSlide={handleNextSlide}
 			handlePrevSlide={handlePrevSlide}

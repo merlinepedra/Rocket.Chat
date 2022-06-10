@@ -3,7 +3,7 @@ import { TranslationKey, useTranslation } from '@rocket.chat/ui-contexts';
 import React, { FC } from 'react';
 
 import ExternalLink from '../../../components/ExternalLink';
-import ScreenshotCarouselAnchor from './components/ScreenshotCarouselAnchor';
+import ScreenshotCarouselAnchor from './components/ScreenshotCarousel/ScreenshotCarouselAnchor';
 import { AppInfo } from './definitions/AppInfo';
 
 type AppDetailsPageContentProps = {
