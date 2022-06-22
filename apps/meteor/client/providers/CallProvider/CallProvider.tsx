@@ -2,8 +2,8 @@ import {
 	IVoipRoom,
 	IUser,
 	VoipEventDataSignature,
-	VoipClientEvents,
 	UserState,
+	VoipClientEvents,
 	ICallerInfo,
 	isVoipEventAgentCalled,
 	isVoipEventAgentConnected,
@@ -69,9 +69,6 @@ export const CallProvider: FC = ({ children }) => {
 
 	const [queueCounter, setQueueCounter] = useState(0);
 	const [queueName, setQueueName] = useState('');
-
-	const setModal = useSetModal();
-
 	const visitorEndpoint = useEndpoint('POST', 'livechat/visitor');
 	const voipEndpoint = useEndpoint('GET', 'voip/room');
 	const voipCloseRoomEndpoint = useEndpoint('POST', 'voip/room.close');
@@ -129,7 +126,7 @@ export const CallProvider: FC = ({ children }) => {
 			}
 			return '';
 		},
-		[result.voipClient, user, visitorEndpoint, voipEndpoint],
+		[result.voipClient, setRoomInfo, user, visitorEndpoint, voipEndpoint],
 	);
 
 	const onCallEstablished = useCallback(

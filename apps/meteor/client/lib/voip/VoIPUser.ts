@@ -38,6 +38,7 @@ import {
 import { OutgoingByeRequest, OutgoingRequestDelegate, URI } from 'sip.js/lib/core';
 import { SessionDescriptionHandler, SessionDescriptionHandlerOptions } from 'sip.js/lib/platform/web';
 
+import { DeviceManager } from './DeviceManager';
 import { toggleMediaStreamTracks } from './Helper';
 import LocalStream from './LocalStream';
 import { QueueAggregator } from './QueueAggregator';
@@ -93,6 +94,8 @@ export class VoIPUser extends Emitter<VoipEvents> {
 
 	private attemptRegistration = false;
 
+	private deviceManager: DeviceManager;
+
 	constructor(private readonly config: VoIPUserConfiguration, mediaRenderer?: IMediaStreamRenderer) {
 		super();
 		this.mediaStreamRendered = mediaRenderer;
@@ -102,6 +105,7 @@ export class VoIPUser extends Emitter<VoipEvents> {
 
 		this.onlineNetworkHandler = this.onNetworkRestored.bind(this);
 		this.offlineNetworkHandler = this.onNetworkLost.bind(this);
+		this.deviceManager = new DeviceManager(this.config);
 	}
 
 	/**
@@ -1074,7 +1078,6 @@ export class VoIPUser extends Emitter<VoipEvents> {
 		if (!target) {
 			throw new Error(`Failed to create valid URI ${callee}`);
 		}
-
 		const inviterOptions = {
 			sessionDescriptionHandlerOptions: { constraints },
 		};
