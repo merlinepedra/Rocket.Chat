@@ -4816,6 +4816,7 @@ __metadata:
     "@rocket.chat/string-helpers": ~0.31.12
     "@rocket.chat/ui-contexts": "workspace:^"
     "@rocket.chat/ui-kit": ~0.31.12
+    "@rocket.chat/ui-rocket-chat-carousel": "workspace:^"
     "@settlin/spacebars-loader": ^1.0.9
     "@slack/client": ^4.12.0
     "@slack/rtm-api": ^6.0.0
@@ -5273,6 +5274,20 @@ __metadata:
   checksum: 9f807601eb6b90a975e61c78fc1af2663fe42998b931f825e694e5843a0bc048f679dfe7c264e772819824a7b57e5c7f6df30048d88bbc797dceab8d6e766e2a
   languageName: node
   linkType: hard
+
+"@rocket.chat/ui-rocket-chat-carousel@workspace:^, @rocket.chat/ui-rocket-chat-carousel@workspace:packages/ui-rocket-chat-carousel":
+  version: 0.0.0-use.local
+  resolution: "@rocket.chat/ui-rocket-chat-carousel@workspace:packages/ui-rocket-chat-carousel"
+  dependencies:
+    "@types/jest": ^27.4.1
+    "@types/react": ^18
+    eslint: ^8.12.0
+    jest: ^27.5.1
+    react: ~17.0.2
+    ts-jest: ^27.1.4
+    typescript: ~4.3.4
+  languageName: unknown
+  linkType: soft
 
 "@selderee/plugin-htmlparser2@npm:^0.6.0":
   version: 0.6.0
@@ -7790,6 +7805,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: ebee02778ca08f954c316dc907802264e0121c87b8fa2e7e0156ab0ef2a1b0a09d968c016a3600ec4c9a17dc09b4274f292d9b15a1a5369bb7e4072def82808f
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18":
+  version: 18.0.14
+  resolution: "@types/react@npm:18.0.14"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 608eb57a383eedc54c79949673e5e8314f6b0c61542bff58721c8c47a18c23e2832e77c656050c2c2c004b62cf25582136c7c56fe1b6263a285c065fae31dbcf
   languageName: node
   linkType: hard
 
