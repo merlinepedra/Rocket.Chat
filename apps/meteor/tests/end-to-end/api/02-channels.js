@@ -1899,6 +1899,22 @@ describe('[Channels]', function () {
 			});
 		});
 
+		it('should fail to convert public channel if not on channel scope', (done) => {
+			updatePermission('create-team', ['admin']).then(() => {
+				updatePermission('edit-room', []).then(() => {
+					request
+						.post(api('channels.convertToTeam'))
+						.set(credentials)
+						.send({ channelId: channel._id })
+						.expect(403)
+						.expect((res) => {
+							expect(res.body).to.have.a.property('success', false);
+						})
+						.end(done);
+				});
+			});
+		});
+
 		it('should successfully convert a channel to a team', (done) => {
 			updatePermission('create-team', ['admin']).then(() => {
 				updatePermission('edit-room', ['admin']).then(() => {
