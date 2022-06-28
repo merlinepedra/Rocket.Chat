@@ -23,9 +23,10 @@ const addAgent = async (request: APIRequestContext): Promise<void> => {
 	});
 };
 
-test.describe.skip('[Livechat]', () => {
+test.describe.only('[Livechat]', () => {
 	let page: Page;
 	let liveChat: LiveChat;
+	const liveChatUrl = '/livechat';
 	const liveChatUser = createRegisterUser();
 	test.afterAll(async () => {
 		await page.close();
@@ -33,7 +34,6 @@ test.describe.skip('[Livechat]', () => {
 	test.describe('[Offline message]', () => {
 		test.beforeAll(async ({ browser }) => {
 			page = await browser.newPage();
-			const liveChatUrl = '/livechat';
 			await page.goto(liveChatUrl);
 
 			liveChat = new LiveChat(page);
@@ -70,13 +70,11 @@ test.describe.skip('[Livechat]', () => {
 
 			await loginPage.doLogin(validUserInserted);
 
-			await page.reload();
+			await page.goto(liveChatUrl);
 			await liveChat.btnOpenLiveChat('R').click();
 			await liveChat.doSendMessage(liveChatUser, false);
 			await liveChat.onlineAgentMessage.type('this_a_test_message_from_user');
 			await liveChat.btnSendMessageToOnlineAgent.click();
-
-			// await agent.clickOnLiveChatCall(liveChatUser.name).click();
 
 			await mainContent.sendMessage('this_a_test_message_from_agent');
 		});

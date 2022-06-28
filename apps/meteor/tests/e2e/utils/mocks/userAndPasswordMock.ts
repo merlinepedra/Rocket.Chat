@@ -20,12 +20,12 @@ export const registerUser: IRegister = {
 
 export const createRegisterUser = (): IRegister => {
 	const name = faker.name.findName();
-	const [firstName] = name.split(' ');
+	const [firstName, lastName] = name.split(' ');
 	return {
-		email: faker.internet.email(firstName.toLocaleLowerCase()),
+		email: faker.internet.email(firstName, lastName),
 		password: 'any_password',
 		name,
-		username: faker.internet.userName(),
+		username: faker.internet.userName(firstName, lastName),
 	};
 };
 

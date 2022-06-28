@@ -9,3 +9,4 @@ export * from './SetupWizard';
 export * from './SideNav';
 export * from './Discussion';
 export * from './Departments';
+export * from './LiveChat';
