@@ -225,3 +225,25 @@ export const useChangeAudioInputDevice = (): CallContextReady['changeAudioOutput
 
 	return context.changeAudioInputDevice;
 };
+
+export const useCallerState = (): CallStates | null => {
+	const context = useContext(CallContext);
+
+	const [subscribe, getSnapshot] = useMemo(() => {
+		const getSnapshot = (): CallStates | null => (isCallContextReady(context) ? context.voipClient.callerInfo.state : null);
+
+		const callback = (cb: () => void): (() => void) => {
+			if (!isCallContextReady(context)) {
+				return (): void => undefined;
+			}
+
+			context.voipClient.on('stateChanged', cb);
+
+			return (): void => context.voipClient.off('stateChanged', cb);
+		};
+
+		return [callback, getSnapshot];
+	}, [context]);
+
+	return useSyncExternalStore(subscribe, getSnapshot);
+};
