@@ -37,13 +37,12 @@ import { CustomSounds } from '../../../app/custom-sounds/client';
 import { getUserPreference } from '../../../app/utils/client';
 import { useHasLicense } from '../../../ee/client/hooks/useHasLicense';
 import { useVoipClient } from '../../../ee/client/hooks/useVoipClient';
-import { EEVoipClient } from '../../../ee/client/lib/voip/EEVoipClient';
 import { WrapUpCallModal } from '../../../ee/client/voip/components/modals/WrapUpCallModal';
+import { isOutboundClient } from '../../../ee/client/voip/utils';
 import { CallContext, CallContextValue } from '../../contexts/CallContext';
 import { useDialModal } from '../../hooks/useDialModal';
 import { roomCoordinator } from '../../lib/rooms/roomCoordinator';
 import { QueueAggregator } from '../../lib/voip/QueueAggregator';
-import { VoIPUser } from '../../lib/voip/VoIPUser';
 import VoIPAgentProvider from '../VoIPAgentProvider';
 
 type NetworkState = 'online' | 'offline';
@@ -60,8 +59,6 @@ const stopRingback = (): void => {
 	CustomSounds.pause('telephone');
 	CustomSounds.remove('telephone');
 };
-
-const isOutboundClient = (client: VoIPUser | undefined): client is EEVoipClient => client instanceof EEVoipClient;
 
 export const CallProvider: FC = ({ children }) => {
 	const voipEnabled = useSetting('VoIP_Enabled');
