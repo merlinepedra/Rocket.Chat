@@ -4,15 +4,13 @@ import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hoo
 import { useRoute, useTranslation } from '@rocket.chat/ui-contexts';
 import React, { useState, useMemo, useCallback, useEffect, ReactElement, MouseEvent } from 'react';
 
-import { useHasLicense } from '../../../../../ee/client/hooks/useHasLicense';
 import FilterByText from '../../../../components/FilterByText';
 import GenericTable from '../../../../components/GenericTable';
 import { GenericTableParams } from '../../../../components/GenericTable/GenericTable';
-import { useCallerState } from '../../../../contexts/CallContext';
+import { useCanMakeCall, useIsVoipEnterprise } from '../../../../contexts/CallContext';
 import { useDialModal } from '../../../../hooks/useDialModal';
 import { useEndpointData } from '../../../../hooks/useEndpointData';
 import { useFormatDate } from '../../../../hooks/useFormatDate';
-import { useVoipAgent } from '../../../../sidebar/sections/hooks/useVoipAgent';
 
 type Query = {
 	offset?: number;
@@ -63,11 +61,9 @@ function ContactTable({ setContactReload }: ContactTableProps): ReactElement {
 	const query = useQuery(debouncedParams, debouncedSort);
 	const directoryRoute = useRoute('omnichannel-directory');
 	const formatDate = useFormatDate();
-	const callState = useCallerState();
-	const { agentEnabled, registered } = useVoipAgent();
-	const isInCall = callState === 'IN_CALL';
-	const isEnterprise = useHasLicense('voip-enterprise') === true;
 	const { openDialModal } = useDialModal();
+	const isEnterprise = useIsVoipEnterprise();
+	const canMakeCall = useCanMakeCall();
 
 	const onHeaderClick = useMutableCallback((id) => {
 		const [sortBy, sortDirection] = sort;
@@ -154,7 +150,7 @@ function ContactTable({ setContactReload }: ContactTableProps): ReactElement {
 		({ _id, username, name, visitorEmails, phone, lastChat }) => {
 			const phoneNumber = phone?.length && phone[0].phoneNumber;
 			const visitorEmail = visitorEmails?.length && visitorEmails[0].address;
-			const isCallDisabled = !agentEnabled || !registered || !isEnterprise || isInCall || !phoneNumber;
+			const isCallDisabled = !canMakeCall || !phoneNumber;
 
 			return (
 				<Table.Row key={_id} tabIndex={0} role='link' onClick={onRowClick(_id)} action qa-user-id={_id} className={rowClass} height='40px'>
@@ -177,7 +173,7 @@ function ContactTable({ setContactReload }: ContactTableProps): ReactElement {
 				</Table.Row>
 			);
 		},
-		[formatDate, agentEnabled, registered, isEnterprise, isInCall, onRowClick, t, handleDial],
+		[formatDate, isEnterprise, canMakeCall, onRowClick, t, handleDial],
 	);
 
 	return (

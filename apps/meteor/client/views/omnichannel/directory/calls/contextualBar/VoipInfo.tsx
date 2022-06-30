@@ -1,5 +1,5 @@
 import type { IVoipRoom } from '@rocket.chat/core-typings';
-import { Box, Icon, Chip } from '@rocket.chat/fuselage';
+import { Box, Icon, Chip, Button, ButtonGroup } from '@rocket.chat/fuselage';
 import { useTranslation } from '@rocket.chat/ui-contexts';
 import moment from 'moment';
 import React, { ReactElement, useMemo } from 'react';
@@ -7,6 +7,7 @@ import React, { ReactElement, useMemo } from 'react';
 import { UserStatus } from '../../../../../components/UserStatus';
 import VerticalBar from '../../../../../components/VerticalBar';
 import UserAvatar from '../../../../../components/avatar/UserAvatar';
+import { useCanMakeCall } from '../../../../../contexts/CallContext';
 import InfoPanel from '../../../../InfoPanel';
 import AgentInfoDetails from '../../../components/AgentInfoDetails';
 import AgentField from '../../chats/contextualBar/AgentField';
@@ -16,10 +17,10 @@ type VoipInfoPropsType = {
 	room: IVoipRoom;
 	onClickClose: () => void;
 	onClickReport?: () => void;
-	onClickCall?: () => void;
+	onClickCall?: (phone: string) => void;
 };
 
-export const VoipInfo = ({ room, onClickClose /* , onClickReport, onClickCall */ }: VoipInfoPropsType): ReactElement => {
+export const VoipInfo = ({ room, onClickClose, onClickCall /* , onClickReport  */ }: VoipInfoPropsType): ReactElement => {
 	const t = useTranslation();
 
 	const { servedBy, queue, v, fname, name, callDuration, callTotalHoldTime, closedAt, callWaitingTime, tags, lastMessage } = room;
@@ -31,6 +32,7 @@ export const VoipInfo = ({ room, onClickClose /* , onClickReport, onClickCall */
 	const shouldShowWrapup = useMemo(() => lastMessage?.t === 'voip-call-wrapup' && lastMessage?.msg, [lastMessage]);
 	const shouldShowTags = useMemo(() => tags && tags.length > 0, [tags]);
 	const _name = name || fname;
+	const canMakeCall = useCanMakeCall() && phoneNumber && onClickCall;
 
 	return (
 		<>
@@ -83,20 +85,20 @@ export const VoipInfo = ({ room, onClickClose /* , onClickReport, onClickCall */
 			</VerticalBar.ScrollableContent>
 			<VerticalBar.Footer>
 				{/* TODO: Introduce this buttons [Not part of MVP] */}
-				{/* <ButtonGroup stretch>
-					<Button danger onClick={onClickReport}>
+				<ButtonGroup stretch>
+					{/* <Button danger onClick={onClickReport}>
 						<Box display='flex' justifyContent='center' fontSize='p2'>
 							<Icon name='ban' size='x20' mie='4px' />
 							{t('Report_Number')}
 						</Box>
-					</Button>
-					<Button onClick={onClickCall}>
+					</Button> */}
+					<Button disabled={!canMakeCall} onClick={(): void => onClickCall?.(phoneNumber)}>
 						<Box display='flex' justifyContent='center' fontSize='p2'>
 							<Icon name='phone' size='x20' mie='4px' />
 							{t('Call')}
 						</Box>
 					</Button>
-				</ButtonGroup> */}
+				</ButtonGroup>
 			</VerticalBar.Footer>
 		</>
 	);

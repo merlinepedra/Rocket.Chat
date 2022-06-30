@@ -6,6 +6,7 @@ import { useSyncExternalStore } from 'use-sync-external-store/shim';
 
 import { useHasLicense } from '../../ee/client/hooks/useHasLicense';
 import { VoIPUser } from '../lib/voip/VoIPUser';
+import { useVoipAgent } from '../sidebar/sections/hooks/useVoipAgent';
 
 export type CallContextValue = CallContextDisabled | CallContextEnabled | CallContextReady | CallContextError;
 
@@ -245,4 +246,13 @@ export const useCallerState = (): CallStates | null => {
 	}, [context]);
 
 	return useSyncExternalStore(subscribe, getSnapshot);
+};
+
+export const useCanMakeCall = (): boolean => {
+	const callState = useCallerState();
+	const { agentEnabled, registered } = useVoipAgent();
+	const isInCall = callState === 'IN_CALL';
+	const isEnterprise = useIsVoipEnterprise();
+
+	return isEnterprise && agentEnabled && registered && !isInCall;
 };
