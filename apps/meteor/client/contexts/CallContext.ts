@@ -6,6 +6,7 @@ import { useSyncExternalStore } from 'use-sync-external-store/shim';
 
 import { useHasLicense } from '../../ee/client/hooks/useHasLicense';
 import { VoIPUser } from '../lib/voip/VoIPUser';
+import { useVoipAgent } from '../sidebar/sections/hooks/useVoipAgent';
 
 export type CallContextValue = CallContextDisabled | CallContextReady | CallContextError | CallContextEnabled;
 
