@@ -20,7 +20,6 @@ type CallContextEnabled = {
 };
 
 type CallContextReady = {
-	canMakeCall: boolean;
 	enabled: true;
 	ready: true;
 	voipClient: VoIPUser;

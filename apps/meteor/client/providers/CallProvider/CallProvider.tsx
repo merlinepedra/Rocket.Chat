@@ -28,7 +28,7 @@ import {
 } from '@rocket.chat/ui-contexts';
 // import { useRoute, useUser, useSetting, useEndpoint, useStream, useSetModal } from '@rocket.chat/ui-contexts';
 import { Random } from 'meteor/random';
-import React, { useMemo, FC, useRef, useCallback, useEffect, useState } from 'react';
+import React, { useMemo, FC, useRef, useCallback, useEffect, useState, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { OutgoingByeRequest } from 'sip.js/lib/core';
 
@@ -41,6 +41,8 @@ import { CallContext, CallContextValue } from '../../contexts/CallContext';
 import { roomCoordinator } from '../../lib/rooms/roomCoordinator';
 import { QueueAggregator } from '../../lib/voip/QueueAggregator';
 import VoIPAgentProvider from '../VoIPAgentProvider';
+
+type NetworkState = 'online' | 'offline';
 
 const startRingback = (user: IUser): void => {
 	const audioVolume = getUserPreference(user, 'notificationsSoundVolume');
@@ -55,7 +57,6 @@ const stopRingback = (): void => {
 	CustomSounds.remove('telephone');
 };
 
-type NetworkState = 'online' | 'offline';
 export const CallProvider: FC = ({ children }) => {
 	const voipEnabled = useSetting('VoIP_Enabled');
 	const subscribeToNotifyUser = useStream('notify-user');
@@ -77,6 +78,9 @@ export const CallProvider: FC = ({ children }) => {
 	const [queueCounter, setQueueCounter] = useState(0);
 	const [queueName, setQueueName] = useState('');
 	const [roomInfo, setRoomInfo] = useState<{ v: { token?: string }; rid: string }>();
+
+	const [queueAggregator, setQueueAggregator] = useState<QueueAggregator>();
+	const [networkStatus, setNetworkStatus] = useState<NetworkState>('online');
 
 	const closeRoom = useCallback(
 		async (data = {}): Promise<void> => {
@@ -119,18 +123,6 @@ export const CallProvider: FC = ({ children }) => {
 		setInputMediaDevice(selectedAudioDevice);
 	});
 
-	const [queueAggregator, setQueueAggregator] = useState<QueueAggregator>();
-
-	const [networkStatus, setNetworkStatus] = useState<NetworkState>('online');
-
-	useEffect(() => {
-		if (!result?.voipClient) {
-			return;
-		}
-
-		setQueueAggregator(result.voipClient.getAggregator());
-	}, [result]);
-
 	const openRoom = useCallback((rid: IVoipRoom['_id']): void => {
 		roomCoordinator.openRouteLink('v', { rid });
 	}, []);
@@ -163,6 +155,14 @@ export const CallProvider: FC = ({ children }) => {
 		},
 		[openRoom, result.voipClient, user, visitorEndpoint, voipEndpoint],
 	);
+
+	useEffect(() => {
+		if (!result?.voipClient) {
+			return;
+		}
+
+		setQueueAggregator(result.voipClient.getAggregator());
+	}, [result]);
 
 	useEffect(() => {
 		if (!voipEnabled || !user || !queueAggregator) {
@@ -284,14 +284,8 @@ export const CallProvider: FC = ({ children }) => {
 		remoteAudioMediaRef.current && result.voipClient.switchMediaRenderer({ remoteMediaElement: remoteAudioMediaRef.current });
 	}, [result.voipClient]);
 
-	const hasLicenseToMakeVoIPCalls = useHasLicense('voip-enterprise');
-
 	useEffect(() => {
-		if (!result.voipClient) {
-			return;
-		}
-
-		if (!user) {
+		if (!result.voipClient || !user) {
 			return;
 		}
 
@@ -399,7 +393,6 @@ export const CallProvider: FC = ({ children }) => {
 		const { registrationInfo, voipClient } = result;
 
 		return {
-			canMakeCall: hasLicenseToMakeVoIPCalls,
 			enabled: true,
 			ready: true,
 			openedRoomInfo: roomInfo,
@@ -430,7 +423,6 @@ export const CallProvider: FC = ({ children }) => {
 		changeAudioInputDevice,
 		user,
 		result,
-		hasLicenseToMakeVoIPCalls,
 		roomInfo,
 		queueCounter,
 		queueName,
@@ -440,19 +432,14 @@ export const CallProvider: FC = ({ children }) => {
 		openWrapUpModal,
 	]);
 
+	const WrapperProvider = contextValue.ready ? VoIPAgentProvider : Fragment;
+
 	return (
 		<CallContext.Provider value={contextValue}>
-			{contextValue.ready ? (
-				<VoIPAgentProvider>
-					{children}
-					{contextValue.enabled && createPortal(<audio ref={remoteAudioMediaRef} />, document.body)}
-				</VoIPAgentProvider>
-			) : (
-				<>
-					{children}
-					{contextValue.enabled && createPortal(<audio ref={remoteAudioMediaRef} />, document.body)}
-				</>
-			)}
+			<WrapperProvider>
+				{children}
+				{contextValue.enabled && createPortal(<audio ref={remoteAudioMediaRef} />, document.body)}
+			</WrapperProvider>
 		</CallContext.Provider>
 	);
 };
