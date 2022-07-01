@@ -35,12 +35,11 @@ import { OutgoingByeRequest } from 'sip.js/lib/core';
 import { CustomSounds } from '../../../app/custom-sounds/client';
 import { getUserPreference } from '../../../app/utils/client';
 import { useHasLicense } from '../../../ee/client/hooks/useHasLicense';
+import { useVoipClient } from '../../../ee/client/hooks/useVoipClient';
 import { WrapUpCallModal } from '../../../ee/client/voip/components/modals/WrapUpCallModal';
 import { CallContext, CallContextValue } from '../../contexts/CallContext';
 import { roomCoordinator } from '../../lib/rooms/roomCoordinator';
 import { QueueAggregator } from '../../lib/voip/QueueAggregator';
-import VoIPAgentProvider from '../VoIPAgentProvider';
-import { useVoipClient } from './hooks/useVoipClient';
 
 const startRingback = (user: IUser): void => {
 	const audioVolume = getUserPreference(user, 'notificationsSoundVolume');
@@ -70,13 +69,13 @@ export const CallProvider: FC = ({ children }) => {
 	const homeRoute = useRoute('home');
 	const setOutputMediaDevice = useSetOutputMediaDevice();
 	const setInputMediaDevice = useSetInputMediaDevice();
-	const isEnterprise = useHasLicense('voip-enterprise');
+	const isEnterprise = useHasLicense('voip-enterprise') === true;
 
 	const remoteAudioMediaRef = useRef<IExperimentalHTMLAudioElement>(null); // TODO: Create a dedicated file for the AUDIO and make the controls accessible
 
 	const [queueCounter, setQueueCounter] = useState(0);
 	const [queueName, setQueueName] = useState('');
-	const [roomInfo, setRoomInfo] = useState<{ v: { token?: string }; rid: string }>();
+	const [roomInfo, setRoomInfo] = useState<{ v: { token?: string }; rid: string }>({ v: {}, rid: '' });
 
 	const closeRoom = useCallback(
 		async (data = {}): Promise<void> => {
@@ -124,11 +123,19 @@ export const CallProvider: FC = ({ children }) => {
 	const [networkStatus, setNetworkStatus] = useState<NetworkState>('online');
 
 	useEffect(() => {
-		if (!result?.voipClient) {
+		if (!result) {
 			return;
 		}
 
-		setQueueAggregator(result.voipClient.getAggregator());
+		const { voipClient } = result;
+		if (!voipClient) {
+			return;
+		}
+
+		voipClient.register();
+
+		setQueueAggregator(voipClient.getAggregator());
+		return (): void => voipClient.unregister();
 	}, [result]);
 
 	const openRoom = useCallback((rid: IVoipRoom['_id']): void => {
@@ -284,7 +291,7 @@ export const CallProvider: FC = ({ children }) => {
 		remoteAudioMediaRef.current && result.voipClient.switchMediaRenderer({ remoteMediaElement: remoteAudioMediaRef.current });
 	}, [result.voipClient]);
 
-	const hasLicenseToMakeVoIPCalls = useHasLicense('voip-enterprise');
+	const hasLicenseToMakeVoIPCalls = useHasLicense('voip-enterprise') === true;
 
 	useEffect(() => {
 		if (!result.voipClient) {
@@ -423,6 +430,8 @@ export const CallProvider: FC = ({ children }) => {
 			openWrapUpModal,
 			changeAudioOutputDevice,
 			changeAudioInputDevice,
+			register: (): void => voipClient.register(),
+			unregister: (): void => voipClient.unregister(),
 		};
 	}, [
 		voipEnabled,
@@ -442,17 +451,10 @@ export const CallProvider: FC = ({ children }) => {
 
 	return (
 		<CallContext.Provider value={contextValue}>
-			{contextValue.ready ? (
-				<VoIPAgentProvider>
-					{children}
-					{contextValue.enabled && createPortal(<audio ref={remoteAudioMediaRef} />, document.body)}
-				</VoIPAgentProvider>
-			) : (
-				<>
-					{children}
-					{contextValue.enabled && createPortal(<audio ref={remoteAudioMediaRef} />, document.body)}
-				</>
-			)}
+			<>
+				{children}
+				{contextValue.enabled && createPortal(<audio ref={remoteAudioMediaRef} />, document.body)}
+			</>
 		</CallContext.Provider>
 	);
 };
