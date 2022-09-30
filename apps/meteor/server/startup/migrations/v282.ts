@@ -50,7 +50,7 @@ async function migrateThumbnails(total: number, current: number): Promise<any> {
 }
 
 addMigration({
-	version: 244,
+	version: 282,
 	up() {
 		// thumbnails were introduced on 3.18 release ( 31 of august ) + add sort
 		const total = Uploads.model.rawCollection().find({ typeGroup: 'image', uploadedAt: { $gte: new Date('2021-08-31T00:00:00.000Z') } }, { sort: { rid: 1 } }).count();
