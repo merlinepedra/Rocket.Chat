@@ -10,7 +10,7 @@ import type { TranslationKey } from '@rocket.chat/ui-contexts';
 
 import { Messages, Rooms, Subscriptions } from '../../../models/client';
 import { roomCoordinator } from '../../../../client/lib/rooms/roomCoordinator';
-import type { ToolboxContextValue } from '../../../../client/views/room/lib/Toolbox/ToolboxContext';
+import type { ToolboxContextValue } from '../../../../client/views/room/contexts/ToolboxContext';
 
 const call = (method: string, ...args: any[]): Promise<any> =>
 	new Promise((resolve, reject) => {
@@ -36,7 +36,7 @@ export type MessageActionContext = 'message' | 'threads' | 'message-mobile' | 'p
 
 type MessageActionConditionProps = {
 	message: IMessage;
-	user: IUser;
+	user: IUser | undefined;
 	room: IRoom;
 	subscription?: ISubscription;
 	context?: MessageActionContext;
