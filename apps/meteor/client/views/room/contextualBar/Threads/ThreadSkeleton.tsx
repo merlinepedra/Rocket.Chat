@@ -1,7 +1,7 @@
 import { Modal, Box } from '@rocket.chat/fuselage';
 import React, { FC, useMemo } from 'react';
 
-import VerticalBar from '../../../components/VerticalBar';
+import VerticalBar from '../../../../components/VerticalBar';
 
 type ThreadSkeletonProps = {
 	expanded: boolean;

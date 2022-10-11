@@ -2,10 +2,10 @@ import type { IUser } from '@rocket.chat/core-typings';
 import { useEndpoint } from '@rocket.chat/ui-contexts';
 import { useCallback, useMemo } from 'react';
 
-import { useScrollableMessageList } from '../../../../hooks/lists/useScrollableMessageList';
-import { useStreamUpdatesForMessageList } from '../../../../hooks/lists/useStreamUpdatesForMessageList';
-import { ThreadsList, ThreadsListOptions } from '../../../../lib/lists/ThreadsList';
-import { getConfig } from '../../../../lib/utils/getConfig';
+import { useScrollableMessageList } from '../../../../../hooks/lists/useScrollableMessageList';
+import { useStreamUpdatesForMessageList } from '../../../../../hooks/lists/useStreamUpdatesForMessageList';
+import { ThreadsList, ThreadsListOptions } from '../../../../../lib/lists/ThreadsList';
+import { getConfig } from '../../../../../lib/utils/getConfig';
 
 export const useThreadsList = (
 	options: ThreadsListOptions,

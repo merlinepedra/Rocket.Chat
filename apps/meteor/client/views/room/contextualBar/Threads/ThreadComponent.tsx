@@ -1,56 +1,18 @@
-import type { IMessage, IRoom } from '@rocket.chat/core-typings';
+import type { IRoom } from '@rocket.chat/core-typings';
 import { useLocalStorage } from '@rocket.chat/fuselage-hooks';
 import { useToastMessageDispatch, useRoute, useUserId, useUserSubscription, useEndpoint } from '@rocket.chat/ui-contexts';
 import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
-import { Tracker } from 'meteor/tracker';
 import React, { useEffect, useRef, useState, useCallback, useMemo, FC } from 'react';
 
-import { ChatMessage } from '../../../../app/models/client';
-import { normalizeThreadTitle } from '../../../../app/threads/client/lib/normalizeThreadTitle';
-import { roomCoordinator } from '../../../lib/rooms/roomCoordinator';
-import { mapMessageFromApi } from '../../../lib/utils/mapMessageFromApi';
-import { useTabBarOpenUserInfo } from '../contexts/ToolboxContext';
+import { normalizeThreadTitle } from '../../../../../app/threads/client/lib/normalizeThreadTitle';
+import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
+import { useTabBarOpenUserInfo } from '../../contexts/ToolboxContext';
 import ThreadSkeleton from './ThreadSkeleton';
 import ThreadView from './ThreadView';
+import { useThreadMessage } from './hooks/useThreadMessage';
 
 const subscriptionFields = {};
-
-const useThreadMessage = (tmid: string): IMessage | undefined => {
-	const [message, setMessage] = useState<IMessage | undefined>(() => Tracker.nonreactive(() => ChatMessage.findOne({ _id: tmid })));
-	const getMessage = useEndpoint('GET', '/v1/chat.getMessage');
-	const getMessageParsed = useCallback<(params: { msgId: IMessage['_id'] }) => Promise<IMessage>>(
-		async (params) => {
-			const { message } = await getMessage(params);
-			return mapMessageFromApi(message);
-		},
-		[getMessage],
-	);
-
-	useEffect(() => {
-		const computation = Tracker.autorun(async (computation) => {
-			const msg = ChatMessage.findOne({ _id: tmid }) || (await getMessageParsed({ msgId: tmid }));
-
-			if (!msg || computation.stopped) {
-				return;
-			}
-
-			setMessage((prevMsg) => {
-				if (!prevMsg || prevMsg._id !== msg._id || prevMsg._updatedAt?.getTime() !== msg._updatedAt?.getTime()) {
-					return msg;
-				}
-
-				return prevMsg;
-			});
-		});
-
-		return (): void => {
-			computation.stop();
-		};
-	}, [getMessageParsed, tmid]);
-
-	return message;
-};
 
 const ThreadComponent: FC<{
 	mid: string;
