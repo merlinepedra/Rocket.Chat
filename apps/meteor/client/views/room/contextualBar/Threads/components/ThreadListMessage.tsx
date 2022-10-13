@@ -8,21 +8,22 @@ import UserAvatar from '../../../../../components/avatar/UserAvatar';
 import * as NotificationStatus from '../../../../../components/message/NotificationStatus';
 import { followStyle, anchor } from '../../../../../components/message/helpers/followSyle';
 import { useTimeAgo } from '../../../../../hooks/useTimeAgo';
+import { clickableItem } from '../../../../../lib/clickableItem';
 
 type ThreadListMessageProps = {
 	_id: IMessage['_id'];
-	msg: IMessage['msg'];
+	msg: string;
 	following: boolean;
 	username: IMessage['u']['username'];
 	name?: IMessage['u']['name'];
-	ts: IMessage['ts'];
-	replies: IMessage['replies'];
+	ts: Date;
+	replies?: number;
 	participants: ReactNode;
 	handleFollowButton: MouseEventHandler;
 	unread: boolean;
-	mention: number;
+	mention: boolean;
 	all: boolean;
-	tlm: number;
+	tlm?: Date;
 	className?: string | string[];
 } & Omit<ComponentProps<typeof Message>, 'className'>;
 
@@ -72,10 +73,12 @@ function ThreadListMessage({
 								<Message.Metrics.Item.Icon name='user' />
 								<Message.Metrics.Item.Label>{participants}</Message.Metrics.Item.Label>
 							</Message.Metrics.Item>
-							<Message.Metrics.Item>
-								<Message.Metrics.Item.Icon name='clock' />
-								<Message.Metrics.Item.Label>{formatDate(tlm)}</Message.Metrics.Item.Label>
-							</Message.Metrics.Item>
+							{tlm ? (
+								<Message.Metrics.Item>
+									<Message.Metrics.Item.Icon name='clock' />
+									<Message.Metrics.Item.Label>{formatDate(tlm)}</Message.Metrics.Item.Label>
+								</Message.Metrics.Item>
+							) : null}
 						</Message.Metrics>
 					</Message.Block>
 				</Message.Container>
@@ -100,4 +103,4 @@ function ThreadListMessage({
 	);
 }
 
-export default memo(ThreadListMessage);
+export default memo(clickableItem(ThreadListMessage));

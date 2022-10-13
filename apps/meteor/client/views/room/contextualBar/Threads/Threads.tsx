@@ -1,30 +1,19 @@
-import { useQueryStringParameter, useUserRoom } from '@rocket.chat/ui-contexts';
+import { useQueryStringParameter } from '@rocket.chat/ui-contexts';
 import React, { ReactElement } from 'react';
 
 import { useTabContext } from '../../contexts/ToolboxContext';
 import Thread from './Thread';
 import ThreadsList from './ThreadsList';
 
-type ThreadsProps = {
-	rid: string;
-};
-
-const roomFields = { t: true, name: true };
-
-const Threads = ({ rid }: ThreadsProps): ReactElement => {
-	const room = useUserRoom(rid, roomFields);
-	if (!room) {
-		throw new Error('No room available');
-	}
-
+const Threads = (): ReactElement => {
 	const mid = useTabContext() as string;
 	const jump = useQueryStringParameter('jump');
 
 	if (mid) {
-		return <Thread room={room} mid={mid} jump={jump} />;
+		return <Thread mid={mid} jump={jump} />;
 	}
 
-	return <ThreadsList room={room} />;
+	return <ThreadsList />;
 };
 
 export default Threads;

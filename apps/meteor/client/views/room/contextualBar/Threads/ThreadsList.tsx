@@ -1,26 +1,23 @@
-import type { IMessage, IRoom } from '@rocket.chat/core-typings';
+import type { IMessage } from '@rocket.chat/core-typings';
 import { Box, Icon, TextInput, Select, Margins, Callout, Throbber } from '@rocket.chat/fuselage';
 import { useResizeObserver, useMutableCallback, useAutoFocus, useLocalStorage, useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import { useRoute, useCurrentRoute, useSetting, useTranslation, useUserSubscription, useUserId } from '@rocket.chat/ui-contexts';
-import React, { ReactElement, useCallback, useMemo, useState } from 'react';
+import { useRoute, useSetting, useTranslation, useUserId } from '@rocket.chat/ui-contexts';
+import React, { ReactElement, UIEvent, useCallback, useMemo, useState } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../components/ScrollableContentWrapper';
 import VerticalBar from '../../../../components/VerticalBar';
 import { useRecordList } from '../../../../hooks/lists/useRecordList';
 import { AsyncStatePhase } from '../../../../lib/asyncState';
+import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
+import { useRoom, useRoomSubscription } from '../../contexts/RoomContext';
 import { useTabBarClose } from '../../contexts/ToolboxContext';
-import ThreadRow from './ThreadRow';
+import ThreadsListItem from './ThreadsListItem';
 import { useThreadsList } from './hooks/useThreadsList';
 
-type ThreadsListProps = {
-	room: IRoom;
-};
-
-const subscriptionFields = { tunread: true, tunreadUser: true, tunreadGroup: true };
-
-const ThreadsList = ({ room }: ThreadsListProps): ReactElement => {
-	const subscription = useUserSubscription(room._id, subscriptionFields);
+const ThreadsList = (): ReactElement => {
+	const room = useRoom();
+	const subscription = useRoomSubscription();
 	const subscribed = !!subscription;
 
 	const t = useTranslation();
@@ -86,15 +83,10 @@ const ThreadsList = ({ room }: ThreadsListProps): ReactElement => {
 	const showRealNames = Boolean(useSetting('UI_Use_Real_Name'));
 
 	const inputRef = useAutoFocus<HTMLInputElement>(true);
-	const [name] = useCurrentRoute();
 
-	if (!name) {
-		throw new Error('No route name');
-	}
-
-	const channelRoute = useRoute(name);
-	const onClick = useMutableCallback((e) => {
-		const { id: context } = e.currentTarget.dataset;
+	const channelRoute = useRoute(roomCoordinator.getRoomTypeConfig(room.t).route.name);
+	const onClick = useMutableCallback((e: UIEvent<HTMLElement>) => {
+		const { id: context = '' } = e.currentTarget.dataset;
 		channelRoute.push({
 			tab: 'thread',
 			context,
@@ -174,7 +166,7 @@ const ThreadsList = ({ room }: ThreadsListProps): ReactElement => {
 							data={threads}
 							components={{ Scroller: ScrollableContentWrapper }}
 							itemContent={(_index, data: IMessage): ReactElement => (
-								<ThreadRow
+								<ThreadsListItem
 									thread={data}
 									showRealNames={showRealNames}
 									unread={subscription?.tunread ?? []}

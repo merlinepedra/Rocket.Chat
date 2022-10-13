@@ -1,14 +1,10 @@
 import type { IMessage } from '@rocket.chat/core-typings';
-import React, { memo, MouseEvent, ReactElement } from 'react';
+import React, { memo, MouseEvent, ReactElement, UIEvent } from 'react';
 
 import { useDecryptedMessage } from '../../../../hooks/useDecryptedMessage';
-import { clickableItem } from '../../../../lib/clickableItem';
 import { normalizeThreadMessage } from '../../../../lib/normalizeThreadMessage';
 import { callWithErrorHandling } from '../../../../lib/utils/callWithErrorHandling';
 import ThreadListMessage from './components/ThreadListMessage';
-import { mapProps } from './mapProps';
-
-const Thread = memo(mapProps(clickableItem(ThreadListMessage)));
 
 const handleFollowButton = (e: MouseEvent<HTMLElement>, threadId: string): void => {
 	e.preventDefault();
@@ -21,41 +17,41 @@ const handleFollowButton = (e: MouseEvent<HTMLElement>, threadId: string): void 
 		});
 };
 
-type ThreadRowProps = {
+type ThreadsListItemProps = {
 	thread: IMessage;
 	showRealNames: boolean;
 	unread: string[];
 	unreadUser: string[];
 	unreadGroup: string[];
 	userId: string;
-	onClick: (threadId: string) => void;
+	onClick: (event: UIEvent<HTMLElement>) => void;
 };
 
-function ThreadRow({ thread, showRealNames, unread, unreadUser, unreadGroup, userId, onClick }: ThreadRowProps): ReactElement {
+function ThreadsListItem({ thread, showRealNames, unread, unreadUser, unreadGroup, userId, onClick }: ThreadsListItemProps): ReactElement {
 	const decryptedMsg = useDecryptedMessage(thread);
 	const msg = normalizeThreadMessage({ ...thread, msg: decryptedMsg });
 
 	const { name = thread.u.username } = thread.u;
 
 	return (
-		<Thread
-			tcount={thread.tcount}
+		<ThreadListMessage
+			_id={thread._id}
 			tlm={thread.tlm}
 			ts={thread.ts}
-			u={thread.u}
-			replies={thread.replies}
+			replies={thread.tcount}
+			participants={thread.replies?.length}
 			name={showRealNames ? name : thread.u.username}
 			username={thread.u.username}
 			unread={unread.includes(thread._id)}
 			mention={unreadUser.includes(thread._id)}
 			all={unreadGroup.includes(thread._id)}
-			following={thread.replies?.includes(userId)}
+			following={thread.replies?.includes(userId) ?? false}
 			data-id={thread._id}
-			msg={msg}
+			msg={msg ?? ''}
 			handleFollowButton={(e: MouseEvent<HTMLElement>): unknown => handleFollowButton(e, thread._id)}
 			onClick={onClick}
 		/>
 	);
 }
 
-export default memo(ThreadRow);
+export default memo(ThreadsListItem);
