@@ -182,6 +182,7 @@ export interface ServerMethods {
 	'personalAccessTokens:regenerateToken': (...args: any[]) => any;
 	'personalAccessTokens:removeToken': (...args: any[]) => any;
 	'readMessages': (...args: any[]) => any;
+	'readThreads': (tmid: IMessage['_id']) => void;
 	'refreshClients': (...args: any[]) => any;
 	'refreshOAuthService': (...args: any[]) => any;
 	'registerUser': (...args: any[]) => any;

@@ -78,7 +78,7 @@ export const ThreadMessageList: FC<{ rid: IRoom['_id']; tmid: IThreadMessage['tm
 	const messageGroupingPeriod = Number(useSetting('Message_GroupingPeriod'));
 	const format = useFormatDate();
 	const messages = useThreadMessages({ tmid });
-	console.log(messages);
+
 	return (
 		<MessageListErrorBoundary>
 			<MessageListProvider rid={rid}>

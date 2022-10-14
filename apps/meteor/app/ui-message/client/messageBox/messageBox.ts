@@ -30,6 +30,8 @@ import './messageBox.html';
 type MessageBoxTemplateInstance = Blaze.TemplateInstance<{
 	rid: IRoom['_id'];
 	tmid: IMessage['_id'];
+	onInputChanged?: (input: HTMLInputElement | HTMLTextAreaElement) => void;
+	onResize?: () => void;
 	onSend: (
 		event: Event,
 		params: {
@@ -174,7 +176,7 @@ Template.messageBox.onRendered(function (this: MessageBoxTemplateInstance) {
 	});
 
 	this.autorun(() => {
-		const { rid, tmid, onInputChanged, onResize } = Template.currentData();
+		const { rid, tmid, onInputChanged, onResize } = Template.currentData() as MessageBoxTemplateInstance['data'];
 
 		Tracker.afterFlush(() => {
 			const input = this.find('.js-input-message') as HTMLTextAreaElement;

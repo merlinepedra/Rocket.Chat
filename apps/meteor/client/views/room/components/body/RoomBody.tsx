@@ -71,7 +71,7 @@ const RoomBody = (): ReactElement => {
 	const atBottomRef = useRef(!useQueryStringParameter('msg'));
 	const lastScrollTopRef = useRef(0);
 
-	const chatMessagesInstance = useChatMessages(room._id, wrapperRef);
+	const chatMessagesInstance = useChatMessages({ rid: room._id, wrapperRef });
 	const [fileUploadTriggerProps, fileUploadOverlayProps] = useFileUploadDropTarget(room);
 
 	const _isAtBottom = useCallback((scrollThreshold = 0) => {

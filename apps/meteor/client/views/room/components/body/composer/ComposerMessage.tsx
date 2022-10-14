@@ -1,4 +1,4 @@
-import { IRoom, ISubscription } from '@rocket.chat/core-typings';
+import { IMessage, IRoom, ISubscription } from '@rocket.chat/core-typings';
 import { useSetting } from '@rocket.chat/ui-contexts';
 import { Blaze } from 'meteor/blaze';
 import { ReactiveVar } from 'meteor/reactive-var';
@@ -13,12 +13,23 @@ import ComposerSkeleton from '../../../Room/ComposerSkeleton';
 
 export type ComposerMessageProps = {
 	rid: IRoom['_id'];
+	tmid?: IMessage['_id'];
 	subscription?: ISubscription;
 	chatMessagesInstance: ChatMessages;
+	onKeyDown?: (event: KeyboardEvent) => void;
+	onSend?: () => void;
 	onResize?: () => void;
 };
 
-const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: ComposerMessageProps): ReactElement => {
+const ComposerMessage = ({
+	rid,
+	tmid,
+	subscription,
+	chatMessagesInstance,
+	onKeyDown,
+	onSend,
+	onResize,
+}: ComposerMessageProps): ReactElement => {
 	const isLayoutEmbedded = useEmbeddedLayout();
 	const showFormattingTips = useSetting('Message_ShowFormattingTips') as boolean;
 
@@ -26,9 +37,12 @@ const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: 
 	const messageBoxViewDataRef = useRef(
 		new ReactiveVar({
 			rid,
+			tmid,
 			subscription,
 			isEmbedded: isLayoutEmbedded,
 			showFormattingTips: showFormattingTips && !isLayoutEmbedded,
+			onKeyDown,
+			onSend,
 			onResize,
 		}),
 	);
@@ -36,12 +50,15 @@ const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: 
 	useEffect(() => {
 		messageBoxViewDataRef.current.set({
 			rid,
+			tmid,
 			subscription,
 			isEmbedded: isLayoutEmbedded,
 			showFormattingTips: showFormattingTips && !isLayoutEmbedded,
+			onKeyDown,
+			onSend,
 			onResize,
 		});
-	}, [isLayoutEmbedded, onResize, rid, showFormattingTips, subscription]);
+	}, [isLayoutEmbedded, onSend, onResize, rid, showFormattingTips, subscription, tmid, onKeyDown]);
 
 	const footerRef = useCallback(
 		(footer: HTMLElement | null) => {
@@ -51,7 +68,7 @@ const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: 
 					() => ({
 						...messageBoxViewDataRef.current.get(),
 						onInputChanged: (input: HTMLTextAreaElement): void => {
-							chatMessagesInstance.initializeInput(input, { rid });
+							chatMessagesInstance.initializeInput(input, { rid, tmid });
 						},
 						onKeyUp: (
 							event: KeyboardEvent,
@@ -63,7 +80,15 @@ const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: 
 								tmid?: string | undefined;
 							},
 						) => chatMessagesInstance.keyup(event, { rid, tmid }),
-						onKeyDown: (event: KeyboardEvent) => chatMessagesInstance.keydown(event),
+						onKeyDown: (event: KeyboardEvent): void => {
+							const handled = chatMessagesInstance.keydown(event);
+
+							if (handled) {
+								return;
+							}
+
+							messageBoxViewDataRef.current.get().onKeyDown?.(event);
+						},
 						onSend: (
 							event: Event,
 							params: {
@@ -73,7 +98,10 @@ const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: 
 								tshow?: boolean;
 							},
 							done?: () => void,
-						) => chatMessagesInstance.send(event, params, done),
+						): void => {
+							messageBoxViewDataRef.current.get().onSend?.();
+							chatMessagesInstance.send(event, params, done);
+						},
 					}),
 					footer,
 				);
@@ -85,7 +113,7 @@ const ComposerMessage = ({ rid, subscription, chatMessagesInstance, onResize }: 
 				messageBoxViewRef.current = undefined;
 			}
 		},
-		[rid, chatMessagesInstance],
+		[chatMessagesInstance, rid, tmid],
 	);
 
 	const publicationReady = useReactiveValue(useCallback(() => RoomManager.getOpenedRoomByRid(rid)?.streamActive ?? false, [rid]));

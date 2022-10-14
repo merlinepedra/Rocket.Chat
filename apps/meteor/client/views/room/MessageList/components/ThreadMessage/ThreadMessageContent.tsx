@@ -14,15 +14,18 @@ import MessageLocation from '../../../../location/MessageLocation';
 import { useMessageActions, useMessageOembedIsEnabled, useMessageRunActionLink } from '../../../contexts/MessageContext';
 import { useTranslateAttachments, useMessageListShowReadReceipt } from '../../contexts/MessageListContext';
 import { isOwnUserMessage } from '../../lib/isOwnUserMessage';
+import { MessageWithMdEnforced } from '../../lib/parseMessageTextToAstMarkdown';
 import MessageContentBody from '../MessageContentBody';
 import ReactionsList from '../MessageReactionsList';
 import ReadReceipt from '../MessageReadReceipt';
 import PreviewList from '../UrlPreview';
 
-const ThreadMessageContent: FC<{ message: IMessage; sequential: boolean; subscription?: ISubscription; id: IMessage['_id'] }> = ({
-	message,
-	subscription,
-}) => {
+const ThreadMessageContent: FC<{
+	message: MessageWithMdEnforced;
+	sequential: boolean;
+	subscription?: ISubscription;
+	id: IMessage['_id'];
+}> = ({ message, subscription }) => {
 	const {
 		broadcast,
 		actions: { replyBroadcast },
@@ -46,8 +49,10 @@ const ThreadMessageContent: FC<{ message: IMessage; sequential: boolean; subscri
 		<>
 			{!message.blocks && (message.md || message.msg) && (
 				<MessageBody data-qa-type='message-body'>
-					{!isEncryptedMessage && <MessageContentBody message={message} />}
-					{isEncryptedMessage && message.e2e === 'done' && <MessageContentBody message={message} />}
+					{!isEncryptedMessage && <MessageContentBody md={message.md} mentions={message.mentions} channels={message.channels} />}
+					{isEncryptedMessage && message.e2e === 'done' && (
+						<MessageContentBody md={message.md} mentions={message.mentions} channels={message.channels} />
+					)}
 					{isEncryptedMessage && message.e2e === 'pending' && t('E2E_message_encrypted_placeholder')}
 				</MessageBody>
 			)}

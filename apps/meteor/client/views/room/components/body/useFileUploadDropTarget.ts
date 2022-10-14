@@ -1,4 +1,4 @@
-import { IRoom } from '@rocket.chat/core-typings';
+import { IMessage, IRoom } from '@rocket.chat/core-typings';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { useSetting, useTranslation } from '@rocket.chat/ui-contexts';
 import React, { ReactNode, useCallback, useMemo } from 'react';
@@ -11,6 +11,7 @@ import { useDropTarget } from './useDropTarget';
 
 export const useFileUploadDropTarget = (
 	room: IRoom,
+	tmid?: IMessage['_id'],
 ): readonly [
 	fileUploadTriggerProps: {
 		onDragEnter: (event: React.DragEvent<Element>) => void;
@@ -48,7 +49,7 @@ export const useFileUploadDropTarget = (
 			};
 		});
 
-		fileUpload(uploads, input, { rid: room._id });
+		fileUpload(uploads, input, { rid: room._id, tmid });
 	});
 
 	const allOverlayProps = useMemo(() => {

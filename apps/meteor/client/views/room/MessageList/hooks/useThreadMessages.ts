@@ -1,13 +1,19 @@
-import { IThreadMessage } from '@rocket.chat/core-typings';
+import { IMessage, IThreadMessage } from '@rocket.chat/core-typings';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Messages } from '../../../../../app/models/client';
 import { queryClient } from '../../../../lib/queryClient';
 import { callWithErrorHandling } from '../../../../lib/utils/callWithErrorHandling';
+import { useMessageListContext } from '../contexts/MessageListContext';
+import {
+	MessageWithMdEnforced,
+	parseMessageTextToAstMarkdown,
+	removePossibleNullMessageValues,
+} from '../lib/parseMessageTextToAstMarkdown';
 
 const fetchThreadMessages = async (tmid: IThreadMessage['tmid']): Promise<IThreadMessage[]> => {
-	const messages = await callWithErrorHandling('getThreadMessages', { tmid });
+	const messages = (await callWithErrorHandling('getThreadMessages', { tmid })) as IThreadMessage[];
 	return messages?.sort((a: IThreadMessage, b: IThreadMessage) => Number(a.ts) - Number(b.ts));
 };
 
@@ -15,7 +21,24 @@ const fetchThreadMessages = async (tmid: IThreadMessage['tmid']): Promise<IThrea
 // Delete message is not working (fails to read message dataset)
 // Issues with sequential messages
 
-export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): IThreadMessage[] => {
+export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): MessageWithMdEnforced[] => {
+	const { autoTranslateLanguage, katex, showColors, useShowTranslated } = useMessageListContext();
+
+	const normalizeMessage = useMemo(() => {
+		const parseOptions = {
+			colors: showColors,
+			emoticons: true,
+			...(Boolean(katex) && {
+				katex: {
+					dollarSyntax: katex?.dollarSyntaxEnabled,
+					parenthesisSyntax: katex?.parenthesisSyntaxEnabled,
+				},
+			}),
+		};
+		return (message: IMessage): MessageWithMdEnforced =>
+			parseMessageTextToAstMarkdown(removePossibleNullMessageValues(message), parseOptions, autoTranslateLanguage, useShowTranslated);
+	}, [autoTranslateLanguage, katex, showColors, useShowTranslated]);
+
 	useEffect(() => {
 		const threadsObserve = Messages.find(
 			{ $or: [{ tmid }, { _id: tmid }], _hidden: { $ne: true } },
@@ -28,12 +51,13 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): I
 			},
 		).observe({
 			added: (message: IThreadMessage) => {
-				console.log('added');
-				queryClient.setQueryData<IThreadMessage[]>(['threadMessages', tmid], (currentData) => [...(currentData || []), message]);
+				queryClient.setQueryData<MessageWithMdEnforced[]>(['threadMessages', tmid], (currentData) => [
+					...(currentData || []),
+					normalizeMessage(message),
+				]);
 			},
 			changed: (message: IThreadMessage) => {
-				queryClient.setQueryData<IThreadMessage[]>(['threadMessages', tmid], (currentData) => {
-					// console.log(message, currentData);
+				queryClient.setQueryData<MessageWithMdEnforced[]>(['threadMessages', tmid], (currentData) => {
 					if (!currentData) {
 						return [];
 					}
@@ -41,11 +65,10 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): I
 					if (index === -1) {
 						return currentData;
 					}
-					return [...currentData.slice(0, index), message, ...currentData.slice(index + 1)];
+					return [...currentData.slice(0, index), normalizeMessage(message), ...currentData.slice(index + 1)];
 				});
 			},
 			removed: ({ _id }: IThreadMessage) => {
-				console.log('removed');
 				queryClient.setQueryData<IThreadMessage[]>(['threadMessages', tmid], (currentData) => {
 					if (!currentData) {
 						return [];
@@ -60,9 +83,9 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): I
 		});
 
 		return (): void => threadsObserve.stop();
-	}, [tmid]);
+	}, [normalizeMessage, tmid]);
 
-	const { data, isSuccess } = useQuery(['threadMessages', tmid], () => fetchThreadMessages(tmid));
+	const { data, isSuccess } = useQuery(['threadMessages', tmid], async () => (await fetchThreadMessages(tmid)).map(normalizeMessage));
 
 	if (isSuccess && data) {
 		return data;

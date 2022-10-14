@@ -20,22 +20,9 @@ createTemplateForComponent('DiscussionMetric', () => import('./components/messag
 		}),
 });
 
-createTemplateForComponent('ThreadMessageList', () => import('./views/room/MessageList/ThreadMessageList'), { attachment: 'at-parent' });
-
 createTemplateForComponent('MessageList', () => import('./views/room/MessageList/MessageList'));
 
 createTemplateForComponent('BroadCastMetric', () => import('./components/message/Metrics/Broadcast'));
-
-createTemplateForComponent(
-	'Checkbox',
-	async (): Promise<{ default: typeof import('@rocket.chat/fuselage').CheckBox }> => {
-		const { CheckBox } = await import('@rocket.chat/fuselage');
-		return { default: CheckBox };
-	},
-	{
-		attachment: 'at-parent',
-	},
-);
 
 createTemplateForComponent('UnreadMessagesIndicator', () => import('./views/room/components/body/UnreadMessagesIndicator'), {
 	attachment: 'at-parent',
