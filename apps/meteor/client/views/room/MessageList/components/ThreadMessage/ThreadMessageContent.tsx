@@ -1,9 +1,10 @@
 /* eslint-disable complexity */
-import { IMessage, ISubscription, isE2EEMessage } from '@rocket.chat/core-typings';
+import { IMessage, ISubscription, isE2EEMessage, IThreadMessage } from '@rocket.chat/core-typings';
 import { MessageBody, MessageBlock } from '@rocket.chat/fuselage';
 import { useTranslation, TranslationKey } from '@rocket.chat/ui-contexts';
 import React, { FC, memo } from 'react';
 
+import { WithRequiredProperty } from '../../../../../../definition/WithRequiredProperty';
 import Attachments from '../../../../../components/message/Attachments';
 import MessageActions from '../../../../../components/message/MessageActions';
 import BroadcastMetric from '../../../../../components/message/Metrics/Broadcast';
@@ -14,14 +15,13 @@ import MessageLocation from '../../../../location/MessageLocation';
 import { useMessageActions, useMessageOembedIsEnabled, useMessageRunActionLink } from '../../../contexts/MessageContext';
 import { useTranslateAttachments, useMessageListShowReadReceipt } from '../../contexts/MessageListContext';
 import { isOwnUserMessage } from '../../lib/isOwnUserMessage';
-import { MessageWithMdEnforced } from '../../lib/parseMessageTextToAstMarkdown';
 import MessageContentBody from '../MessageContentBody';
 import ReactionsList from '../MessageReactionsList';
 import ReadReceipt from '../MessageReadReceipt';
 import PreviewList from '../UrlPreview';
 
 const ThreadMessageContent: FC<{
-	message: MessageWithMdEnforced;
+	message: WithRequiredProperty<IThreadMessage, 'md'>;
 	sequential: boolean;
 	subscription?: ISubscription;
 	id: IMessage['_id'];

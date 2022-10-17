@@ -1,11 +1,8 @@
 import { IMessage, isQuoteAttachment, isTranslatedMessage, MessageAttachment, MessageQuoteAttachment } from '@rocket.chat/core-typings';
 import { Options, parse, Root } from '@rocket.chat/message-parser';
 
+import { WithRequiredProperty } from '../../../../../definition/WithRequiredProperty';
 import { isParsedMessage } from './isParsedMessage';
-
-type WithRequiredProperty<Type, Key extends keyof Type> = Type & {
-	[Property in Key]-?: Type[Property];
-};
 
 export type MessageWithMdEnforced = WithRequiredProperty<IMessage, 'md'>;
 /*

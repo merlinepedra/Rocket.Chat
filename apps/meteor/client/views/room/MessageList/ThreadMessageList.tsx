@@ -6,6 +6,7 @@ import React, { FC, Fragment, memo, ReactElement } from 'react';
 // import { MessageTypes } from '../../../../app/ui-utils/client';
 import { Virtuoso } from 'react-virtuoso';
 
+import { WithRequiredProperty } from '../../../../definition/WithRequiredProperty';
 import ScrollableContentWrapper from '../../../components/ScrollableContentWrapper';
 import { useFormatDate } from '../../../hooks/useFormatDate';
 import { MessageProvider } from '../providers/MessageProvider';
@@ -23,8 +24,8 @@ import MessageHighlightProvider from './providers/MessageHighlightProvider';
 import { MessageListProvider } from './providers/MessageListProvider';
 
 type ThreadMessageItemProps = {
-	message: IThreadMessage;
-	previous: IThreadMessage;
+	message: WithRequiredProperty<IThreadMessage, 'md'>;
+	previous: WithRequiredProperty<IThreadMessage, 'md'>;
 	subscription: ISubscription | undefined;
 	messageGroupingPeriod: number;
 	format: ReturnType<typeof useFormatDate>;

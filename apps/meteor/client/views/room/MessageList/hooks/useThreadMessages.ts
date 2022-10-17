@@ -1,16 +1,13 @@
-import { IMessage, IThreadMessage } from '@rocket.chat/core-typings';
+import { IMessage, isThreadMessage, IThreadMessage } from '@rocket.chat/core-typings';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 
 import { Messages } from '../../../../../app/models/client';
+import { WithRequiredProperty } from '../../../../../definition/WithRequiredProperty';
 import { queryClient } from '../../../../lib/queryClient';
 import { callWithErrorHandling } from '../../../../lib/utils/callWithErrorHandling';
 import { useMessageListContext } from '../contexts/MessageListContext';
-import {
-	MessageWithMdEnforced,
-	parseMessageTextToAstMarkdown,
-	removePossibleNullMessageValues,
-} from '../lib/parseMessageTextToAstMarkdown';
+import { parseMessageTextToAstMarkdown, removePossibleNullMessageValues } from '../lib/parseMessageTextToAstMarkdown';
 
 const fetchThreadMessages = async (tmid: IThreadMessage['tmid']): Promise<IThreadMessage[]> => {
 	const messages = (await callWithErrorHandling('getThreadMessages', { tmid })) as IThreadMessage[];
@@ -21,7 +18,7 @@ const fetchThreadMessages = async (tmid: IThreadMessage['tmid']): Promise<IThrea
 // Delete message is not working (fails to read message dataset)
 // Issues with sequential messages
 
-export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): MessageWithMdEnforced[] => {
+export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): WithRequiredProperty<IThreadMessage, 'md'>[] => {
 	const { autoTranslateLanguage, katex, showColors, useShowTranslated } = useMessageListContext();
 
 	const normalizeMessage = useMemo(() => {
@@ -35,8 +32,20 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): M
 				},
 			}),
 		};
-		return (message: IMessage): MessageWithMdEnforced =>
-			parseMessageTextToAstMarkdown(removePossibleNullMessageValues(message), parseOptions, autoTranslateLanguage, useShowTranslated);
+		return (message: IMessage): WithRequiredProperty<IThreadMessage, 'md'> => {
+			const parsedMessage = parseMessageTextToAstMarkdown(
+				removePossibleNullMessageValues(message),
+				parseOptions,
+				autoTranslateLanguage,
+				useShowTranslated,
+			);
+
+			if (!isThreadMessage(parsedMessage)) {
+				throw new Error('Message is not a thread message');
+			}
+
+			return parsedMessage;
+		};
 	}, [autoTranslateLanguage, katex, showColors, useShowTranslated]);
 
 	useEffect(() => {
@@ -51,13 +60,13 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): M
 			},
 		).observe({
 			added: (message: IThreadMessage) => {
-				queryClient.setQueryData<MessageWithMdEnforced[]>(['threadMessages', tmid], (currentData) => [
+				queryClient.setQueryData<WithRequiredProperty<IThreadMessage, 'md'>[]>(['threadMessages', tmid], (currentData) => [
 					...(currentData || []),
 					normalizeMessage(message),
 				]);
 			},
 			changed: (message: IThreadMessage) => {
-				queryClient.setQueryData<MessageWithMdEnforced[]>(['threadMessages', tmid], (currentData) => {
+				queryClient.setQueryData<WithRequiredProperty<IThreadMessage, 'md'>[]>(['threadMessages', tmid], (currentData) => {
 					if (!currentData) {
 						return [];
 					}
@@ -69,7 +78,7 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): M
 				});
 			},
 			removed: ({ _id }: IThreadMessage) => {
-				queryClient.setQueryData<IThreadMessage[]>(['threadMessages', tmid], (currentData) => {
+				queryClient.setQueryData<WithRequiredProperty<IThreadMessage, 'md'>[]>(['threadMessages', tmid], (currentData) => {
 					if (!currentData) {
 						return [];
 					}

@@ -1,9 +1,10 @@
 /* eslint-disable complexity */
-import type { ISubscription, IMessage } from '@rocket.chat/core-typings';
+import type { ISubscription, IMessage, IThreadMessage } from '@rocket.chat/core-typings';
 import { Message as MessageTemplate, MessageLeftContainer, MessageContainer, MessageBody, CheckBox } from '@rocket.chat/fuselage';
 import { useToggle } from '@rocket.chat/fuselage-hooks';
 import React, { FC, memo } from 'react';
 
+import { WithRequiredProperty } from '../../../../../../definition/WithRequiredProperty';
 import UserAvatar from '../../../../../components/avatar/UserAvatar';
 import { useMessageActions } from '../../../contexts/MessageContext';
 import { useIsMessageHighlight } from '../../contexts/MessageHighlightContext';
@@ -14,12 +15,12 @@ import { MessageIndicators } from '../MessageIndicators';
 import Toolbox from '../Toolbox';
 import ThreadMessageContent from './ThreadMessageContent';
 
-const ThreadMessage: FC<{ message: IMessage; sequential: boolean; subscription?: ISubscription; id: IMessage['_id'] }> = ({
-	message,
-	sequential,
-	subscription,
-	...props
-}) => {
+const ThreadMessage: FC<{
+	message: WithRequiredProperty<IThreadMessage, 'md'> & { ignored?: boolean };
+	sequential: boolean;
+	subscription?: ISubscription;
+	id: IMessage['_id'];
+}> = ({ message, sequential, subscription, ...props }) => {
 	const isMessageHighlight = useIsMessageHighlight(message._id);
 	const [isMessageIgnored, toggleMessageIgnored] = useToggle(message.ignored);
 	const {
