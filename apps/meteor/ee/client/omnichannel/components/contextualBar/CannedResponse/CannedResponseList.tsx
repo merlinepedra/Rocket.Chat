@@ -102,7 +102,7 @@ const CannedResponseList: FC<{
 			{cannedId && (
 				<VerticalBar.InnerContent>
 					<WrapCannedResponse
-						cannedItem={cannedItems.find((canned) => canned._id === (cannedId as unknown))}
+						cannedItem={cannedItems.find((canned) => canned._id === cannedId)}
 						onClickBack={onClickItem}
 						onClickUse={onClickUse}
 						reload={reload}

@@ -1,4 +1,3 @@
-import { useQueryStringParameter } from '@rocket.chat/ui-contexts';
 import React, { ReactElement } from 'react';
 
 import { useTabContext } from '../../contexts/ToolboxContext';
@@ -6,11 +5,10 @@ import Thread from './Thread';
 import ThreadsList from './ThreadsList';
 
 const Threads = (): ReactElement => {
-	const mid = useTabContext() as string;
-	const jump = useQueryStringParameter('jump');
+	const mid = useTabContext();
 
 	if (mid) {
-		return <Thread mid={mid} jump={jump} />;
+		return <Thread mid={mid} />;
 	}
 
 	return <ThreadsList />;

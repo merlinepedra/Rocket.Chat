@@ -541,7 +541,7 @@ API.v1.addRoute(
 
 			const typeThread = {
 				_hidden: { $ne: true },
-				...(type === 'following' && { replies: { $in: [this.userId] } }),
+				...(type === 'following' && { replies: { $in: [user._id] } }),
 				...(type === 'unread' && { _id: { $in: Subscriptions.findOneByRoomIdAndUserId(room._id, user._id).tunread } }),
 				msg: new RegExp(escapeRegExp(text), 'i'),
 			};

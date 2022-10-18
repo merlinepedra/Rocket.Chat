@@ -10,7 +10,7 @@ export type ToolboxContextValue = {
 	actions: Map<ToolboxActionConfig['id'], ToolboxAction>;
 	listen: ToolboxEventHandler;
 	tabBar?: any;
-	context?: any;
+	context?: string;
 	open: (actionId: string, context?: string) => void;
 	openRoomInfo: (username?: string) => void;
 	close: () => void;
@@ -28,7 +28,7 @@ export const ToolboxContext = createContext<ToolboxContextValue>({
 
 export const useToolboxContext = (): ToolboxContextValue => useContext(ToolboxContext);
 
-export const useTabContext = (): unknown | undefined => useContext(ToolboxContext).context;
+export const useTabContext = (): string | undefined => useContext(ToolboxContext).context;
 export const useTab = (): ToolboxActionConfig | undefined => useContext(ToolboxContext).activeTabBar;
 export const useTabBarOpen = (): ((actionId: string, context?: string) => void) => useContext(ToolboxContext).open;
 export const useTabBarClose = (): (() => void) => useContext(ToolboxContext).close;

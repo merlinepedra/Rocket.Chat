@@ -1,86 +1,32 @@
-import type { IMessage } from '@rocket.chat/core-typings';
+import { IThreadMainMessage } from '@rocket.chat/core-typings';
 import { Box, Icon, TextInput, Select, Margins, Callout, Throbber } from '@rocket.chat/fuselage';
-import { useResizeObserver, useMutableCallback, useAutoFocus, useLocalStorage, useDebouncedValue } from '@rocket.chat/fuselage-hooks';
-import { useRoute, useSetting, useTranslation, useUserId } from '@rocket.chat/ui-contexts';
-import React, { ReactElement, UIEvent, useCallback, useMemo, useState } from 'react';
+import { useResizeObserver, useMutableCallback, useAutoFocus } from '@rocket.chat/fuselage-hooks';
+import { useRoute, useTranslation } from '@rocket.chat/ui-contexts';
+import React, { ReactElement, UIEvent } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../components/ScrollableContentWrapper';
 import VerticalBar from '../../../../components/VerticalBar';
-import { useRecordList } from '../../../../hooks/lists/useRecordList';
-import { AsyncStatePhase } from '../../../../lib/asyncState';
 import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
-import { useRoom, useRoomSubscription } from '../../contexts/RoomContext';
+import { useRoom } from '../../contexts/RoomContext';
 import { useTabBarClose } from '../../contexts/ToolboxContext';
 import ThreadsListItem from './ThreadsListItem';
-import { useThreadsList } from './hooks/useThreadsList';
+import { useThreadFilterOptions } from './hooks/useThreadFilterOptions';
+import { useThreadsQuery } from './hooks/useThreadsQuery';
 
 const ThreadsList = (): ReactElement => {
 	const room = useRoom();
-	const subscription = useRoomSubscription();
-	const subscribed = !!subscription;
 
-	const t = useTranslation();
-	const onClose = useTabBarClose();
-	const userId = useUserId();
+	const {
+		type,
+		typeOptions,
+		onTypeChange: handleTypeChange,
+		messageText,
+		onMessageTextChange: handleMessageTextChange,
+		searchParameters,
+	} = useThreadFilterOptions();
 
-	const typeOptions: [type: 'all' | 'following' | 'unread', label: string][] = useMemo(
-		() => [
-			['all', t('All')],
-			['following', t('Following')],
-			['unread', t('Unread')],
-		],
-		[t],
-	);
-
-	const [type, setType] = useLocalStorage<'all' | 'following' | 'unread'>('thread-list-type', 'all');
-
-	const handleChangeType = useCallback(
-		(type: string) => {
-			setType(type as 'all' | 'following' | 'unread');
-		},
-		[setType],
-	);
-
-	const [text, setText] = useState('');
-	const debouncedText = useDebouncedValue(text, 400);
-	const handleTextChange = useCallback((event) => {
-		setText(event.currentTarget.value);
-	}, []);
-
-	const options = useDebouncedValue(
-		useMemo(() => {
-			if (type === 'all' || !subscribed || !userId) {
-				return {
-					rid: room._id,
-					text: debouncedText,
-					type: 'all',
-				} as const;
-			}
-			switch (type) {
-				case 'following':
-					return {
-						rid: room._id,
-						text: debouncedText,
-						type,
-						uid: userId,
-					} as const;
-				case 'unread':
-					return {
-						rid: room._id,
-						text: debouncedText,
-						type,
-						tunread: subscription?.tunread,
-					} as const;
-			}
-		}, [type, subscribed, userId, room._id, debouncedText, subscription?.tunread]),
-		300,
-	);
-
-	const { threadsList, loadMoreItems } = useThreadsList(options, userId as string);
-	const { phase, error, items: threads, itemCount: total } = useRecordList(threadsList);
-
-	const showRealNames = Boolean(useSetting('UI_Use_Real_Name'));
+	const threadsQueryResult = useThreadsQuery(searchParameters);
 
 	const inputRef = useAutoFocus<HTMLInputElement>(true);
 
@@ -99,12 +45,15 @@ const ThreadsList = (): ReactElement => {
 		debounceDelay: 200,
 	});
 
+	const t = useTranslation();
+	const handleClose = useTabBarClose();
+
 	return (
 		<>
 			<VerticalBar.Header>
 				<VerticalBar.Icon name='thread' />
 				<VerticalBar.Text>{t('Threads')}</VerticalBar.Text>
-				<VerticalBar.Close onClick={onClose} />
+				<VerticalBar.Close onClick={handleClose} />
 			</VerticalBar.Header>
 
 			<VerticalBar.Content paddingInline={0} ref={ref}>
@@ -121,60 +70,49 @@ const ThreadsList = (): ReactElement => {
 						<Margins inline='x4'>
 							<TextInput
 								placeholder={t('Search_Messages')}
-								value={text}
-								onChange={handleTextChange}
+								value={messageText}
+								onChange={handleMessageTextChange}
 								addon={<Icon name='magnifier' size='x20' />}
 								ref={inputRef}
 							/>
-							<Select flexGrow={0} width='110px' onChange={handleChangeType} value={type} options={typeOptions} />
+							<Select flexGrow={0} width='110px' onChange={handleTypeChange} value={type} options={typeOptions} />
 						</Margins>
 					</Box>
 				</Box>
 
-				{phase === AsyncStatePhase.LOADING && (
+				{threadsQueryResult.isLoading && (
 					<Box pi='x24' pb='x12'>
 						<Throbber size='x12' />
 					</Box>
 				)}
 
-				{error && (
+				{threadsQueryResult.isError && (
 					<Callout mi='x24' type='danger'>
-						{error.toString()}
+						{threadsQueryResult.error.toString()}
 					</Callout>
 				)}
 
-				{phase !== AsyncStatePhase.LOADING && total === 0 && (
+				{threadsQueryResult.isSuccess && threadsQueryResult.data.pages.length === 0 && (
 					<Box p='x24' color='neutral-600' textAlign='center' width='full'>
 						{t('No_Threads')}
 					</Box>
 				)}
 
 				<Box flexGrow={1} flexShrink={1} overflow='hidden' display='flex'>
-					{!error && total > 0 && threads.length > 0 && (
+					{threadsQueryResult.isSuccess && threadsQueryResult.data.pages.length > 0 && (
 						<Virtuoso
 							style={{
 								height: blockSize,
 								width: inlineSize,
 							}}
-							totalCount={total}
-							endReached={
-								phase === AsyncStatePhase.LOADING
-									? (): void => undefined
-									: (start): unknown => loadMoreItems(start, Math.min(50, total - start))
-							}
+							endReached={(): void => {
+								threadsQueryResult.fetchNextPage();
+							}}
 							overscan={25}
-							data={threads}
+							data={threadsQueryResult.data.pages.flat()}
 							components={{ Scroller: ScrollableContentWrapper }}
-							itemContent={(_index, data: IMessage): ReactElement => (
-								<ThreadsListItem
-									thread={data}
-									showRealNames={showRealNames}
-									unread={subscription?.tunread ?? []}
-									unreadUser={subscription?.tunreadUser ?? []}
-									unreadGroup={subscription?.tunreadGroup ?? []}
-									userId={userId || ''}
-									onClick={onClick}
-								/>
+							itemContent={(_index, mainMessage: IThreadMainMessage): ReactElement => (
+								<ThreadsListItem key={mainMessage._id} mainMessage={mainMessage} onClick={onClick} />
 							)}
 						/>
 					)}

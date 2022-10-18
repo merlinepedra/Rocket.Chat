@@ -11,6 +11,7 @@ import {
 	useTranslation,
 	useUserPreference,
 	useMethod,
+	useQueryStringParameter,
 } from '@rocket.chat/ui-contexts';
 import { Mongo } from 'meteor/mongo';
 import React, { ReactElement, UIEvent, useEffect, useRef, useState, useCallback, useMemo, FormEvent } from 'react';
@@ -42,10 +43,11 @@ import { useThreadMessage } from './hooks/useThreadMessage';
 
 type ThreadProps = {
 	mid: IMessage['_id'];
-	jump?: IMessage['_id'];
 };
 
-const Thread = ({ mid: tmid, jump }: ThreadProps): ReactElement => {
+const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
+	const jump = useQueryStringParameter('jump');
+
 	const room = useRoom();
 
 	const useLegacyMessageTemplate = useUserPreference<boolean>('useLegacyMessageTemplate') ?? false;
