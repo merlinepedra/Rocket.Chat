@@ -1,22 +1,18 @@
 import { IThreadMainMessage } from '@rocket.chat/core-typings';
 import { Box, Icon, TextInput, Select, Margins, Callout, Throbber } from '@rocket.chat/fuselage';
-import { useResizeObserver, useMutableCallback, useAutoFocus } from '@rocket.chat/fuselage-hooks';
-import { useRoute, useTranslation } from '@rocket.chat/ui-contexts';
-import React, { ReactElement, UIEvent } from 'react';
+import { useResizeObserver, useAutoFocus } from '@rocket.chat/fuselage-hooks';
+import { useTranslation } from '@rocket.chat/ui-contexts';
+import React, { ReactElement, useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import ScrollableContentWrapper from '../../../../components/ScrollableContentWrapper';
 import VerticalBar from '../../../../components/VerticalBar';
-import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
-import { useRoom } from '../../contexts/RoomContext';
 import { useTabBarClose } from '../../contexts/ToolboxContext';
 import ThreadsListItem from './ThreadsListItem';
 import { useThreadFilterOptions } from './hooks/useThreadFilterOptions';
 import { useThreadsQuery } from './hooks/useThreadsQuery';
 
 const ThreadsList = (): ReactElement => {
-	const room = useRoom();
-
 	const {
 		type,
 		typeOptions,
@@ -30,23 +26,13 @@ const ThreadsList = (): ReactElement => {
 
 	const inputRef = useAutoFocus<HTMLInputElement>(true);
 
-	const channelRoute = useRoute(roomCoordinator.getRoomTypeConfig(room.t).route.name);
-	const onClick = useMutableCallback((e: UIEvent<HTMLElement>) => {
-		const { id: context = '' } = e.currentTarget.dataset;
-		channelRoute.push({
-			tab: 'thread',
-			context,
-			rid: room._id,
-			...(room.name && { name: room.name }),
-		});
-	});
-
-	const { ref, contentBoxSize: { inlineSize = 378, blockSize = 1 } = {} } = useResizeObserver<HTMLElement>({
-		debounceDelay: 200,
-	});
+	const { ref: contentRef, contentBoxSize: { inlineSize: contentInlineSize = 378, blockSize: contentBlockSize = 1 } = {} } =
+		useResizeObserver<HTMLElement>({ debounceDelay: 200 });
 
 	const t = useTranslation();
 	const handleClose = useTabBarClose();
+
+	const data = useMemo(() => threadsQueryResult.data?.pages.flat(), [threadsQueryResult.data]);
 
 	return (
 		<>
@@ -56,7 +42,7 @@ const ThreadsList = (): ReactElement => {
 				<VerticalBar.Close onClick={handleClose} />
 			</VerticalBar.Header>
 
-			<VerticalBar.Content paddingInline={0} ref={ref}>
+			<VerticalBar.Content paddingInline={0} ref={contentRef}>
 				<Box
 					display='flex'
 					flexDirection='row'
@@ -75,7 +61,7 @@ const ThreadsList = (): ReactElement => {
 								addon={<Icon name='magnifier' size='x20' />}
 								ref={inputRef}
 							/>
-							<Select flexGrow={0} width='110px' onChange={handleTypeChange} value={type} options={typeOptions} />
+							<Select flexGrow={0} width={110} onChange={handleTypeChange} value={type} options={typeOptions} />
 						</Margins>
 					</Box>
 				</Box>
@@ -102,17 +88,17 @@ const ThreadsList = (): ReactElement => {
 					{threadsQueryResult.isSuccess && threadsQueryResult.data.pages.length > 0 && (
 						<Virtuoso
 							style={{
-								height: blockSize,
-								width: inlineSize,
+								height: contentBlockSize,
+								width: contentInlineSize,
 							}}
 							endReached={(): void => {
 								threadsQueryResult.fetchNextPage();
 							}}
 							overscan={25}
-							data={threadsQueryResult.data.pages.flat()}
+							data={data}
 							components={{ Scroller: ScrollableContentWrapper }}
 							itemContent={(_index, mainMessage: IThreadMainMessage): ReactElement => (
-								<ThreadsListItem key={mainMessage._id} mainMessage={mainMessage} onClick={onClick} />
+								<ThreadsListItem key={mainMessage._id} mainMessage={mainMessage} />
 							)}
 						/>
 					)}

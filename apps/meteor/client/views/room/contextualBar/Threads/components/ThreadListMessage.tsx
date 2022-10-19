@@ -1,7 +1,7 @@
 import { IMessage } from '@rocket.chat/core-typings';
 import { Message, Box, IconButton } from '@rocket.chat/fuselage';
 import { useTranslation } from '@rocket.chat/ui-contexts';
-import React, { ComponentProps, memo, MouseEventHandler, ReactElement, ReactNode } from 'react';
+import React, { ComponentProps, memo, ReactElement, ReactNode, UIEventHandler } from 'react';
 
 import RawText from '../../../../../components/RawText';
 import UserAvatar from '../../../../../components/avatar/UserAvatar';
@@ -11,15 +11,15 @@ import { useTimeAgo } from '../../../../../hooks/useTimeAgo';
 import { clickableItem } from '../../../../../lib/clickableItem';
 
 type ThreadListMessageProps = {
-	_id: IMessage['_id'];
+	mid: IMessage['_id'];
 	msg: string;
 	following: boolean;
-	username: IMessage['u']['username'];
-	name?: IMessage['u']['name'];
+	username: string;
+	name: ReactNode;
 	ts: Date;
 	replies?: number;
 	participants: ReactNode;
-	handleFollowButton: MouseEventHandler;
+	onToggleFollowButtonClick: UIEventHandler<HTMLElement>;
 	unread: boolean;
 	mention: boolean;
 	all: boolean;
@@ -27,8 +27,8 @@ type ThreadListMessageProps = {
 	className?: string | string[];
 } & Omit<ComponentProps<typeof Message>, 'className'>;
 
-function ThreadListMessage({
-	_id,
+const ThreadListMessage = ({
+	mid: _id,
 	msg,
 	following,
 	username,
@@ -36,19 +36,17 @@ function ThreadListMessage({
 	ts,
 	replies,
 	participants,
-	handleFollowButton,
+	onToggleFollowButtonClick,
 	unread,
 	mention,
 	all,
 	tlm,
 	className = [],
 	...props
-}: ThreadListMessageProps): ReactElement {
+}: ThreadListMessageProps): ReactElement => {
 	const t = useTranslation();
 	const formatDate = useTimeAgo();
 
-	const button = !following ? 'bell-off' : 'bell';
-	const actionLabel = t(!following ? 'Not_Following' : 'Following');
 	return (
 		<Box className={[className, !following && followStyle].flat()} pb='x8'>
 			<Message {...props}>
@@ -86,13 +84,13 @@ function ThreadListMessage({
 					<IconButton
 						className={anchor}
 						small
-						icon={button}
+						icon={following ? 'bell' : 'bell-off'}
 						flexShrink={0}
 						data-following={following}
 						data-id={_id}
-						onClick={handleFollowButton}
-						title={actionLabel}
-						aria-label={actionLabel}
+						onClick={onToggleFollowButtonClick}
+						title={following ? t('Following') : t('Not_Following')}
+						aria-label={following ? t('Following') : t('Not_Following')}
 					/>
 					<Box mb={24}>
 						{(mention && <NotificationStatus.Me />) || (all && <NotificationStatus.All />) || (unread && <NotificationStatus.Unread />)}
@@ -101,6 +99,6 @@ function ThreadListMessage({
 			</Message>
 		</Box>
 	);
-}
+};
 
 export default memo(clickableItem(ThreadListMessage));
