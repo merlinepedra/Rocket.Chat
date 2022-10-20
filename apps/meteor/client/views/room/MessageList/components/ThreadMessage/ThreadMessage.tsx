@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import type { ISubscription, IMessage, IThreadMessage } from '@rocket.chat/core-typings';
+import type { ISubscription, IMessage, IThreadMessage, IThreadMainMessage } from '@rocket.chat/core-typings';
 import { Message as MessageTemplate, MessageLeftContainer, MessageContainer, MessageBody, CheckBox } from '@rocket.chat/fuselage';
 import { useToggle } from '@rocket.chat/fuselage-hooks';
 import React, { FC, memo } from 'react';
@@ -16,7 +16,7 @@ import Toolbox from '../Toolbox';
 import ThreadMessageContent from './ThreadMessageContent';
 
 const ThreadMessage: FC<{
-	message: WithRequiredProperty<IThreadMessage, 'md'> & { ignored?: boolean };
+	message: WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'> & { ignored?: boolean };
 	sequential: boolean;
 	subscription?: ISubscription;
 	id: IMessage['_id'];

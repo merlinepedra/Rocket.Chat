@@ -1,4 +1,4 @@
-import type { IEditedMessage, IMessage } from '@rocket.chat/core-typings';
+import { IEditedMessage, IMessage, IRoom, IThreadMainMessage, isThreadMainMessage } from '@rocket.chat/core-typings';
 import { css } from '@rocket.chat/css-in-js';
 import { Box, CheckBox, Modal } from '@rocket.chat/fuselage';
 import { useMutableCallback, useLocalStorage } from '@rocket.chat/fuselage-hooks';
@@ -11,8 +11,8 @@ import {
 	useTranslation,
 	useUserPreference,
 	useMethod,
-	useQueryStringParameter,
 } from '@rocket.chat/ui-contexts';
+import { useQuery, useQueryClient, InfiniteData, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { Mongo } from 'meteor/mongo';
 import React, { ReactElement, UIEvent, useEffect, useRef, useState, useCallback, useMemo, FormEvent } from 'react';
 
@@ -28,6 +28,7 @@ import { withDebouncing, withThrottling } from '../../../../../lib/utils/highOrd
 import VerticalBar from '../../../../components/VerticalBar';
 import { useReactiveValue } from '../../../../hooks/useReactiveValue';
 import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
+import { mapMessageFromApi } from '../../../../lib/utils/mapMessageFromApi';
 import MessageListErrorBoundary from '../../MessageList/MessageListErrorBoundary';
 import ThreadMessageList from '../../MessageList/ThreadMessageList';
 import DropTargetOverlay from '../../components/body/DropTargetOverlay';
@@ -36,19 +37,64 @@ import ComposerMessage from '../../components/body/composer/ComposerMessage';
 import { useChatMessages } from '../../components/body/useChatMessages';
 import { useFileUploadDropTarget } from '../../components/body/useFileUploadDropTarget';
 import { useRoom, useRoomSubscription } from '../../contexts/RoomContext';
-import { useTabBarOpenUserInfo, useToolboxContext } from '../../contexts/ToolboxContext';
+import { useToolboxContext } from '../../contexts/ToolboxContext';
 import LegacyThreadMessageTemplateList from './LegacyThreadMessageTemplateList';
 import ThreadSkeleton from './ThreadSkeleton';
 import { useThreadMessage } from './hooks/useThreadMessage';
+
+const threadMainMessageQueryKey = (rid: IRoom['_id'], tmid: IMessage['_id']) => ['rooms', rid, 'threads', tmid, 'main-message'] as const;
+
+const useThreadMainMessageQuery = ({
+	rid,
+	tmid,
+	...options
+}: { rid: IRoom['_id']; tmid: IMessage['_id'] } & UseQueryOptions<
+	IThreadMainMessage,
+	Error,
+	IThreadMainMessage,
+	ReturnType<typeof threadMainMessageQueryKey>
+>): UseQueryResult<IThreadMainMessage, Error> => {
+	const queryClient = useQueryClient();
+
+	const getMessage = useEndpoint('GET', '/v1/chat.getMessage');
+
+	const queryResult = useQuery(
+		threadMainMessageQueryKey(rid, tmid),
+		async (): Promise<IThreadMainMessage> => {
+			const fromQueryCache = queryClient
+				.getQueryData<InfiniteData<IThreadMainMessage[]>>(['rooms', rid, 'threads'], { exact: true })
+				?.pages.find((page) => page.some((message) => message._id === tmid))
+				?.find((message) => message._id === tmid);
+
+			if (fromQueryCache) return fromQueryCache;
+
+			const fromCachedCollection = (Messages as Mongo.Collection<IMessage>)
+				.find({ _id: tmid, rid }, { reactive: false })
+				.fetch()
+				.filter(isThreadMainMessage)[0] as IThreadMainMessage | undefined;
+
+			if (fromCachedCollection) return fromCachedCollection;
+
+			const { message: rawMessage } = await getMessage({ msgId: tmid });
+			const message = mapMessageFromApi(rawMessage);
+			if (message.rid === rid && isThreadMainMessage(message)) return message;
+
+			throw new Error('Thread main message not found');
+		},
+		options,
+	);
+
+	return queryResult;
+};
 
 type ThreadProps = {
 	mid: IMessage['_id'];
 };
 
 const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
-	const jump = useQueryStringParameter('jump');
-
 	const room = useRoom();
+
+	useThreadMainMessageQuery({ rid: room._id, tmid });
 
 	const useLegacyMessageTemplate = useUserPreference<boolean>('useLegacyMessageTemplate') ?? false;
 
@@ -107,8 +153,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 		useCallback(() => Threads.current.find({ tmid, _id: { $ne: tmid } }, { sort: { ts: 1 } }).fetch(), [tmid]),
 	);
 
-	const openUserInfo = useTabBarOpenUserInfo();
-
 	const ref = useRef<HTMLElement>(null);
 	const uid = useUserId();
 
@@ -156,47 +200,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 				return !threadMessage?.tcount;
 		}
 	});
-
-	const [viewData, setViewData] = useState(() => ({
-		mainMessage: threadMessage,
-		jump,
-		following,
-		subscription,
-		rid: room._id,
-		tabBar: { openUserInfo },
-		sendToChannel,
-		setSendToChannel,
-	}));
-
-	useEffect(() => {
-		setViewData((viewData) => {
-			if (!threadMessage || viewData.mainMessage?._id === threadMessage._id) {
-				return viewData;
-			}
-
-			return {
-				mainMessage: threadMessage,
-				jump,
-				following,
-				subscription,
-				rid: room._id,
-				tabBar: { openUserInfo },
-				sendToChannel,
-				setSendToChannel,
-			};
-		});
-	}, [following, jump, openUserInfo, room._id, sendToChannel, subscription, threadMessage]);
-
-	useEffect(() => {
-		if (!ref.current || !viewData.mainMessage) {
-			return;
-		}
-		// const view = Blaze.renderWithData(Template.thread, viewData, ref.current);
-
-		return (): void => {
-			// Blaze.remove(view);
-		};
-	}, [viewData]);
 
 	const handleFollowActionClick = useMutableCallback(() => {
 		setFollowing(!following);

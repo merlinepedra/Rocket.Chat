@@ -1,4 +1,4 @@
-import { IMessage, isThreadMessage, IThreadMessage } from '@rocket.chat/core-typings';
+import { IMessage, isThreadMessage, IThreadMessage, IThreadMainMessage, isThreadMainMessage } from '@rocket.chat/core-typings';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 
@@ -9,16 +9,20 @@ import { callWithErrorHandling } from '../../../../lib/utils/callWithErrorHandli
 import { useMessageListContext } from '../contexts/MessageListContext';
 import { parseMessageTextToAstMarkdown, removePossibleNullMessageValues } from '../lib/parseMessageTextToAstMarkdown';
 
-const fetchThreadMessages = async (tmid: IThreadMessage['tmid']): Promise<IThreadMessage[]> => {
-	const messages = (await callWithErrorHandling('getThreadMessages', { tmid })) as IThreadMessage[];
-	return messages?.sort((a: IThreadMessage, b: IThreadMessage) => Number(a.ts) - Number(b.ts));
+const fetchThreadMessages = async (tmid: IThreadMainMessage['_id']): Promise<(IThreadMessage | IThreadMainMessage)[]> => {
+	const messages = (await callWithErrorHandling('getThreadMessages', { tmid })) as (IThreadMessage | IThreadMainMessage)[];
+	return messages?.sort((a, b) => a.ts.getDate() - b.ts.getDate());
 };
 
 // Edit message is not working (fails to read message dataset)
 // Delete message is not working (fails to read message dataset)
 // Issues with sequential messages
 
-export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): WithRequiredProperty<IThreadMessage, 'md'>[] => {
+export const useThreadMessages = ({
+	tmid,
+}: {
+	tmid: IThreadMessage['tmid'];
+}): WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>[] => {
 	const { autoTranslateLanguage, katex, showColors, useShowTranslated } = useMessageListContext();
 
 	const normalizeMessage = useMemo(() => {
@@ -32,7 +36,7 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): W
 				},
 			}),
 		};
-		return (message: IMessage): WithRequiredProperty<IThreadMessage, 'md'> => {
+		return (message: IMessage): WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'> => {
 			const parsedMessage = parseMessageTextToAstMarkdown(
 				removePossibleNullMessageValues(message),
 				parseOptions,
@@ -40,7 +44,7 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): W
 				useShowTranslated,
 			);
 
-			if (!isThreadMessage(parsedMessage)) {
+			if (!isThreadMessage(parsedMessage) && !isThreadMainMessage(parsedMessage)) {
 				throw new Error('Message is not a thread message');
 			}
 
@@ -59,35 +63,41 @@ export const useThreadMessages = ({ tmid }: { tmid: IThreadMessage['tmid'] }): W
 				},
 			},
 		).observe({
-			added: (message: IThreadMessage) => {
-				queryClient.setQueryData<WithRequiredProperty<IThreadMessage, 'md'>[]>(['threadMessages', tmid], (currentData) => [
-					...(currentData || []),
-					normalizeMessage(message),
-				]);
+			added: (message: IThreadMessage | IThreadMainMessage) => {
+				queryClient.setQueryData<WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>[]>(
+					['threadMessages', tmid],
+					(currentData) => [...(currentData || []), normalizeMessage(message)],
+				);
 			},
-			changed: (message: IThreadMessage) => {
-				queryClient.setQueryData<WithRequiredProperty<IThreadMessage, 'md'>[]>(['threadMessages', tmid], (currentData) => {
-					if (!currentData) {
-						return [];
-					}
-					const index = currentData.findIndex((currentMessage) => currentMessage._id === message._id);
-					if (index === -1) {
-						return currentData;
-					}
-					return [...currentData.slice(0, index), normalizeMessage(message), ...currentData.slice(index + 1)];
-				});
+			changed: (message: IThreadMessage | IThreadMainMessage) => {
+				queryClient.setQueryData<WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>[]>(
+					['threadMessages', tmid],
+					(currentData) => {
+						if (!currentData) {
+							return [];
+						}
+						const index = currentData.findIndex((currentMessage) => currentMessage._id === message._id);
+						if (index === -1) {
+							return currentData;
+						}
+						return [...currentData.slice(0, index), normalizeMessage(message), ...currentData.slice(index + 1)];
+					},
+				);
 			},
-			removed: ({ _id }: IThreadMessage) => {
-				queryClient.setQueryData<WithRequiredProperty<IThreadMessage, 'md'>[]>(['threadMessages', tmid], (currentData) => {
-					if (!currentData) {
-						return [];
-					}
-					const index = currentData.findIndex((currentMessage) => currentMessage._id === _id);
-					if (index === -1) {
-						return currentData;
-					}
-					return [...currentData.slice(0, index), ...currentData.slice(index + 1)];
-				});
+			removed: ({ _id }: IThreadMessage | IThreadMainMessage) => {
+				queryClient.setQueryData<WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>[]>(
+					['threadMessages', tmid],
+					(currentData) => {
+						if (!currentData) {
+							return [];
+						}
+						const index = currentData.findIndex((currentMessage) => currentMessage._id === _id);
+						if (index === -1) {
+							return currentData;
+						}
+						return [...currentData.slice(0, index), ...currentData.slice(index + 1)];
+					},
+				);
 			},
 		});
 

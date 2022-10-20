@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { IMessage, ISubscription, isE2EEMessage, IThreadMessage } from '@rocket.chat/core-typings';
+import { IMessage, ISubscription, isE2EEMessage, IThreadMessage, IThreadMainMessage } from '@rocket.chat/core-typings';
 import { MessageBody, MessageBlock } from '@rocket.chat/fuselage';
 import { useTranslation, TranslationKey } from '@rocket.chat/ui-contexts';
 import React, { FC, memo } from 'react';
@@ -21,7 +21,7 @@ import ReadReceipt from '../MessageReadReceipt';
 import PreviewList from '../UrlPreview';
 
 const ThreadMessageContent: FC<{
-	message: WithRequiredProperty<IThreadMessage, 'md'>;
+	message: WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>;
 	sequential: boolean;
 	subscription?: ISubscription;
 	id: IMessage['_id'];

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-multi-comp */
-import { IThreadMessage, IRoom, ISubscription } from '@rocket.chat/core-typings';
+import { IThreadMessage, IRoom, ISubscription, IThreadMainMessage } from '@rocket.chat/core-typings';
 import { MessageDivider } from '@rocket.chat/fuselage';
 import { useUserSubscription, useSetting, useTranslation } from '@rocket.chat/ui-contexts';
 import React, { FC, Fragment, memo, ReactElement } from 'react';
@@ -24,8 +24,8 @@ import MessageHighlightProvider from './providers/MessageHighlightProvider';
 import { MessageListProvider } from './providers/MessageListProvider';
 
 type ThreadMessageItemProps = {
-	message: WithRequiredProperty<IThreadMessage, 'md'>;
-	previous: WithRequiredProperty<IThreadMessage, 'md'>;
+	message: WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>;
+	previous: WithRequiredProperty<IThreadMessage | IThreadMainMessage, 'md'>;
 	subscription: ISubscription | undefined;
 	messageGroupingPeriod: number;
 	format: ReturnType<typeof useFormatDate>;
