@@ -1,6 +1,5 @@
 import { css } from '@rocket.chat/css-in-js';
-import { Box } from '@rocket.chat/fuselage';
-import colors from '@rocket.chat/fuselage-tokens/colors';
+import { Box, Palette } from '@rocket.chat/fuselage';
 import { createElement, ComponentType, FunctionComponent, ReactElement, ComponentProps } from 'react';
 
 // TODO remove border from here.
@@ -11,9 +10,9 @@ export const clickableItem = <TProps extends Pick<ComponentProps<typeof Box>, 'c
 		cursor: pointer;
 		&:hover,
 		&:focus {
-			background: ${colors.n100};
+			background: ${Palette.surface['surface-tint']};
 		}
-		border-bottom: 2px solid ${colors.n300} !important;
+		border-bottom: 2px solid ${Palette.stroke['stroke-extra-light']} !important;
 	`;
 
 	const WrappedComponent = (props: TProps): ReactElement => createElement(Component, { className: clickable, tabIndex: 0, ...props });
