@@ -41,6 +41,7 @@ type ThreadTemplateInstance = Blaze.TemplateInstance<{
 		sendToChannel: boolean;
 		jump?: string | null;
 	}>;
+	closeThread: () => void;
 	loadMore: () => Promise<void>;
 	atBottom?: boolean;
 	sendToBottom: () => void;
@@ -142,14 +143,7 @@ Template.thread.helpers({
 				const input = event.target as HTMLTextAreaElement | null;
 
 				if (keyCode === keyCodes.ESCAPE && !result && !input?.value.trim()) {
-					const {
-						route,
-						params: { context, tab, ...params },
-					} = FlowRouter.current();
-					if (!route || !route.name) {
-						throw new Error('FlowRouter.current().route.name is undefined');
-					}
-					FlowRouter.go(route.name, params);
+					instance.closeThread();
 				}
 			},
 		};
@@ -211,6 +205,17 @@ Template.thread.onCreated(async function (this: ThreadTemplateInstance) {
 		Tracker.afterFlush(() => {
 			this.state.set('loading', false);
 		});
+	};
+
+	this.closeThread = () => {
+		const {
+			route,
+			params: { context, tab, ...params },
+		} = FlowRouter.current();
+		if (!route || !route.name) {
+			throw new Error('FlowRouter.current().route.name is undefined');
+		}
+		FlowRouter.go(route.name, params);
 	};
 });
 
@@ -364,6 +369,16 @@ Template.thread.onRendered(function (this: ThreadTemplateInstance) {
 					message.scrollIntoView();
 				}, 300);
 			});
+		}
+	});
+
+	this.autorun(() => {
+		const { Threads, state } = Template.instance() as ThreadTemplateInstance;
+		const tmid = state.get('tmid');
+		const threads = Threads.findOne({ $or: [{ tmid }, { _id: tmid }] });
+
+		if (!threads) {
+			this.closeThread();
 		}
 	});
 });
