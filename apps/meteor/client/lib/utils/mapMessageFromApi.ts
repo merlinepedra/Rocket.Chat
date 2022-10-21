@@ -1,5 +1,4 @@
-import type { IMessage } from '@rocket.chat/core-typings';
-import { Serialized } from '@rocket.chat/core-typings';
+import { IMessage, isThreadMainMessage, IThreadMainMessage, Serialized } from '@rocket.chat/core-typings';
 
 export const mapMessageFromApi = ({ attachments, tlm, ts, _updatedAt, webRtcCallEndTs, ...message }: Serialized<IMessage>): IMessage => ({
 	...message,
@@ -14,3 +13,13 @@ export const mapMessageFromApi = ({ attachments, tlm, ts, _updatedAt, webRtcCall
 		})),
 	}),
 });
+
+export const mapThreadMainMessageFromApi = (message: Serialized<IMessage>): IThreadMainMessage => {
+	const mapped = mapMessageFromApi(message);
+
+	if (!isThreadMainMessage(mapped)) {
+		throw new Error('Message is not a thread main message');
+	}
+
+	return mapped;
+};

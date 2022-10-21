@@ -1,30 +1,3 @@
-export const enum BSONType {
-	Double = 1,
-	String,
-	Object,
-	Array,
-	BinData,
-	/** @deprecated */
-	Undefined,
-	ObjectId,
-	Boolean,
-	Date,
-	Null,
-	Regex,
-	/** @deprecated */
-	DBPointer,
-	JavaScript,
-	/** @deprecated */
-	Symbol,
-	JavaScriptWithScope,
-	Int,
-	Timestamp,
-	Long,
-	Decimal,
-	MinKey = -1,
-	MaxKey = 127,
-}
-
 type BsonType =
 	| 1
 	| 'double'
@@ -110,20 +83,10 @@ export type FieldExpression<T> = {
 	$comment?: string | undefined;
 };
 
-export type Flatten<T> = T extends unknown[] ? T[0] : T;
+type Flatten<T> = T extends any[] ? T[0] : T;
 
-export type Query<T> = {
-	[P in keyof T]?: Flatten<T[P]> | RegExp | FieldExpression<Flatten<T[P]>>;
-} & {
-	[P in keyof T as P extends string ? `${P}.${Extract<keyof T[P], string>}` : never]?: Flatten<T[P]> | RegExp | FieldExpression<unknown>;
-} & {
-	$or?: Query<T>[];
-	$and?: Query<T>[];
-	$nor?: Query<T>[];
-};
-
-export type Sort =
-	| (string | [string, 'asc' | 'desc'])[]
-	| {
-			[key: string]: -1 | 1;
-	  };
+type Query<T> = { [P in keyof T]?: Flatten<T[P]> | RegExp | FieldExpression<Flatten<T[P]>> } & {
+	$or?: Query<T>[] | undefined;
+	$and?: Query<T>[] | undefined;
+	$nor?: Query<T>[] | undefined;
+} & Record<string, any>;

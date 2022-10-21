@@ -1,4 +1,10 @@
 {
-	"extends": ["@rocket.chat/eslint-config"],
-	"ignorePatterns": ["**/dist"]
+	"extends": ["@rocket.chat/eslint-config", "prettier"],
+	"plugins": ["react-hooks"],
+	"ignorePatterns": ["**/dist"],
+	"rules": {
+		"prettier/prettier": "error",
+		"react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+	}
 }

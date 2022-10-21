@@ -1,4 +1,4 @@
-import { IEditedMessage, IMessage, IRoom, IThreadMainMessage, isThreadMainMessage } from '@rocket.chat/core-typings';
+import { IEditedMessage, IMessage } from '@rocket.chat/core-typings';
 import { css } from '@rocket.chat/css-in-js';
 import { Box, CheckBox, Modal } from '@rocket.chat/fuselage';
 import { useMutableCallback, useLocalStorage } from '@rocket.chat/fuselage-hooks';
@@ -12,7 +12,6 @@ import {
 	useUserPreference,
 	useMethod,
 } from '@rocket.chat/ui-contexts';
-import { useQuery, useQueryClient, InfiniteData, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { Mongo } from 'meteor/mongo';
 import React, { ReactElement, UIEvent, useEffect, useRef, useState, useCallback, useMemo, FormEvent } from 'react';
 
@@ -28,7 +27,6 @@ import { withDebouncing, withThrottling } from '../../../../../lib/utils/highOrd
 import VerticalBar from '../../../../components/VerticalBar';
 import { useReactiveValue } from '../../../../hooks/useReactiveValue';
 import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
-import { mapMessageFromApi } from '../../../../lib/utils/mapMessageFromApi';
 import MessageListErrorBoundary from '../../MessageList/MessageListErrorBoundary';
 import ThreadMessageList from '../../MessageList/ThreadMessageList';
 import DropTargetOverlay from '../../components/body/DropTargetOverlay';
@@ -40,52 +38,7 @@ import { useRoom, useRoomSubscription } from '../../contexts/RoomContext';
 import { useToolboxContext } from '../../contexts/ToolboxContext';
 import LegacyThreadMessageTemplateList from './LegacyThreadMessageTemplateList';
 import ThreadSkeleton from './ThreadSkeleton';
-import { useThreadMessage } from './hooks/useThreadMessage';
-
-const threadMainMessageQueryKey = (rid: IRoom['_id'], tmid: IMessage['_id']) => ['rooms', rid, 'threads', tmid, 'main-message'] as const;
-
-const useThreadMainMessageQuery = ({
-	rid,
-	tmid,
-	...options
-}: { rid: IRoom['_id']; tmid: IMessage['_id'] } & UseQueryOptions<
-	IThreadMainMessage,
-	Error,
-	IThreadMainMessage,
-	ReturnType<typeof threadMainMessageQueryKey>
->): UseQueryResult<IThreadMainMessage, Error> => {
-	const queryClient = useQueryClient();
-
-	const getMessage = useEndpoint('GET', '/v1/chat.getMessage');
-
-	const queryResult = useQuery(
-		threadMainMessageQueryKey(rid, tmid),
-		async (): Promise<IThreadMainMessage> => {
-			const fromQueryCache = queryClient
-				.getQueryData<InfiniteData<IThreadMainMessage[]>>(['rooms', rid, 'threads'], { exact: true })
-				?.pages.find((page) => page.some((message) => message._id === tmid))
-				?.find((message) => message._id === tmid);
-
-			if (fromQueryCache) return fromQueryCache;
-
-			const fromCachedCollection = (Messages as Mongo.Collection<IMessage>)
-				.find({ _id: tmid, rid }, { reactive: false })
-				.fetch()
-				.filter(isThreadMainMessage)[0] as IThreadMainMessage | undefined;
-
-			if (fromCachedCollection) return fromCachedCollection;
-
-			const { message: rawMessage } = await getMessage({ msgId: tmid });
-			const message = mapMessageFromApi(rawMessage);
-			if (message.rid === rid && isThreadMainMessage(message)) return message;
-
-			throw new Error('Thread main message not found');
-		},
-		options,
-	);
-
-	return queryResult;
-};
+import { useThreadMainMessageQuery } from './hooks/useThreadMainMessageQuery';
 
 type ThreadProps = {
 	mid: IMessage['_id'];
@@ -94,7 +47,7 @@ type ThreadProps = {
 const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	const room = useRoom();
 
-	useThreadMainMessageQuery({ rid: room._id, tmid });
+	const threadMainMessageQueryResult = useThreadMainMessageQuery({ rid: room._id, tmid });
 
 	const useLegacyMessageTemplate = useUserPreference<boolean>('useLegacyMessageTemplate') ?? false;
 
@@ -148,7 +101,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	});
 
 	const subscription = useRoomSubscription();
-	const threadMessage = useThreadMessage(tmid);
 	const messages = useReactiveValue(
 		useCallback(() => Threads.current.find({ tmid, _id: { $ne: tmid } }, { sort: { ts: 1 } }).fetch(), [tmid]),
 	);
@@ -156,7 +108,10 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	const ref = useRef<HTMLElement>(null);
 	const uid = useUserId();
 
-	const title = useMemo(() => (threadMessage ? normalizeThreadTitle(threadMessage) : null), [threadMessage]);
+	const title = useMemo(
+		() => (threadMainMessageQueryResult.data ? normalizeThreadTitle(threadMainMessageQueryResult.data) : null),
+		[threadMainMessageQueryResult.data],
+	);
 	const hasExpand = useLayoutContextualBarExpanded();
 	const [expanded, setExpand] = useLocalStorage('expand-threads', hasExpand);
 
@@ -164,7 +119,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	const followMessage = useEndpoint('POST', '/v1/chat.followMessage');
 	const unfollowMessage = useEndpoint('POST', '/v1/chat.unfollowMessage');
 
-	const following = !uid ? false : threadMessage?.replies?.includes(uid) ?? false;
+	const following = !uid ? false : threadMainMessageQueryResult.data?.replies?.includes(uid) ?? false;
 	const setFollowing = useCallback<(following: boolean) => void>(
 		async (following) => {
 			try {
@@ -197,7 +152,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 			case 'never':
 				return false;
 			default:
-				return !threadMessage?.tcount;
+				return !threadMainMessageQueryResult.data?.tcount;
 		}
 	});
 
@@ -444,7 +399,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	return (
 		<VerticalBar.InnerContent>
 			{hasExpand && expanded && <Modal.Backdrop onClick={handleClose} />}
-			{threadMessage ? (
+			{threadMainMessageQueryResult.data ? (
 				<Box flexGrow={1} position={expanded ? 'static' : 'relative'}>
 					<VerticalBar
 						rcx-thread-view
@@ -494,7 +449,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 														<LoadingMessagesIndicator />
 													</li>
 												)}
-												<LegacyThreadMessageTemplateList mainMessage={threadMessage} messages={messages} />
+												<LegacyThreadMessageTemplateList mainMessage={threadMainMessageQueryResult.data} messages={messages} />
 											</ul>
 										) : (
 											<ThreadMessageList rid={room._id} tmid={tmid} />

@@ -60,6 +60,7 @@ export { useSettingsDispatch } from './hooks/useSettingsDispatch';
 export { useSettingSetValue } from './hooks/useSettingSetValue';
 export { useSettingStructure } from './hooks/useSettingStructure';
 export { useStream } from './hooks/useStream';
+export { useStreamEvent } from './hooks/useStreamEvent';
 export { useToastMessageDispatch } from './hooks/useToastMessageDispatch';
 export { useTooltipClose } from './hooks/useTooltipClose';
 export { useTooltipOpen } from './hooks/useTooltipOpen';
@@ -84,7 +85,3 @@ export { ServerMethods, ServerMethodName, ServerMethodParameters, ServerMethodRe
 export { UploadResult } from './ServerContext';
 export { TranslationKey, TranslationLanguage } from './TranslationContext';
 export { Fields } from './UserContext';
-
-export interface ITest {
-	test: string;
-}
