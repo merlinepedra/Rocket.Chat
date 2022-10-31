@@ -48,8 +48,8 @@ const ThreadListMessage = ({
 	const formatDate = useTimeAgo();
 
 	return (
-		<Box className={[className, !following && followStyle].flat()} pb='x8'>
-			<Message {...props}>
+		<Box className={[className, !following && followStyle].flat()} paddingBlock={8}>
+			<Message clickable {...props}>
 				<Message.LeftContainer>
 					<UserAvatar username={username} className='rcx-message__avatar' size='x36' />
 				</Message.LeftContainer>
