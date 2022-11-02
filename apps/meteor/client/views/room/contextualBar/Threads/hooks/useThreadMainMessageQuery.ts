@@ -1,4 +1,4 @@
-import { IMessage, IRoom, IThreadMainMessage, isThreadMainMessage } from '@rocket.chat/core-typings';
+import { IMessage, IRoom } from '@rocket.chat/core-typings';
 import { useEndpoint, useStream } from '@rocket.chat/ui-contexts';
 import { useQuery, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { Mongo } from 'meteor/mongo';
@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
 
 import { Messages } from '../../../../../../app/models/client';
 import { createFilterFromQuery, Query } from '../../../../../lib/minimongo';
-import { mapThreadMainMessageFromApi } from '../../../../../lib/utils/mapMessageFromApi';
+import { mapMessageFromApi } from '../../../../../lib/utils/mapMessageFromApi';
 
 export const useThreadMainMessageQuery = ({
 	rid,
@@ -14,11 +14,11 @@ export const useThreadMainMessageQuery = ({
 	enabled = true,
 	...options
 }: { rid: IRoom['_id']; tmid: IMessage['_id'] } & UseQueryOptions<
-	IThreadMainMessage,
+	IMessage,
 	Error,
-	IThreadMainMessage,
+	IMessage,
 	readonly ['rooms', IRoom['_id'], 'threads', IMessage['_id'], 'main-message']
->): UseQueryResult<IThreadMainMessage, Error> => {
+>): UseQueryResult<IMessage, Error> => {
 	// fetching
 
 	const getMessage = useEndpoint('GET', '/v1/chat.getMessage');
@@ -27,16 +27,15 @@ export const useThreadMainMessageQuery = ({
 
 	const queryResult = useQuery(
 		queryKey,
-		async (): Promise<IThreadMainMessage> => {
-			const fromCachedCollection = (Messages as Mongo.Collection<IMessage>)
-				.find({ _id: tmid, rid }, { reactive: false })
-				.fetch()
-				.filter(isThreadMainMessage)[0] as IThreadMainMessage | undefined;
+		async (): Promise<IMessage> => {
+			const fromCachedCollection = (Messages as Mongo.Collection<IMessage>).findOne({ _id: tmid, rid }, { reactive: false }) as
+				| IMessage
+				| undefined;
 
 			if (fromCachedCollection) return fromCachedCollection;
 
 			const { message: rawMessage } = await getMessage({ msgId: tmid });
-			const message = mapThreadMainMessageFromApi(rawMessage);
+			const message = mapMessageFromApi(rawMessage);
 			if (message.rid === rid) return message;
 
 			throw new Error('Thread main message not found');

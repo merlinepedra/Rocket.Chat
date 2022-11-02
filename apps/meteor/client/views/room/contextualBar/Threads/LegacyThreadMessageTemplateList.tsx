@@ -1,17 +1,22 @@
 import { IMessage } from '@rocket.chat/core-typings';
 import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
-import React, { memo, ReactElement, useCallback, useRef } from 'react';
+import React, { forwardRef, memo, ReactElement, Ref, useCallback, useRef } from 'react';
 
+import MessageListErrorBoundary from '../../MessageList/MessageListErrorBoundary';
 import { useThreadMessages } from '../../MessageList/hooks/useThreadMessages';
+import LoadingMessagesIndicator from '../../components/body/LoadingMessagesIndicator';
 import { useThreadMessageContext } from './useThreadMessageContext';
 
 type LegacyThreadMessageTemplateListProps = {
 	mainMessage: IMessage;
-	messages: IMessage[];
+	loading: boolean;
 };
 
-const LegacyThreadMessageTemplateList = ({ mainMessage }: LegacyThreadMessageTemplateListProps): ReactElement => {
+const LegacyThreadMessageTemplateList = forwardRef(function LegacyThreadMessageTemplateList(
+	{ mainMessage, loading }: LegacyThreadMessageTemplateListProps,
+	wrapperRef: Ref<HTMLDivElement>,
+): ReactElement {
 	const messageContext = useThreadMessageContext();
 	const messagesHistory = useThreadMessages({ tmid: mainMessage._id });
 
@@ -84,13 +89,24 @@ const LegacyThreadMessageTemplateList = ({ mainMessage }: LegacyThreadMessageTem
 	);
 
 	return (
-		<>
-			<li ref={mainMessageRef} />
-			{messagesHistory.map((message, index) => (
-				<li key={message._id} ref={messageRef(message, index)} />
-			))}
-		</>
+		<div ref={wrapperRef} className='thread-list js-scroll-thread' style={{ scrollBehavior: 'smooth' }}>
+			<MessageListErrorBoundary>
+				{
+					<ul className='thread' style={{ height: '100%' }}>
+						{loading && (
+							<li className='load-more'>
+								<LoadingMessagesIndicator />
+							</li>
+						)}
+						<li ref={mainMessageRef} />
+						{messagesHistory.map((message, index) => (
+							<li key={message._id} ref={messageRef(message, index)} />
+						))}
+					</ul>
+				}
+			</MessageListErrorBoundary>
+		</div>
 	);
-};
+});
 
 export default memo(LegacyThreadMessageTemplateList);

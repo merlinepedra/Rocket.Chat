@@ -25,12 +25,9 @@ import { callbacks } from '../../../../../lib/callbacks';
 import { isTruthy } from '../../../../../lib/isTruthy';
 import { withDebouncing, withThrottling } from '../../../../../lib/utils/highOrderFunctions';
 import VerticalBar from '../../../../components/VerticalBar';
-import { useReactiveValue } from '../../../../hooks/useReactiveValue';
 import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
-import MessageListErrorBoundary from '../../MessageList/MessageListErrorBoundary';
 import ThreadMessageList from '../../MessageList/ThreadMessageList';
 import DropTargetOverlay from '../../components/body/DropTargetOverlay';
-import LoadingMessagesIndicator from '../../components/body/LoadingMessagesIndicator';
 import ComposerMessage from '../../components/body/composer/ComposerMessage';
 import { useChatMessages } from '../../components/body/useChatMessages';
 import { useFileUploadDropTarget } from '../../components/body/useFileUploadDropTarget';
@@ -101,9 +98,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	});
 
 	const subscription = useRoomSubscription();
-	const messages = useReactiveValue(
-		useCallback(() => Threads.current.find({ tmid, _id: { $ne: tmid } }, { sort: { ts: 1 } }).fetch(), [tmid]),
-	);
 
 	const ref = useRef<HTMLElement>(null);
 	const uid = useUserId();
@@ -399,7 +393,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	return (
 		<VerticalBar.InnerContent>
 			{hasExpand && expanded && <Modal.Backdrop onClick={handleClose} />}
-			{threadMainMessageQueryResult.data ? (
+			{threadMainMessageQueryResult.isSuccess ? (
 				<Box flexGrow={1} position={expanded ? 'static' : 'relative'}>
 					<VerticalBar
 						rcx-thread-view
@@ -407,7 +401,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 						position={hasExpand && expanded ? 'fixed' : 'absolute'}
 						display='flex'
 						flexDirection='column'
-						width={'full'}
+						width='full'
 						overflow='hidden'
 						zIndex={100}
 						insetBlock={0}
@@ -440,22 +434,11 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 							>
 								<DropTargetOverlay {...fileUploadOverlayProps} />
 
-								<div ref={wrapperRef} className='thread-list js-scroll-thread' style={{ scrollBehavior: 'smooth' }}>
-									<MessageListErrorBoundary>
-										{useLegacyMessageTemplate ? (
-											<ul className='thread' style={useLegacyMessageTemplate ? { height: '100%' } : undefined}>
-												{isLoading && (
-													<li className='load-more'>
-														<LoadingMessagesIndicator />
-													</li>
-												)}
-												<LegacyThreadMessageTemplateList mainMessage={threadMainMessageQueryResult.data} messages={messages} />
-											</ul>
-										) : (
-											<ThreadMessageList rid={room._id} tmid={tmid} />
-										)}
-									</MessageListErrorBoundary>
-								</div>
+								{useLegacyMessageTemplate ? (
+									<LegacyThreadMessageTemplateList ref={wrapperRef} mainMessage={threadMainMessageQueryResult.data} loading={isLoading} />
+								) : (
+									<ThreadMessageList ref={wrapperRef} rid={room._id} tmid={tmid} />
+								)}
 
 								<ComposerMessage
 									rid={room._id}
