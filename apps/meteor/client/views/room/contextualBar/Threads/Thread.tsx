@@ -1,6 +1,6 @@
 import { IEditedMessage, IMessage } from '@rocket.chat/core-typings';
 import { css } from '@rocket.chat/css-in-js';
-import { Box, CheckBox, Modal } from '@rocket.chat/fuselage';
+import { Box, Modal } from '@rocket.chat/fuselage';
 import { useMutableCallback, useLocalStorage } from '@rocket.chat/fuselage-hooks';
 import {
 	useRoute,
@@ -13,7 +13,7 @@ import {
 	useMethod,
 } from '@rocket.chat/ui-contexts';
 import { Mongo } from 'meteor/mongo';
-import React, { ReactElement, UIEvent, useEffect, useRef, useState, useCallback, useMemo, FormEvent } from 'react';
+import React, { ReactElement, UIEvent, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 
 import { Messages } from '../../../../../app/models/client';
 import { normalizeThreadTitle } from '../../../../../app/threads/client/lib/normalizeThreadTitle';
@@ -28,13 +28,13 @@ import VerticalBar from '../../../../components/VerticalBar';
 import { roomCoordinator } from '../../../../lib/rooms/roomCoordinator';
 import ThreadMessageList from '../../MessageList/ThreadMessageList';
 import DropTargetOverlay from '../../components/body/DropTargetOverlay';
-import ComposerMessage from '../../components/body/composer/ComposerMessage';
 import { useChatMessages } from '../../components/body/useChatMessages';
 import { useFileUploadDropTarget } from '../../components/body/useFileUploadDropTarget';
-import { useRoom, useRoomSubscription } from '../../contexts/RoomContext';
+import { useRoom } from '../../contexts/RoomContext';
 import { useToolboxContext } from '../../contexts/ToolboxContext';
 import LegacyThreadMessageTemplateList from './LegacyThreadMessageTemplateList';
 import ThreadSkeleton from './ThreadSkeleton';
+import ThreadFooter from './components/ThreadFooter';
 import { useThreadMainMessageQuery } from './hooks/useThreadMainMessageQuery';
 
 type ThreadProps = {
@@ -97,8 +97,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 		});
 	});
 
-	const subscription = useRoomSubscription();
-
 	const ref = useRef<HTMLElement>(null);
 	const uid = useUserId();
 
@@ -136,19 +134,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 	const handleClose = useCallback(() => {
 		channelRoute.push(room.t === 'd' ? { rid: room._id } : { name: room.name || room._id });
 	}, [channelRoute, room._id, room.t, room.name]);
-
-	const alsoSendThreadToChannelPreference = useUserPreference<string>('alsoSendThreadToChannel');
-
-	const [sendToChannel, setSendToChannel] = useState(() => {
-		switch (alsoSendThreadToChannelPreference) {
-			case 'always':
-				return true;
-			case 'never':
-				return false;
-			default:
-				return !threadMainMessageQueryResult.data?.tcount;
-		}
-	});
 
 	const handleFollowActionClick = useMutableCallback(() => {
 		setFollowing(!following);
@@ -440,42 +425,15 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 									<ThreadMessageList ref={wrapperRef} rid={room._id} tmid={tmid} />
 								)}
 
-								<ComposerMessage
-									rid={room._id}
-									tmid={tmid}
-									subscription={subscription}
+								<ThreadFooter
 									chatMessagesInstance={chatMessagesInstance}
-									onKeyDown={(event: KeyboardEvent): void => {
-										const { key, currentTarget } = event;
-
-										if (key === 'Escape' && !(currentTarget as HTMLTextAreaElement | null)?.value.trim()) {
-											channelRoute.push({
-												rid: room._id,
-												...(room.name && { name: room.name }),
-											});
-										}
-									}}
+									tmid={tmid}
+									tcount={threadMainMessageQueryResult.data.tcount}
+									onResize={handleComposerResize}
 									onSend={(): void => {
 										sendToBottom();
-										if (alsoSendThreadToChannelPreference === 'default') {
-											setSendToChannel(false);
-										}
 									}}
-									onResize={handleComposerResize}
 								/>
-
-								<footer className='thread-footer'>
-									<div style={{ display: 'flex' }}>
-										<CheckBox
-											id='sendAlso'
-											checked={sendToChannel}
-											onChange={(e: FormEvent<HTMLInputElement>): void => setSendToChannel(e.currentTarget.checked)}
-										/>
-									</div>
-									<label htmlFor='sendAlso' className='thread-footer__text'>
-										{t('Also_send_to_channel')}
-									</label>
-								</footer>
 							</section>
 						</VerticalBar.Content>
 					</VerticalBar>

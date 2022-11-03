@@ -14,6 +14,7 @@ import ComposerSkeleton from '../../../Room/ComposerSkeleton';
 export type ComposerMessageProps = {
 	rid: IRoom['_id'];
 	tmid?: IMessage['_id'];
+	tshow?: boolean;
 	subscription?: ISubscription;
 	chatMessagesInstance: ChatMessages;
 	onKeyDown?: (event: KeyboardEvent) => void;
@@ -24,6 +25,7 @@ export type ComposerMessageProps = {
 const ComposerMessage = ({
 	rid,
 	tmid,
+	tshow = false,
 	subscription,
 	chatMessagesInstance,
 	onKeyDown,
@@ -38,6 +40,7 @@ const ComposerMessage = ({
 		new ReactiveVar({
 			rid,
 			tmid,
+			tshow,
 			subscription,
 			isEmbedded: isLayoutEmbedded,
 			showFormattingTips: showFormattingTips && !isLayoutEmbedded,
@@ -51,6 +54,7 @@ const ComposerMessage = ({
 		messageBoxViewDataRef.current.set({
 			rid,
 			tmid,
+			tshow,
 			subscription,
 			isEmbedded: isLayoutEmbedded,
 			showFormattingTips: showFormattingTips && !isLayoutEmbedded,
@@ -58,7 +62,7 @@ const ComposerMessage = ({
 			onSend,
 			onResize,
 		});
-	}, [isLayoutEmbedded, onSend, onResize, rid, showFormattingTips, subscription, tmid, onKeyDown]);
+	}, [isLayoutEmbedded, onSend, onResize, rid, showFormattingTips, subscription, tmid, onKeyDown, tshow]);
 
 	const footerRef = useCallback(
 		(footer: HTMLElement | null) => {
