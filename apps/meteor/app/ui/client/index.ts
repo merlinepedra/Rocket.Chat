@@ -17,7 +17,7 @@ import './components/selectDropdown.html';
 
 // import './components/tooltip';
 
-export { ChatMessages, chatMessages } from './lib/ChatMessages';
+export { ChatMessages, getChatMessagesFor, setChatMessagesFor } from './lib/ChatMessages';
 export { fileUpload } from './lib/fileUpload';
 export { UserAction, USER_ACTIVITIES } from './lib/UserAction';
 export { KonchatNotification } from './lib/notification';

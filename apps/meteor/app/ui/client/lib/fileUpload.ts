@@ -10,7 +10,7 @@ import { fileUploadIsValidContentType, APIClient } from '../../../utils/client';
 import { imperativeModal } from '../../../../client/lib/imperativeModal';
 import FileUploadModal from '../../../../client/views/room/modals/FileUploadModal';
 import { prependReplies } from '../../../../client/lib/utils/prependReplies';
-import { chatMessages } from './ChatMessages';
+import { getChatMessagesFor } from './ChatMessages';
 import { getErrorMessage } from '../../../../client/lib/errorHandling';
 import { Rooms } from '../../../models/client';
 
@@ -224,8 +224,8 @@ export const fileUpload = async (
 						tmid,
 					);
 					const localStorageKey = ['messagebox', rid, tmid].filter(Boolean).join('_');
-					const chatMessageKey = [rid, tmid].filter(Boolean).join('-');
-					const { input } = chatMessages[chatMessageKey];
+					const chatMessagesInstance = getChatMessagesFor({ rid, tmid });
+					const input = chatMessagesInstance?.input;
 					if (input) {
 						input.value = '';
 						$(input).trigger('input');

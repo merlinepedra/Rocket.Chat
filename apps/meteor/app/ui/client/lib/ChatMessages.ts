@@ -7,6 +7,7 @@ import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
 import { escapeHTML } from '@rocket.chat/string-helpers';
 import type { IMessage, IRoom } from '@rocket.chat/core-typings';
 import type { Mongo } from 'meteor/mongo';
+import $ from 'jquery';
 
 import { KonchatNotification } from './notification';
 import { fileUpload } from './fileUpload';
@@ -32,14 +33,14 @@ import { UserAction, USER_ACTIVITIES } from './UserAction';
 import { keyCodes } from '../../../../client/lib/utils/keyCodes';
 
 export class ChatMessages {
-	editing: {
+	private editing: {
 		element?: HTMLElement;
 		id?: string;
 		saved?: string;
 		savedCursor?: number;
 	} = {};
 
-	records: Record<
+	private records: Record<
 		IMessage['_id'],
 		| {
 				draft: string;
@@ -47,11 +48,9 @@ export class ChatMessages {
 		| undefined
 	> = {};
 
-	wrapper: HTMLElement | undefined;
+	private wrapper: HTMLElement | undefined;
 
 	input: HTMLTextAreaElement | undefined;
-
-	$input: JQuery<HTMLTextAreaElement> | undefined;
 
 	constructor(
 		public collection: Mongo.Collection<Omit<IMessage, '_id'>, IMessage> & {
@@ -66,7 +65,6 @@ export class ChatMessages {
 
 	initializeInput(input: HTMLTextAreaElement, { rid, tmid }: Pick<IMessage, 'rid' | 'tmid'>) {
 		this.input = input;
-		this.$input = $(this.input);
 
 		if (!input || !rid) {
 			return;
@@ -88,10 +86,10 @@ export class ChatMessages {
 			return;
 		}
 
-		this.$input?.data('reply', [message]).trigger('dataChange');
+		if (this.input) $(this.input).data('reply', [message]).trigger('dataChange');
 	}
 
-	requestInputFocus() {
+	private requestInputFocus() {
 		setTimeout(() => {
 			if (this.input && window.matchMedia('screen and (min-device-width: 500px)').matches) {
 				this.input.focus();
@@ -99,7 +97,7 @@ export class ChatMessages {
 		}, 200);
 	}
 
-	recordInputAsDraft() {
+	private recordInputAsDraft() {
 		const { input } = this;
 		if (!input) {
 			return;
@@ -126,7 +124,7 @@ export class ChatMessages {
 		this.records[id] = record;
 	}
 
-	clearCurrentDraft() {
+	private clearCurrentDraft() {
 		const { id } = this.editing;
 		if (!id) {
 			return;
@@ -137,7 +135,7 @@ export class ChatMessages {
 		return !!hasValue;
 	}
 
-	resetToDraft(id: string) {
+	private resetToDraft(id: string) {
 		const { input } = this;
 		if (!input) {
 			return;
@@ -153,7 +151,7 @@ export class ChatMessages {
 		return oldValue !== message.msg;
 	}
 
-	toPrevMessage() {
+	private toPrevMessage() {
 		const { element } = this.editing;
 		if (!element) {
 			const messages = Array.from(this.wrapper?.querySelectorAll('[data-own="true"]') ?? []);
@@ -169,7 +167,7 @@ export class ChatMessages {
 		this.clearEditing();
 	}
 
-	toNextMessage() {
+	private toNextMessage() {
 		const { element } = this.editing;
 		if (element) {
 			let next;
@@ -245,7 +243,7 @@ export class ChatMessages {
 		input.setSelectionRange(cursorPosition, cursorPosition);
 	}
 
-	clearEditing() {
+	private clearEditing() {
 		const { input } = this;
 
 		if (!input) {
@@ -291,8 +289,8 @@ export class ChatMessages {
 
 		let msg = value.trim();
 		if (msg) {
-			const mention = this.$input?.data('mention-user') ?? false;
-			const replies = this.$input?.data('reply') ?? [];
+			const mention = $(this.input).data('mention-user') ?? false;
+			const replies = $(this.input).data('reply') ?? [];
 			if (!mention || !threadsEnabled) {
 				msg = await prependReplies(msg, replies, mention);
 			}
@@ -324,7 +322,7 @@ export class ChatMessages {
 			try {
 				// @ts-ignore
 				await this.processMessageSend(message);
-				this.$input?.removeData('reply').trigger('dataChange');
+				$(this.input).removeData('reply').trigger('dataChange');
 			} catch (error) {
 				dispatchToastMessage({ type: 'error', message: error });
 			}
@@ -355,7 +353,7 @@ export class ChatMessages {
 		return done();
 	}
 
-	async processMessageSend(message: IMessage) {
+	private async processMessageSend(message: IMessage) {
 		if (await this.processSetReaction(message)) {
 			return;
 		}
@@ -379,7 +377,7 @@ export class ChatMessages {
 		await callWithErrorHandling('sendMessage', message);
 	}
 
-	async processSetReaction({ rid, tmid, msg }: Pick<IMessage, 'msg' | 'rid' | 'tmid'>) {
+	private async processSetReaction({ rid, tmid, msg }: Pick<IMessage, 'msg' | 'rid' | 'tmid'>) {
 		if (msg.slice(0, 2) !== '+:') {
 			return false;
 		}
@@ -397,7 +395,7 @@ export class ChatMessages {
 		return true;
 	}
 
-	async processTooLongMessage({ msg, rid, tmid }: Pick<IMessage, 'msg' | 'rid' | 'tmid'>) {
+	private async processTooLongMessage({ msg, rid, tmid }: Pick<IMessage, 'msg' | 'rid' | 'tmid'>) {
 		const adjustedMessage = messageProperties.messageWithoutEmojiShortnames(msg);
 		if (messageProperties.length(adjustedMessage) <= settings.get('Message_MaxAllowedSize') && msg) {
 			return false;
@@ -446,7 +444,7 @@ export class ChatMessages {
 		return true;
 	}
 
-	async processMessageEditing(message: IMessage) {
+	private async processMessageEditing(message: IMessage) {
 		if (!message._id) {
 			return false;
 		}
@@ -563,7 +561,7 @@ export class ChatMessages {
 		});
 	}
 
-	async deleteMsg({ _id, rid, ts }: Pick<IMessage, '_id' | 'rid' | 'ts'>) {
+	private async deleteMsg({ _id, rid, ts }: Pick<IMessage, '_id' | 'rid' | 'ts'>) {
 		const forceDelete = hasAtLeastOnePermission('force-delete-message', rid);
 		const blockDeleteInMinutes = settings.get('Message_AllowDeleting_BlockDeleteInMinutes');
 		if (blockDeleteInMinutes && forceDelete === false) {
@@ -660,4 +658,34 @@ export class ChatMessages {
 	}
 }
 
-export const chatMessages: Record<IRoom['_id'], ChatMessages> = {};
+const chatMessages: Record<IRoom['_id'], ChatMessages> = {};
+
+const getChatMessagesKey = ({ rid, tmid }: { rid: IRoom['_id']; tmid?: never } | { rid: IRoom['_id']; tmid: IMessage['_id'] }): string => {
+	if (tmid) {
+		return `${rid}-${tmid}`;
+	}
+
+	return rid;
+};
+
+export const getChatMessagesFor = ({
+	rid,
+	tmid,
+}: { rid: IRoom['_id']; tmid?: never } | { rid: IRoom['_id']; tmid: IMessage['_id'] }): ChatMessages | undefined => {
+	return chatMessages[getChatMessagesKey({ rid, tmid })];
+};
+
+export const setChatMessagesFor = (
+	{ rid, tmid }: { rid: IRoom['_id']; tmid?: never } | { rid: IRoom['_id']; tmid: IMessage['_id'] },
+	chatMessagesInstance: ChatMessages | undefined,
+): void => {
+	const key = getChatMessagesKey({ rid, tmid });
+
+	if (!chatMessagesInstance) {
+		chatMessages[key]?.onDestroyed(rid, tmid);
+		delete chatMessages[key];
+		return;
+	}
+
+	chatMessages[key] = chatMessagesInstance;
+};

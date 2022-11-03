@@ -2,7 +2,7 @@ import { IMessage, IRoom } from '@rocket.chat/core-typings';
 import { Mongo } from 'meteor/mongo';
 import { RefObject, useEffect, useMemo } from 'react';
 
-import { ChatMessages, chatMessages } from '../../../../../app/ui';
+import { ChatMessages, getChatMessagesFor, setChatMessagesFor } from '../../../../../app/ui';
 
 export const useChatMessages = ({
 	rid,
@@ -18,30 +18,24 @@ export const useChatMessages = ({
 	};
 	wrapperRef: RefObject<HTMLElement | null>;
 }): ChatMessages => {
-	const id = tmid ? `${rid}-${tmid}` : rid;
-
 	const chatMessagesInstance = useMemo(() => {
-		const instance = chatMessages[id] ?? new ChatMessages(collection);
-		chatMessages[id] = instance;
+		const instance = getChatMessagesFor({ rid, tmid }) ?? new ChatMessages(collection);
+		setChatMessagesFor({ rid, tmid }, instance);
 		return instance;
-	}, [collection, id]);
+	}, [collection, rid, tmid]);
+
+	const wrapper = wrapperRef.current;
 
 	useEffect(() => {
-		const wrapper = wrapperRef.current;
-
 		if (!wrapper) {
 			return;
 		}
 
 		chatMessagesInstance.initializeWrapper(wrapper);
 		return (): void => {
-			chatMessagesInstance.onDestroyed(rid, tmid);
-
-			if (tmid) {
-				delete chatMessages[id];
-			}
+			setChatMessagesFor({ rid, tmid }, undefined);
 		};
-	}, [chatMessagesInstance, id, rid, tmid, wrapperRef]);
+	}, [chatMessagesInstance, rid, tmid, wrapper]);
 
 	return chatMessagesInstance;
 };
