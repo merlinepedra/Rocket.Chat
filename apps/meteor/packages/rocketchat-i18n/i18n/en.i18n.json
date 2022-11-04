@@ -4719,6 +4719,7 @@
   "This_week": "This Week",
   "thread": "thread",
   "Thread_message": "Commented on *__username__'s* message: _ __msg__ _",
+  "Thread_messages": "Thread messages",
   "Threads": "Threads",
   "Threads_Description": "Threads allow organized discussions around a specific message.",
   "Threads_unavailable_for_federation": "Threads are unavailable for Federated rooms",

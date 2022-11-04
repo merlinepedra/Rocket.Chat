@@ -13,11 +13,10 @@ import {
 	useMethod,
 } from '@rocket.chat/ui-contexts';
 import { Mongo } from 'meteor/mongo';
-import React, { ReactElement, UIEvent, useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { ReactElement, UIEvent, useEffect, useRef, useCallback, useMemo } from 'react';
 
 import { Messages } from '../../../../../app/models/client';
 import { normalizeThreadTitle } from '../../../../../app/threads/client/lib/normalizeThreadTitle';
-import { upsertMessageBulk } from '../../../../../app/ui-utils/client/lib/RoomHistoryManager';
 import { CommonRoomTemplateInstance } from '../../../../../app/ui/client/views/app/lib/CommonRoomTemplateInstance';
 import { getCommonRoomEvents } from '../../../../../app/ui/client/views/app/lib/getCommonRoomEvents';
 import { isAtBottom } from '../../../../../app/ui/client/views/app/lib/scrolling';
@@ -58,6 +57,34 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 		},
 	);
 	const chatMessagesInstance = useChatMessages({ rid: room._id, tmid, wrapperRef, collection: Threads.current });
+
+	useEffect(() => {
+		const threadsCollection = Threads.current;
+
+		const threadsObserve = Messages.find(
+			{ $or: [{ tmid }, { _id: tmid }], _hidden: { $ne: true } },
+			{
+				fields: {
+					collapsed: 0,
+					threadMsg: 0,
+					repliesCount: 0,
+				},
+			},
+		).observe({
+			added: ({ _id, ...message }: IMessage) => {
+				threadsCollection.upsert({ _id }, message);
+			},
+			changed: ({ _id, ...message }: IMessage) => {
+				threadsCollection.update({ _id }, message);
+			},
+			removed: ({ _id }: IMessage) => threadsCollection.remove(_id),
+		});
+
+		return (): void => {
+			threadsObserve.stop();
+			threadsCollection.remove({});
+		};
+	}, [tmid]);
 
 	const _isAtBottom = useCallback((scrollThreshold = 0) => {
 		const wrapper = wrapperRef.current;
@@ -271,54 +298,6 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 		};
 	}, [sendToBottomIfNecessary]);
 
-	const [isLoading, setIsLoading] = useState(true);
-
-	const getThreadMessages = useMethod('getThreadMessages');
-
-	const loadMore = useCallback(async () => {
-		setIsLoading(true);
-
-		const messages = await getThreadMessages({ tmid });
-
-		if (Threads.current) upsertMessageBulk({ msgs: messages }, Threads.current);
-
-		Tracker.afterFlush(() => {
-			setIsLoading(false);
-		});
-	}, [getThreadMessages, tmid]);
-
-	useEffect(() => {
-		const threadsCollection = Threads.current;
-
-		const threadsObserve = Messages.find(
-			{ $or: [{ tmid }, { _id: tmid }], _hidden: { $ne: true } },
-			{
-				fields: {
-					collapsed: 0,
-					threadMsg: 0,
-					repliesCount: 0,
-				},
-			},
-		).observe({
-			added: ({ _id, ...message }: IMessage) => {
-				threadsCollection.upsert({ _id }, message);
-			},
-			changed: ({ _id, ...message }: IMessage) => {
-				threadsCollection.update({ _id }, message);
-			},
-			removed: ({ _id }: IMessage) => threadsCollection.remove(_id),
-		});
-
-		return (): void => {
-			threadsObserve.stop();
-			threadsCollection.remove({});
-		};
-	}, [tmid]);
-
-	useEffect(() => {
-		loadMore();
-	}, [loadMore]);
-
 	// This was broken before because no elements are identified by the id `#thread-${mid}`
 	/*
 	this.autorun(() => {
@@ -420,7 +399,7 @@ const Thread = ({ mid: tmid }: ThreadProps): ReactElement => {
 								<DropTargetOverlay {...fileUploadOverlayProps} />
 
 								{useLegacyMessageTemplate ? (
-									<LegacyThreadMessageTemplateList ref={wrapperRef} mainMessage={threadMainMessageQueryResult.data} loading={isLoading} />
+									<LegacyThreadMessageTemplateList ref={wrapperRef} mainMessage={threadMainMessageQueryResult.data} />
 								) : (
 									<ThreadMessageList ref={wrapperRef} rid={room._id} tmid={tmid} />
 								)}

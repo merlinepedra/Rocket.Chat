@@ -1,22 +1,22 @@
 import { IMessage } from '@rocket.chat/core-typings';
+import { useTranslation } from '@rocket.chat/ui-contexts';
 import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
 import React, { forwardRef, memo, ReactElement, Ref, useCallback, useRef } from 'react';
 
 import MessageListErrorBoundary from '../../MessageList/MessageListErrorBoundary';
 import { useThreadMessages } from '../../MessageList/hooks/useThreadMessages';
-import LoadingMessagesIndicator from '../../components/body/LoadingMessagesIndicator';
 import { useThreadMessageContext } from './useThreadMessageContext';
 
 type LegacyThreadMessageTemplateListProps = {
 	mainMessage: IMessage;
-	loading: boolean;
 };
 
 const LegacyThreadMessageTemplateList = forwardRef(function LegacyThreadMessageTemplateList(
-	{ mainMessage, loading }: LegacyThreadMessageTemplateListProps,
+	{ mainMessage }: LegacyThreadMessageTemplateListProps,
 	wrapperRef: Ref<HTMLDivElement>,
 ): ReactElement {
+	const t = useTranslation();
 	const messageContext = useThreadMessageContext();
 	const messagesHistory = useThreadMessages({ tmid: mainMessage._id });
 
@@ -89,15 +89,16 @@ const LegacyThreadMessageTemplateList = forwardRef(function LegacyThreadMessageT
 	);
 
 	return (
-		<div ref={wrapperRef} className='thread-list js-scroll-thread' style={{ scrollBehavior: 'smooth' }}>
+		<div
+			ref={wrapperRef}
+			className='thread-list js-scroll-thread'
+			role='list'
+			aria-label={t('Thread_messages')}
+			style={{ scrollBehavior: 'smooth' }}
+		>
 			<MessageListErrorBoundary>
 				{
 					<ul className='thread' style={{ height: '100%' }}>
-						{loading && (
-							<li className='load-more'>
-								<LoadingMessagesIndicator />
-							</li>
-						)}
 						<li ref={mainMessageRef} />
 						{messagesHistory.map((message, index) => (
 							<li key={message._id} ref={messageRef(message, index)} />

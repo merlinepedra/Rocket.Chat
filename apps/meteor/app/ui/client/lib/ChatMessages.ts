@@ -6,7 +6,6 @@ import { Session } from 'meteor/session';
 import { TAPi18n } from 'meteor/rocketchat:tap-i18n';
 import { escapeHTML } from '@rocket.chat/string-helpers';
 import type { IMessage, IRoom } from '@rocket.chat/core-typings';
-import type { Mongo } from 'meteor/mongo';
 import $ from 'jquery';
 
 import { KonchatNotification } from './notification';
@@ -15,7 +14,7 @@ import { t, slashCommands, APIClient } from '../../../utils/client';
 import { messageProperties, MessageTypes, readMessage } from '../../../ui-utils/client';
 import { settings } from '../../../settings/client';
 import { hasAtLeastOnePermission } from '../../../authorization/client';
-import { Messages, Rooms, ChatMessage, ChatSubscription } from '../../../models/client';
+import { Messages, Rooms, ChatSubscription } from '../../../models/client';
 import { emoji } from '../../../emoji/client';
 import { generateTriggerId } from '../../../ui-message/client/ActionManager';
 import { imperativeModal } from '../../../../client/lib/imperativeModal';
@@ -52,12 +51,25 @@ export class ChatMessages {
 
 	input: HTMLTextAreaElement | undefined;
 
-	constructor(
-		public collection: Mongo.Collection<Omit<IMessage, '_id'>, IMessage> & {
-			direct: Mongo.Collection<Omit<IMessage, '_id'>, IMessage>;
-			queries: unknown[];
-		} = ChatMessage,
-	) {}
+	private findMessageByID: (id: IMessage['_id'] | undefined) => IMessage | undefined;
+
+	private findLastMessage: () => IMessage | undefined;
+
+	private upsertMessage: (message: Partial<IMessage>) => void;
+
+	constructor({
+		findMessageByID,
+		findLastMessage,
+		upsertMessage,
+	}: {
+		findMessageByID: (id: IMessage['_id'] | undefined) => IMessage | undefined;
+		findLastMessage: () => IMessage | undefined;
+		upsertMessage: (message: Partial<IMessage>) => void;
+	}) {
+		this.findMessageByID = findMessageByID;
+		this.findLastMessage = findLastMessage;
+		this.upsertMessage = upsertMessage;
+	}
 
 	initializeWrapper(wrapper: HTMLElement) {
 		this.wrapper = wrapper;
@@ -108,7 +120,7 @@ export class ChatMessages {
 			return;
 		}
 
-		const message = this.collection.findOne(id);
+		const message = this.findMessageByID(id);
 		if (!message) {
 			throw new Error('Message not found');
 		}
@@ -141,7 +153,7 @@ export class ChatMessages {
 			return;
 		}
 
-		const message = this.collection.findOne(id);
+		const message = this.findMessageByID(id);
 		if (!message) {
 			throw new Error('Message not found');
 		}
@@ -184,7 +196,7 @@ export class ChatMessages {
 	}
 
 	edit(element: HTMLElement, isEditingTheNextOne?: boolean) {
-		const message = this.collection.findOne(element.dataset.id);
+		const message = this.findMessageByID(element.dataset.id);
 		if (!message) {
 			throw new Error('Message not found');
 		}
@@ -301,7 +313,7 @@ export class ChatMessages {
 		}
 
 		// don't add tmid or tshow if the message isn't part of a thread (it can happen if editing the main message of a thread)
-		const originalMessage = this.collection.findOne({ _id: this.editing.id }, { fields: { tmid: 1 }, reactive: false });
+		const originalMessage = this.findMessageByID(this.editing.id);
 		if (originalMessage && tmid && !originalMessage.tmid) {
 			tmid = undefined;
 			tshow = undefined;
@@ -330,7 +342,7 @@ export class ChatMessages {
 		}
 
 		if (this.editing.id) {
-			const message = this.collection.findOne(this.editing.id);
+			const message = this.findMessageByID(this.editing.id);
 			if (!message) {
 				throw new Error('Message not found');
 			}
@@ -377,7 +389,7 @@ export class ChatMessages {
 		await callWithErrorHandling('sendMessage', message);
 	}
 
-	private async processSetReaction({ rid, tmid, msg }: Pick<IMessage, 'msg' | 'rid' | 'tmid'>) {
+	private async processSetReaction({ msg }: Pick<IMessage, 'msg' | 'rid' | 'tmid'>) {
 		if (msg.slice(0, 2) !== '+:') {
 			return false;
 		}
@@ -387,7 +399,7 @@ export class ChatMessages {
 			return false;
 		}
 
-		const lastMessage = this.collection.findOne({ rid, tmid }, { fields: { ts: 1 }, sort: { ts: -1 } });
+		const lastMessage = this.findLastMessage();
 		if (!lastMessage) {
 			throw new Error('Message not found');
 		}
@@ -503,7 +515,7 @@ export class ChatMessages {
 						private: true,
 					};
 
-					this.collection.upsert({ _id: invalidCommandMsg._id }, { $set: invalidCommandMsg });
+					this.upsertMessage(invalidCommandMsg);
 					return true;
 				}
 			}

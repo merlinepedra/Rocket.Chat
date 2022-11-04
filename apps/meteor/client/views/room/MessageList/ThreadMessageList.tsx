@@ -1,5 +1,6 @@
 import { IThreadMessage, IRoom } from '@rocket.chat/core-typings';
-import { useUserSubscription, useSetting } from '@rocket.chat/ui-contexts';
+import { Box } from '@rocket.chat/fuselage';
+import { useUserSubscription, useSetting, useTranslation } from '@rocket.chat/ui-contexts';
 import React, { forwardRef, memo, ReactElement, Ref } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
@@ -24,9 +25,10 @@ const ThreadMessageList = forwardRef(function ThreadMessageList({ rid, tmid }: T
 	const messageGroupingPeriod = Number(useSetting('Message_GroupingPeriod'));
 	const format = useFormatDate();
 	const messages = useThreadMessages({ tmid });
+	const t = useTranslation();
 
 	return (
-		<div ref={wrapperRef} className='thread-list js-scroll-thread' style={{ scrollBehavior: 'smooth' }}>
+		<Box ref={wrapperRef} flexGrow={1} flexShrink={1} role='list' aria-label={t('Thread_messages')}>
 			<MessageListErrorBoundary>
 				<MessageListProvider rid={rid}>
 					<MessageProvider rid={rid} broadcast={isBroadcast}>
@@ -53,7 +55,7 @@ const ThreadMessageList = forwardRef(function ThreadMessageList({ rid, tmid }: T
 					</MessageProvider>
 				</MessageListProvider>
 			</MessageListErrorBoundary>
-		</div>
+		</Box>
 	);
 });
 

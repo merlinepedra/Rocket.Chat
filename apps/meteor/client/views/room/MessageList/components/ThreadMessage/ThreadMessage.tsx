@@ -40,6 +40,7 @@ const ThreadMessage: FC<{
 			isEditing={isMessageHighlight}
 			isPending={message.temp}
 			sequential={sequential}
+			role='listitem'
 			data-qa-editing={isMessageHighlight}
 			data-qa-selected={isSelected}
 		>
