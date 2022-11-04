@@ -58,10 +58,6 @@ addMigration({
 			Uploads.col.countDocuments({ typeGroup: 'image', uploadedAt: { $gte: new Date('2021-08-31T00:00:00.000Z') } }),
 		);
 
-		Uploads.col.dropIndex('rid_1');
-		Uploads.col.dropIndex('uploadedAt_1');
-		Uploads.col.dropIndex('typeGroup_1');
-
 		Promise.await(migrateThumbnails(total, 0));
 	},
 });
